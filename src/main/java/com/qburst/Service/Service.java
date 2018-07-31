@@ -1,28 +1,24 @@
 package com.qburst.Service;
 
-import java.util.List;
-
 import com.qburst.Model.Data;
 import com.qburst.Model.View;
+
+import java.sql.SQLException;
+import java.util.List;
+
 import com.qburst.DAO.thisDao;
 
-public class Service {
+public class Service extends thisDao{
 
-	thisDao dao = null;
 	
-	public thisDao getDao() {
-		return dao;
-	}
-	public void setDao(thisDao dao) {
-		this.dao = dao;
-	}
 	
-	public Data insertingService(Data sdata) throws Exception {
-		Data data = null;
+	public Data insertingService(Data sdata)throws Exception{
+		Data data = new Data();
+		//System.out.println("hii ");
 		try {
-			data = dao.insertDataBase(sdata);
-		} catch (Exception e) {
-			throw new Exception();
+			data = insertDataBase(sdata);
+		}catch(Exception e){
+			System.out.println(e);
 		}
 		return data;
 	}
@@ -34,10 +30,10 @@ public class Service {
 			switch(page_id)
 			{
 				case 1 : 
-					dao.MemberProjectUpdate(sdata);
+					MemberProjectUpdate(sdata);
 				break;
 				
-				case 2 : dao.MemberTaskUpdate(sdata);
+				case 2 : MemberTaskUpdate(sdata);
 				break;
 				
 			}
@@ -53,20 +49,20 @@ public class Service {
 			switch(page_id)
 			{
 				case 1 : 
-					mv.setList1(dao.readProjectNames());
-				mv.setList5(dao.readEmployeeData());
+					mv.setList1(readProjectNames());
+				mv.setList5(readEmployeeData());
 				break;
 				
 				case 2 : 
-				mv.setList1(dao.readProjectNames());
-				mv.setList2(dao.readYesterdayTask());
-				mv.setList3(dao.readTodayTask());
+				mv.setList1(readProjectNames());
+				mv.setList2(readYesterdayTask());
+				mv.setList3(readTodayTask());
 				break;
 				
-				default : mv.setList4(dao.readProjectMemberData());
-				mv.setList1(dao.readProjectNames());
-				mv.setList2(dao.readYesterdayTask());
-				mv.setList3(dao.readTodayTask());
+				default : mv.setList4(readProjectMemberData());
+				mv.setList1(readProjectNames());
+				mv.setList2(readYesterdayTask());
+				mv.setList3(readTodayTask());
 			}
 		} catch (Exception e) {
 			throw new Exception();
@@ -79,7 +75,7 @@ public class Service {
 		boolean op = false;
 
 		try {
-			op = dao.login(sdata);
+			op = login(sdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

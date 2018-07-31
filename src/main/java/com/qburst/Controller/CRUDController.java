@@ -25,19 +25,22 @@ public class CRUDController extends HttpServlet {
     }
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		PrintWriter out = response.getWriter();
 		
+		PrintWriter out = response.getWriter();		
 		Data data = new Data();
-		ObjectMapper mapper = new ObjectMapper();
 		Service service = new Service();
+		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
 
 		data = mapper.readValue(inputjson, Data.class);
 		
+		//out.println("DATA"+data.getEmail());
+		Data data1 = null;
+		
 		try {
-			service.insertingService(data);
+			data1 = service.insertingService(data);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -74,9 +77,9 @@ public class CRUDController extends HttpServlet {
 		
 		ServletInputStream inputjson = null;
 
-		inputjson = request.getInputStream();
+		//inputjson = request.getInputStream();
 
-		data = mapper.readValue(inputjson, Data.class);
+		//data = mapper.readValue(inputjson, Data.class);
 		try {
 			mv = service.readService(data);
 		} catch (Exception e) {
