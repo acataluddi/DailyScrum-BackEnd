@@ -36,12 +36,18 @@ public class CRUDController extends HttpServlet {
 
 		data = mapper.readValue(inputjson, Data.class);
 		
-		Data data1 = null;
+		boolean result = false;
 		
 		try {
-			data1 = service.insertingService(data);
+			result = service.insertingService(data);
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		if(result == true) {
+			out.println("Registered");
+		}
+		else {
+			out.println("Could not register");
 		}
 	}
 	

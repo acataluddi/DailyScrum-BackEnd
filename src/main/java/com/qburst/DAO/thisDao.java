@@ -10,13 +10,14 @@ import com.qburst.Model.Data;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 public class thisDao extends connection{
 	
 	StringBuilder hash = new StringBuilder();
 	
-	public Data insertDataBase(Data data) throws Exception{
+	public boolean insertDataBase(Data data) throws Exception{
 		
 		/*Create database called Scrum and create a collection called Employee. 
 		 * Then this step is done to auto increment the Employee ID field - 
@@ -26,15 +27,20 @@ public class thisDao extends connection{
 		DB db;
 		String saltStr;
 		String saltedPassword;
-		
+		DBCursor result = null;
 		try {
 
 			db = databaseConnection();
 			
-
 			DBCollection table = db.getCollection("Employee");
 
 			BasicDBObject document = new BasicDBObject();
+			
+			DBObject query = new BasicDBObject("Email", data.getEmail());
+			DBCursor results = table.find(query);
+			while (results.hasNext()) {
+				return false;
+			}
 
 			document.put("EmployeeID", getNextSequence("id"));	//used to calculate the next value of the EmployeID
 			document.put("Name", data.getName());
@@ -49,10 +55,20 @@ public class thisDao extends connection{
 			document.put("Hash", saltStr);
 			document.put("Role", data.getRole());
 			table.insert(document);
+			
+			DBObject querycheck = new BasicDBObject("Email", data.getEmail());
+			result = table.find(querycheck);
+			
 		}catch(Exception e) {
 			
 		}
-		return data;
+		
+		
+		while (result.hasNext()) {
+			return true;
+		}
+		
+		return false;
 		
 		
 		

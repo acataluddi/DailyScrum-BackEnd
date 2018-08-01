@@ -12,14 +12,14 @@ public class Service extends thisDao{
 
 	
 	
-	public Data insertingService(Data sdata)throws Exception{
-		Data data = new Data();
+	public boolean insertingService(Data sdata)throws Exception{
+		boolean result = false;
 		try {
-			data = insertDataBase(sdata);
+			result = insertDataBase(sdata);
 		}catch(Exception e){
 			System.out.println(e);
 		}
-		return data;
+		return result;
 	}
 	
 	public void updatingService(Data sdata) throws Exception {
