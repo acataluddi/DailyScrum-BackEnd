@@ -14,7 +14,6 @@ public class Service extends thisDao{
 	
 	public Data insertingService(Data sdata)throws Exception{
 		Data data = new Data();
-		//System.out.println("hii ");
 		try {
 			data = insertDataBase(sdata);
 		}catch(Exception e){

@@ -36,7 +36,6 @@ public class CRUDController extends HttpServlet {
 
 		data = mapper.readValue(inputjson, Data.class);
 		
-		//out.println("DATA"+data.getEmail());
 		Data data1 = null;
 		
 		try {
