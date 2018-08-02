@@ -15,7 +15,7 @@ public class Service extends thisDao{
 	public boolean insertingService(Data sdata)throws Exception{
 		boolean result = false;
 		try {
-			result = insertDataBase(sdata);
+			result = insertIntoTable(sdata);
 		}catch(Exception e){
 			System.out.println(e);
 		}

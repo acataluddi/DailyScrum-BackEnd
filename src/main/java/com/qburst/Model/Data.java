@@ -10,7 +10,7 @@ public class Data {
 	
 	private String password;
 	
-	private String role;
+	private String designation;
 	
 	@JsonProperty("member_id")
 	private int member_id;
@@ -38,8 +38,8 @@ public class Data {
 		return password;
 	}
 
-	public String getRole() {
-		return role;
+	public String getDesignation() {
+		return designation;
 	}
 	
 	
@@ -63,7 +63,7 @@ public class Data {
 		this.password = password;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setDesignation(String designation) {
+		this.designation = designation;
 	}
 }
