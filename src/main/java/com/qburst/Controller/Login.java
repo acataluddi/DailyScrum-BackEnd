@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qburst.Model.Data;
-import com.qburst.Service.Service;
+import com.qburst.Model.UsersData;
+import com.qburst.Service.Scrum;
 
 @WebServlet("/Login")
 public class Login extends HttpServlet {
@@ -24,18 +24,18 @@ public class Login extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		Service service = new Service();
-		Data data = new Data();
+		Scrum scrum = new Scrum();
+		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
 
-		data = mapper.readValue(inputjson, Data.class);
+		incomingdata = mapper.readValue(inputjson, UsersData.class);
 		
 		try {
-			boolean n = service.loggingService(data);
+			boolean n = scrum.loggingin(incomingdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

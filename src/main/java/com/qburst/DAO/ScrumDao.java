@@ -2,18 +2,18 @@ package com.qburst.DAO;
 
 import java.sql.SQLException;
 import java.util.List;
-import com.qburst.Model.Data;
+import com.qburst.Model.UsersData;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
-public class thisDao extends connection{
+public class ScrumDao extends connection{
 	
 	StringBuilder hash = new StringBuilder();
 	
-	public boolean insertIntoTable(Data data) throws Exception{
+	public boolean insertIntoTable(UsersData usersData) throws Exception{
 		
 		/*Create database called Scrum and create a collection called Employee. 
 		 * Then this step is done to auto increment the Employee ID field - 
@@ -30,19 +30,19 @@ public class thisDao extends connection{
 
 			BasicDBObject document = new BasicDBObject();
 			
-			DBObject query = new BasicDBObject("Email", data.getEmail());
+			DBObject query = new BasicDBObject("Email", usersData.getEmail());
 			DBCursor results = table.find(query);
 			while (results.hasNext()) {
 				return false;
 			}
 
 			document.put("EmployeeID", getNextSequence("id"));	//used to calculate the next value of the EmployeID
-			document.put("Name", data.getName());
-			document.put("Email", data.getEmail());
-			document.put("Role", data.getDesignation());
+			document.put("Name", usersData.getName());
+			document.put("Email", usersData.getEmail());
+			document.put("Role", usersData.getDesignation());
 			table.insert(document);
 			
-			DBObject querycheck = new BasicDBObject("Email", data.getEmail());
+			DBObject querycheck = new BasicDBObject("Email", usersData.getEmail());
 			result = table.find(querycheck);
 			
 		}catch(Exception e) {
@@ -77,31 +77,31 @@ public class thisDao extends connection{
 
 	}
 
-	public Data MemberProjectUpdate(Data data)throws SQLException {
+	public UsersData MemberProjectUpdate(UsersData usersData)throws SQLException {
 		return null;
 	}
-	public Data MemberTaskUpdate(Data data)throws SQLException {
+	public UsersData MemberTaskUpdate(UsersData usersData)throws SQLException {
 		return null;
 	}
-	public List<Data> readProjectNames()throws SQLException {
+	public List<UsersData> readProjectNames()throws SQLException {
 		return null;
 	}
-	public List<Data> readEmployeeData()throws SQLException {
+	public List<UsersData> readEmployeeData()throws SQLException {
 		return null;
 	}
-	public List<Data> readProjectMemberData() throws SQLException {
+	public List<UsersData> readProjectMemberData() throws SQLException {
 		return null;
 	}
-	public List<Data> readYesterdayTask() throws SQLException {
+	public List<UsersData> readYesterdayTask() throws SQLException {
 		return null;
 	}
-	public List<Data> readTodayTask() throws SQLException {
+	public List<UsersData> readTodayTask() throws SQLException {
 		return null;
 	}
-	public boolean login(Data data) {
+	public boolean login(UsersData usersData) {
 		return false;
 	}
-	public List<Data> readData(int n)throws SQLException {
+	public List<UsersData> readData(int n)throws SQLException {
 		return null;
 	}
 }

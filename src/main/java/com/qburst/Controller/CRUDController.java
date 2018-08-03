@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.qburst.Model.Data;
+import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
-import com.qburst.Service.Service;
+import com.qburst.Service.Scrum;
 
 @WebServlet("/CRUDController")
 public class CRUDController extends HttpServlet {
@@ -26,19 +26,19 @@ public class CRUDController extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		PrintWriter out = response.getWriter();		
-		Data data = new Data();
-		Service service = new Service();
+		UsersData incomingdata = new UsersData();
+		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
 
-		data = mapper.readValue(inputjson, Data.class);
+		incomingdata = mapper.readValue(inputjson, UsersData.class);
 		
 		boolean result = false;
 		
 		try {
-			result = service.insertingService(data);
+			result = scrum.insertUser(incomingdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -54,18 +54,18 @@ public class CRUDController extends HttpServlet {
 			throws ServletException, IOException {
 	
 		PrintWriter out = response.getWriter();
-		Service service = new Service();
-		Data data = new Data();
+		Scrum scrum = new Scrum();
+		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
 
-		data = mapper.readValue(inputjson, Data.class);
+		incomingdata = mapper.readValue(inputjson, UsersData.class);
 		
 		try {
-			service.updatingService(data);
+			scrum.update(incomingdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -74,26 +74,26 @@ public class CRUDController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
-		Service service = new Service();
+		Scrum scrum = new Scrum();
 		View mv = new View();
-		Data data = new Data();
+		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
 		
 		ServletInputStream inputjson = null;
 
 		//inputjson = request.getInputStream();
 
-		//data = mapper.readValue(inputjson, Data.class);
+		//data = mapper.readValue(inputjson, UsersData.class);
 		try {
-			mv = service.readService(data);
+			mv = scrum.read(incomingdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		String data1 = mapper.writeValueAsString(mv.getList1());
-		String data2 = mapper.writeValueAsString(mv.getList2());
-		String data3 = mapper.writeValueAsString(mv.getList3());
-		String data4 = mapper.writeValueAsString(mv.getList4());
-		String data5 = mapper.writeValueAsString(mv.getList5());
+		String data1 = mapper.writeValueAsString(mv.getProjectNames());
+		String data2 = mapper.writeValueAsString(mv.getYesterdayTask());
+		String data3 = mapper.writeValueAsString(mv.getTodayTask());
+		String data4 = mapper.writeValueAsString(mv.getProjectMemberData());
+		String data5 = mapper.writeValueAsString(mv.getEmployeeData());
 	}
 
 }

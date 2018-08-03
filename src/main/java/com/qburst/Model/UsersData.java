@@ -2,14 +2,12 @@ package com.qburst.Model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Data {
+public class UsersData {
 
 	private String name;
 	
 	private String email;
-	
-	private String password;
-	
+		
 	private String designation;
 	
 	@JsonProperty("member_id")
@@ -34,10 +32,6 @@ public class Data {
 		return email;
 	}
 
-	public String getPassword() {
-		return password;
-	}
-
 	public String getDesignation() {
 		return designation;
 	}
@@ -57,10 +51,6 @@ public class Data {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
 	}
 
 	public void setDesignation(String designation) {
