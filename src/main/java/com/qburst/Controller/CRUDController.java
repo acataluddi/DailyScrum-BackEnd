@@ -2,6 +2,7 @@ package com.qburst.Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -18,14 +19,15 @@ import com.qburst.Service.Scrum;
 @WebServlet("/CRUDController")
 public class CRUDController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    public CRUDController() {
-        super();
-    }
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		PrintWriter out = response.getWriter();		
+	public CRUDController() {
+		super();
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		PrintWriter out = response.getWriter();
 		UsersData incomingdata = new UsersData();
 		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
@@ -34,66 +36,87 @@ public class CRUDController extends HttpServlet {
 		inputjson = request.getInputStream();
 
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		
+
 		boolean result = false;
-		
+
 		try {
 			result = scrum.insertUser(incomingdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if(result == true) {
+		if (result == true) {
 			out.println("Registered");
-		}
-		else {
+		} else {
 			out.println("Could not register");
 		}
 	}
-	
+
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-	
+
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
 
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		
+
 		try {
 			scrum.update(incomingdata);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		/*
+		 * Retrieve Users List
+		 */
 		PrintWriter out = response.getWriter();
-		Scrum scrum = new Scrum();
-		View mv = new View();
-		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
-		
-		ServletInputStream inputjson = null;
 
-		//inputjson = request.getInputStream();
+		View myView = new View();
+		Scrum scrumService = new Scrum();
 
-		//data = mapper.readValue(inputjson, UsersData.class);
+		String spagenum = request.getParameter("page");
+		int pagenum = Integer.parseInt(spagenum);
+
+		// pageid received from client
+		int pageid = 3;
+		myView.setPageid(pageid);
+
+		// number of records to be displayed in a page: from client
+		int numOfRec = 3;
+
+		myView.setPagenum(pagenum);
+		myView.setNumOfRec(numOfRec);
+
 		try {
-			mv = scrum.read(incomingdata);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		String data1 = mapper.writeValueAsString(mv.getProjectNames());
-		String data2 = mapper.writeValueAsString(mv.getYesterdayTask());
-		String data3 = mapper.writeValueAsString(mv.getTodayTask());
-		String data4 = mapper.writeValueAsString(mv.getProjectMemberData());
-		String data5 = mapper.writeValueAsString(mv.getEmployeeData());
-	}
 
+			myView = scrumService.read(myView);
+
+		} catch (Exception e) {
+
+		}
+
+		List<UsersData> userlist = myView.getEmployeeData(pagenum, numOfRec);
+
+		String outputRecords = mapper.writeValueAsString(userlist);
+		out.println(outputRecords);
+
+		out.close();
+
+		/*
+		 * String data1 = mapper.writeValueAsString(mv.getProjectNames()); 
+		 * String data2 = mapper.writeValueAsString(mv.getYesterdayTask()); 
+		 * String data3 = mapper.writeValueAsString(mv.getTodayTask()); 
+		 * String data4 = mapper.writeValueAsString(mv.getProjectMemberData()); 
+		 * String data5 = mapper.writeValueAsString(mv.getEmployeeData());
+		 */
+	}
 }
