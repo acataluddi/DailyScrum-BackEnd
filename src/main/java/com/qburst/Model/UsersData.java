@@ -12,6 +12,8 @@ public class UsersData {
 	
 	private int memberID;
 	
+	private String employeeID;
+	
 	@JsonProperty("pageID")
 	private int pageID;
 	
@@ -21,6 +23,10 @@ public class UsersData {
 	
 	public Integer getMemberID() {
 		return memberID;
+	}
+
+	public String getEmployeeID() {
+		return employeeID;
 	}
 
 	public String getName() {
@@ -42,6 +48,10 @@ public class UsersData {
 	
 	public void setMemberID(Integer memberID) {
 		this.memberID = memberID;
+	}
+
+	public void setEmployeeID(String employeeID) {
+		this.employeeID = employeeID;
 	}
 
 	public void setName(String name) {
