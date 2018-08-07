@@ -49,7 +49,7 @@ public class ScrumDao extends connection {
 			document.put("EmployeeID", getNextSequence("id")); // used to calculate the next value of the EmployeID
 			document.put("Name", usersData.getName());
 			document.put("Email", usersData.getEmail());
-			document.put("Role", usersData.getUserType());
+			document.put("UserType", usersData.getUserType());
 			table.insert(document);
 
 			DBObject querycheck = new BasicDBObject("Email", usersData.getEmail());
@@ -100,7 +100,7 @@ public class ScrumDao extends connection {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
-				String UserType = userObj.getString("Role");
+				String UserType = userObj.getString("UserType");
 
 				UsersData user = new UsersData();
 				user.setName(Name);
