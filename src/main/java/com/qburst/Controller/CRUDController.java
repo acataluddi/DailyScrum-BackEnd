@@ -45,9 +45,11 @@ public class CRUDController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (result == true) {
-			out.println("Registered");
+//			out.println("Registered");
+			out.println("{\"message\":\"registered\"}");
 		} else {
-			out.println("Could not register");
+//			out.println("Could not register");
+			out.println("{\"message\":\"User exists\"}");
 		}
 	}
 
@@ -77,6 +79,7 @@ public class CRUDController extends HttpServlet {
 		/*
 		 * Retrieve Users List
 		 */
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		ObjectMapper mapper = new ObjectMapper();
 
