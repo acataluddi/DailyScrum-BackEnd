@@ -23,17 +23,17 @@ public class Scrum extends ScrumDao {
 	public void update(UsersData incomingdata) throws Exception {
 		UsersData usersData = null;
 		try {
-			int page_id = usersData.getPageID();
-			switch (page_id) {
-			case 1:
-				MemberProjectUpdate(incomingdata);
-				break;
-
-			case 2:
-				MemberTaskUpdate(incomingdata);
-				break;
-
-			}
+//			int page_id = usersData.getPageID();
+//			switch (page_id) {
+//			case 1:
+//				MemberProjectUpdate(incomingdata);
+//				break;
+//
+//			case 2:
+//				MemberTaskUpdate(incomingdata);
+//				break;
+//
+//			}
 		} catch (Exception e) {
 			throw new Exception();
 		}

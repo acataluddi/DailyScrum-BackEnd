@@ -12,9 +12,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.qburst.Model.GoogleUser;
 import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
 import com.qburst.Service.Scrum;
+import com.qburst.Validator.TokenValidator;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 
 @WebServlet("/CRUDController")
 public class CRUDController extends HttpServlet {
@@ -26,31 +31,59 @@ public class CRUDController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		UsersData user = new UsersData();
+		GoogleUser gmember = new GoogleUser();
+		ObjectMapper mapper = new ObjectMapper();
+		TokenValidator tvalidator = new TokenValidator();
+		Scrum scrum = new Scrum();
+		
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
-		UsersData incomingdata = new UsersData();
-		Scrum scrum = new Scrum();
-		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
-
+		
 		inputjson = request.getInputStream();
+		gmember = mapper.readValue(inputjson, GoogleUser.class);
+		user = tvalidator.verifyToken(gmember.getIdToken());
 
-		incomingdata = mapper.readValue(inputjson, UsersData.class);
-
-		boolean result = false;
-
-		try {
-			result = scrum.insertUser(incomingdata);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		if (result == true) {
-//			out.println("Registered");
-			out.println("{\"message\":\"registered\"}");
+		if (user == null) {
+			out.println("{\"message\":\"Invalid token\"}");
 		} else {
-//			out.println("Could not register");
-			out.println("{\"message\":\"User exists\"}");
+			boolean result = false;
+			// just setting userType as user for the first time
+			user.setUserType("user");
+			try {
+				result = scrum.insertUser(user);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			if (result == true) {
+				out.println("{\"message\":\"registered\"}");
+			} else {
+				out.println("{\"message\":\"User exists\"}");
+			}
 		}
+		// UsersData incomingdata = new UsersData();
+		// ObjectMapper mapper = new ObjectMapper();
+		// ServletInputStream inputjson = null;
+		//
+		// inputjson = request.getInputStream();
+		//
+		// incomingdata = mapper.readValue(inputjson, UsersData.class);
+		//
+		// boolean result = false;
+		//
+		// try {
+		// result = scrum.insertUser(incomingdata);
+		// } catch (Exception e) {
+		// e.printStackTrace();
+		// }
+		// if (result == true) {
+		//// out.println("Registered");
+		// out.println("{\"message\":\"registered\"}");
+		// } else {
+		//// out.println("Could not register");
+		// out.println("{\"message\":\"User exists\"}");
+		// }
 	}
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
@@ -79,47 +112,58 @@ public class CRUDController extends HttpServlet {
 		/*
 		 * Retrieve Users List
 		 */
+		UsersData user = new UsersData();
+		TokenValidator tvalidator = new TokenValidator();
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
-		ObjectMapper mapper = new ObjectMapper();
-
-		View myView = new View();
-		Scrum scrumService = new Scrum();
-
-		String spagenum = request.getParameter("page");
-		int pagenum = Integer.parseInt(spagenum);
-
-		// pageid received from client
-		int pageid = 3;
-		myView.setPageid(pageid);
-
-		// number of records to be displayed in a page: from client
-		int numOfRec = 3;
-
-		myView.setPagenum(pagenum);
-		myView.setNumOfRec(numOfRec);
-
-		try {
-
-			myView = scrumService.read(myView);
-
-		} catch (Exception e) {
-
+		String idToken = request.getParameter("id_token");
+		user = tvalidator.verifyToken(idToken);
+		if (user == null) {
+			out.println("{\"message\":\"Invalid token\"}");
+		} else {
+			out.println("{\"message\":\"" + user.getEmail() + "\"}");
 		}
 
-		List<UsersData> userlist = myView.getEmployeeData(pagenum, numOfRec);
-
-		String outputRecords = mapper.writeValueAsString(userlist);
-		out.println(outputRecords);
-
-		out.close();
-
-		/*
-		 * String data1 = mapper.writeValueAsString(mv.getProjectNames()); 
-		 * String data2 = mapper.writeValueAsString(mv.getYesterdayTask()); 
-		 * String data3 = mapper.writeValueAsString(mv.getTodayTask()); 
-		 * String data4 = mapper.writeValueAsString(mv.getProjectMemberData()); 
-		 * String data5 = mapper.writeValueAsString(mv.getEmployeeData());
-		 */
+		// PrintWriter out = response.getWriter();
+		// ObjectMapper mapper = new ObjectMapper();
+		//
+		// View myView = new View();
+		// Scrum scrumService = new Scrum();
+		//
+		// String spagenum = request.getParameter("page");
+		// int pagenum = Integer.parseInt(spagenum);
+		//
+		// // pageid received from client
+		// int pageid = 3;
+		// myView.setPageid(pageid);
+		//
+		// // number of records to be displayed in a page: from client
+		// int numOfRec = 3;
+		//
+		// myView.setPagenum(pagenum);
+		// myView.setNumOfRec(numOfRec);
+		//
+		// try {
+		//
+		// myView = scrumService.read(myView);
+		//
+		// } catch (Exception e) {
+		//
+		// }
+		//
+		// List<UsersData> userlist = myView.getEmployeeData(pagenum, numOfRec);
+		//
+		// String outputRecords = mapper.writeValueAsString(userlist);
+		// out.println(outputRecords);
+		//
+		// out.close();
+		//
+		// /*
+		// * String data1 = mapper.writeValueAsString(mv.getProjectNames());
+		// * String data2 = mapper.writeValueAsString(mv.getYesterdayTask());
+		// * String data3 = mapper.writeValueAsString(mv.getTodayTask());
+		// * String data4 = mapper.writeValueAsString(mv.getProjectMemberData());
+		// * String data5 = mapper.writeValueAsString(mv.getEmployeeData());
+		// */
 	}
 }

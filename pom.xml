@@ -24,7 +24,7 @@
 			<artifactId>jackson-annotations</artifactId>
 			<version>2.9.6</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
@@ -38,15 +38,17 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-
 			<groupId>org.mongodb</groupId>
-
 			<artifactId>mongo-java-driver</artifactId>
-
 			<version>2.10.1</version>
-
 		</dependency>
-		
+
+		<dependency>
+			<groupId>com.google.api-client</groupId>
+			<artifactId>google-api-client</artifactId>
+			<version>1.23.0</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
