@@ -8,20 +8,19 @@ public class UsersData {
 	
 	private String email;
 		
-	private String designation;
+	private String userType;
 	
-	@JsonProperty("member_id")
-	private int member_id;
+	private int memberID;
 	
-	@JsonProperty("page_id")
-	private int page_id;
+	@JsonProperty("pageID")
+	private int pageID;
 	
 	public Integer getPageID() {
-		return page_id;
+		return pageID;
 	}
 	
 	public Integer getMemberID() {
-		return member_id;
+		return memberID;
 	}
 
 	public String getName() {
@@ -32,17 +31,17 @@ public class UsersData {
 		return email;
 	}
 
-	public String getDesignation() {
-		return designation;
+	public String getUserType() {
+		return userType;
 	}
 	
 	
-	public void setPageID(Integer page_id) {
-		this.page_id = page_id;
+	public void setPageID(Integer pageID) {
+		this.pageID = pageID;
 	}
 	
-	public void setMemberID(Integer member_id) {
-		this.member_id = member_id;
+	public void setMemberID(Integer memberID) {
+		this.memberID = memberID;
 	}
 
 	public void setName(String name) {
@@ -53,7 +52,7 @@ public class UsersData {
 		this.email = email;
 	}
 
-	public void setDesignation(String designation) {
-		this.designation = designation;
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 }

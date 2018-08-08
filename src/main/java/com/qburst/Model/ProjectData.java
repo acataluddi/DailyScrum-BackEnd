@@ -2,8 +2,17 @@ package com.qburst.Model;
 
 public class ProjectData {
 	
-	private String project_name, project_disc;
+	private String project_name, project_disc, role;
 	private int member_id, page_id;
+	
+	
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
 	
 	public Integer getPageID() {
 		return page_id;
