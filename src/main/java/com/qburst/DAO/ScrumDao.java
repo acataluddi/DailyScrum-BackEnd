@@ -67,23 +67,6 @@ public class ScrumDao extends connection {
 
 	}
 
-//	public Object getNextSequence(String name) throws Exception {
-//
-//		DB db;
-//
-//		db = databaseConnection();
-//
-//		DBCollection collection = db.getCollection("Employee");
-//		BasicDBObject find = new BasicDBObject();
-//		find.put("EmployeeID", name);
-//		BasicDBObject update = new BasicDBObject();
-//		update.put("$inc", new BasicDBObject("seq", 1));
-//		DBObject obj = collection.findAndModify(find, update);
-//
-//		return obj.get("seq");
-//
-//	}
-
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
 

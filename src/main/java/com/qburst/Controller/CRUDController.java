@@ -45,10 +45,8 @@ public class CRUDController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (result == true) {
-//			out.println("Registered");
 			out.println("{\"message\":\"registered\"}");
 		} else {
-//			out.println("Could not register");
 			out.println("{\"message\":\"User exists\"}");
 		}
 	}
@@ -113,13 +111,5 @@ public class CRUDController extends HttpServlet {
 		out.println(outputRecords);
 
 		out.close();
-
-		/*
-		 * String data1 = mapper.writeValueAsString(mv.getProjectNames()); 
-		 * String data2 = mapper.writeValueAsString(mv.getYesterdayTask()); 
-		 * String data3 = mapper.writeValueAsString(mv.getTodayTask()); 
-		 * String data4 = mapper.writeValueAsString(mv.getProjectMemberData()); 
-		 * String data5 = mapper.writeValueAsString(mv.getEmployeeData());
-		 */
 	}
 }
