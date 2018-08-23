@@ -13,5 +13,11 @@ public abstract class connection {
 		return db;
 		
 	}
+    public MongoClient databaseConnection2() throws Exception {
+		
+		MongoClient mongo = new MongoClient("localhost", 27017);	
+		return mongo;
+		
+	}
 
 }

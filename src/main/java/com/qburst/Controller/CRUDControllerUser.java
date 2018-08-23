@@ -16,11 +16,11 @@ import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
 import com.qburst.Service.Scrum;
 
-@WebServlet("/CRUDController")
-public class CRUDController extends HttpServlet {
+@WebServlet("/CRUDControllerUser")
+public class CRUDControllerUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public CRUDController() {
+	public CRUDControllerUser() {
 		super();
 	}
 
