@@ -151,4 +151,9 @@ public class ScrumDao extends connection {
 	public List<UsersData> readData(int n) throws SQLException {
 		return null;
 	}
+
+	public boolean insertTask(TaskData taskData) throws Exception {
+		
+	return false;
+	}
 }

@@ -1,5 +1,6 @@
 package com.qburst.Service;
 
+import com.qburst.Model.TaskData;
 import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
 
@@ -86,6 +87,16 @@ public class Scrum extends ScrumDao {
 			e.printStackTrace();
 		}
 		return op;
+	}
+	
+	public boolean addTask(TaskData incomingdata) throws Exception {
+		boolean result = false;
+		try {
+			result = insertTask(incomingdata);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return result;
 	}
 
 }
