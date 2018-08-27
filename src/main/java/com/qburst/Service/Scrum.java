@@ -91,8 +91,11 @@ public class Scrum extends ScrumDao {
 	
 	public boolean addTask(TaskData incomingdata) throws Exception {
 		boolean result = false;
+		System.out.println("in service");
 		try {
+			System.out.println("in service");
 			result = insertTask(incomingdata);
+//			System.out.println("in service");
 		} catch (Exception e) {
 			System.out.println(e);
 		}

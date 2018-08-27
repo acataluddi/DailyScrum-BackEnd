@@ -3,13 +3,33 @@ package com.qburst.Model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.qburst.serialization.LocalDateDeserializer;
+import com.qburst.serialization.LocalDateSerializer;
+import com.qburst.serialization.LocalTimeDeserializer;
+import com.qburst.serialization.LocalTimeSerializer;
+
 public class TaskData {
 	
+	private int taskId;
 	private String taskDesc, impediment;
 	private int memberId;
 	private int projectId;
-	private int taskId;
+	
+	
+	@JsonDeserialize(using = LocalTimeDeserializer.class)  
+	@JsonSerialize(using = LocalTimeSerializer.class) 
 	LocalTime timeStamp;
+	
+	@JsonDeserialize(using = LocalDateDeserializer.class)  
+	@JsonSerialize(using = LocalDateSerializer.class)  
+	LocalDate taskDate;
+	 
+	@JsonDeserialize(using = LocalTimeDeserializer.class)  
+	@JsonSerialize(using = LocalTimeSerializer.class) 
+	LocalTime timeSpent;
+	
 	public String getTaskDesc() {
 		return taskDesc;
 	}
@@ -58,7 +78,6 @@ public class TaskData {
 	public void setTimeSpent(LocalTime timeSpent) {
 		this.timeSpent = timeSpent;
 	}
-	LocalDate taskDate;
-	LocalTime timeSpent;
+	
 		
 }
