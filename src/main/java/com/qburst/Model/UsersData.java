@@ -1,25 +1,16 @@
 package com.qburst.Model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UsersData {
+	
+	private String memberID;
 
 	private String name;
 	
 	private String email;
 		
 	private String userType;
-	
-	private int memberID;
-	
-	@JsonProperty("pageID")
-	private int pageID;
-	
-	public Integer getPageID() {
-		return pageID;
-	}
-	
-	public Integer getMemberID() {
+
+	public String getMemberID() {
 		return memberID;
 	}
 
@@ -34,13 +25,8 @@ public class UsersData {
 	public String getUserType() {
 		return userType;
 	}
-	
-	
-	public void setPageID(Integer pageID) {
-		this.pageID = pageID;
-	}
-	
-	public void setMemberID(Integer memberID) {
+
+	public void setMemberID(String memberID) {
 		this.memberID = memberID;
 	}
 

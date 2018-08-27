@@ -46,7 +46,7 @@ public class ScrumDao extends connection {
 				return false;
 			}
 
-			document.put("EmployeeID", getNextSequence("id")); // used to calculate the next value of the EmployeID
+			document.put("EmployeeID", usersData.getMemberID()); // used to calculate the next value of the EmployeID
 			document.put("Name", usersData.getName());
 			document.put("Email", usersData.getEmail());
 			document.put("UserType", usersData.getUserType());
@@ -67,23 +67,6 @@ public class ScrumDao extends connection {
 
 	}
 
-	public Object getNextSequence(String name) throws Exception {
-
-		DB db;
-
-		db = databaseConnection();
-
-		DBCollection collection = db.getCollection("Employee");
-		BasicDBObject find = new BasicDBObject();
-		find.put("EmployeeID", name);
-		BasicDBObject update = new BasicDBObject();
-		update.put("$inc", new BasicDBObject("seq", 1));
-		DBObject obj = collection.findAndModify(find, update);
-
-		return obj.get("seq");
-
-	}
-
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
 
@@ -98,11 +81,13 @@ public class ScrumDao extends connection {
 
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
+				String MemberID = userObj.getString("MemberID");
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("UserType");
 
 				UsersData user = new UsersData();
+				user.setMemberID(MemberID);
 				user.setName(Name);
 				user.setEmail(Email);
 				user.setUserType(UserType);
