@@ -59,7 +59,7 @@ public class Scrum extends ScrumDao {
 				break;
 
 			case 3:
-				//View UserList
+				// View UserList
 				int pagenum = viewInfo.getPagenum();
 				int num_of_rec = viewInfo.getNum_of_rec();
 				mv.setEmployeeData(readUserList(pagenum, num_of_rec));
@@ -88,14 +88,12 @@ public class Scrum extends ScrumDao {
 		}
 		return op;
 	}
-	
+
 	public boolean addTask(TaskData incomingdata) throws Exception {
 		boolean result = false;
-		System.out.println("in service");
+
 		try {
-			System.out.println("in service");
 			result = insertTask(incomingdata);
-//			System.out.println("in service");
 		} catch (Exception e) {
 			System.out.println(e);
 		}

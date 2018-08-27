@@ -21,32 +21,36 @@ import com.qburst.Service.Scrum;
 @WebServlet("/TaskController")
 public class TaskController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public TaskController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#HttpServlet()
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public TaskController() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 //		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 		PrintWriter out = response.getWriter();
 		TaskData incomingData = new TaskData();
-		
+
 		Scrum scrumService = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
@@ -54,7 +58,6 @@ public class TaskController extends HttpServlet {
 		inputjson = request.getInputStream();
 
 		incomingData = mapper.readValue(inputjson, TaskData.class);
-		System.out.println("hi");
 		boolean result = false;
 
 		try {

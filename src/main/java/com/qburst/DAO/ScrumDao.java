@@ -152,57 +152,57 @@ public class ScrumDao extends connection {
 	}
 
 	public boolean insertTask(TaskData taskData) throws Exception {
-		
+
 		/*
-		 * Do this step to auto increment the TaskId field -
-		 * db.Task.insert({taskId : "id", seq : 0})
+		 * Do this step to auto increment the TaskId field - db.Task.insert({taskId :
+		 * "id", seq : 0})
 		 */
-		
+
 		DB db;
 		DBCursor result = null;
 		try {
-		db = databaseConnection();
-		
-		DBCollection collection = db.getCollection("Task");
-		BasicDBObject document = new BasicDBObject();
-		document.put("taskId", generateTaskId("taskid"));
+			db = databaseConnection();
 
-		document.put("taskDesc", taskData.getTaskDesc());
-		document.put("impediment", taskData.getImpediment());
-		document.put("memberId", taskData.getMemberId());
-		document.put("projectId", taskData.getProjectId());
-		document.put("taskDate", taskData.getTaskDate().toString());
-		document.put("timeSpent", taskData.getTimeSpent().toString());
-		document.put("timeStamp", taskData.getTimeStamp().toString());
-		
-		collection.insert(document);
+			DBCollection collection = db.getCollection("Task");
+			BasicDBObject document = new BasicDBObject();
+			document.put("taskId", generateTaskId("taskid"));
 
-		DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp().toString());
-		query.put("projectId", taskData.getProjectId());
-		result = collection.find(query);
-		}catch (Exception e) {
+			document.put("taskDesc", taskData.getTaskDesc());
+			document.put("impediment", taskData.getImpediment());
+			document.put("memberId", taskData.getMemberId());
+			document.put("projectId", taskData.getProjectId());
+			document.put("taskDate", taskData.getTaskDate().toString());
+			document.put("timeSpent", taskData.getTimeSpent().toString());
+			document.put("timeStamp", taskData.getTimeStamp().toString());
+
+			collection.insert(document);
+
+			DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp().toString());
+			query.put("projectId", taskData.getProjectId());
+			result = collection.find(query);
+		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		while(result.hasNext()) {
+		while (result.hasNext()) {
 			return true;
 		}
-	return false;
+		return false;
 	}
-	
-	public Object generateTaskId(String name) throws Exception{
+
+	public Object generateTaskId(String name) throws Exception {
 		DB con;
-		
+
 		con = databaseConnection();
-		
+
 		DBCollection collection = con.getCollection("Task");
 		BasicDBObject find = new BasicDBObject();
 		find.put("taskId", name);
-		
+
 		BasicDBObject update = new BasicDBObject();
 		update.put("$inc", new BasicDBObject("seq", 1));
-		
+
 		DBObject obj = collection.findAndModify(find, update);
-		
+
 		return obj.get("seq");
 
 	}
