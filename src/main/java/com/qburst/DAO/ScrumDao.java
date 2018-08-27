@@ -21,6 +21,7 @@ import com.mongodb.client.model.Updates;
 public class ScrumDao extends connection {
 	StringBuilder hash = new StringBuilder();
 
+	@SuppressWarnings("deprecation")
 	public boolean insertIntoTable(UsersData usersData) throws Exception {
 		/*
 		 * Create database called Scrum and create a collection called Employee. Then
@@ -30,7 +31,8 @@ public class ScrumDao extends connection {
 		DB db;
 		DBCursor result = null;
 		try {
-			db = databaseConnection();
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Employee");
 			BasicDBObject document = new BasicDBObject();
 			DBObject query = new BasicDBObject("Email", usersData.getEmail());
@@ -53,9 +55,11 @@ public class ScrumDao extends connection {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public Object getNextSequence1(String name) throws Exception {
 		DB db;
-		db = databaseConnection();
+		MongoClient mongo = databaseConnection();
+		db = mongo.getDB("Scrum");
 		DBCollection collection = db.getCollection("Employee");
 		BasicDBObject find = new BasicDBObject();
 		find.put("EmployeeID", name);
@@ -73,11 +77,13 @@ public class ScrumDao extends connection {
 	 * db.Project.insert({ProjectId:"id",seq : 0})
 	 */
 
+	@SuppressWarnings("deprecation")
 	public boolean insertProject(ProjectData projectData) throws Exception {
 		DB db;
 		DBCursor result = null;
 		try {
-			db = databaseConnection();
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			BasicDBObject document = new BasicDBObject();
 			DBObject query = new BasicDBObject("ProjectName", projectData.getProjectName());
@@ -101,9 +107,11 @@ public class ScrumDao extends connection {
 		return false;
 	}
 
+	@SuppressWarnings("deprecation")
 	public Object getNextSequence2(String name) throws Exception {
 		DB db;
-		db = databaseConnection();
+		MongoClient mongo = databaseConnection();
+		db = mongo.getDB("Scrum");
 		DBCollection collection = db.getCollection("Project");
 		BasicDBObject find = new BasicDBObject();
 		find.put("ProjectId", name);
@@ -115,12 +123,13 @@ public class ScrumDao extends connection {
 
 	// Neeraj: Code for delete Project
 
+	@SuppressWarnings("deprecation")
 	public boolean subtractProject(ProjectData projectData) throws Exception {
 		DB db;
 		DBCursor result = null;
 		try {
-			db = databaseConnection();
-			MongoClient mongo = databaseConnection2();
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
 			MongoDatabase database = mongo.getDatabase("Scrum");
 			MongoCollection<Document> collection = database.getCollection("Project");
 			System.out.println("Collection Project selected successfully");
@@ -142,10 +151,11 @@ public class ScrumDao extends connection {
 
 	// Neeraj: Code for edit project
 
+	@SuppressWarnings("deprecation")
 	public boolean updateProject(ProjectData projectData) throws Exception {
 		DB db;
 		try {
-			MongoClient mongo = databaseConnection2();
+			MongoClient mongo = databaseConnection();
 			MongoDatabase database = mongo.getDatabase("Scrum");
 			MongoCollection<Document> collection = database.getCollection("Project");
 			System.out.println("Collection Project selected successfully");
@@ -161,7 +171,7 @@ public class ScrumDao extends connection {
 			updateQuery.append("$set", new BasicDBObject().append("Member", projectData.getMemberId()));
 			BasicDBObject searchQuery = new BasicDBObject();
 			searchQuery.append("ProjectId", editId);
-			db = databaseConnection();
+			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			table.update(searchQuery, updateQuery);
 
@@ -172,11 +182,13 @@ public class ScrumDao extends connection {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
 		List<UsersData> userlist = new ArrayList<UsersData>();
 		try {
-			db = databaseConnection();
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Employee");
 			List<DBObject> cursor = collection.find().skip(num_of_rec * (pagenum - 1)).limit(num_of_rec).toArray();
 			for (int i = 0; i < cursor.size(); i++) {
