@@ -65,7 +65,14 @@ public class ScrumDao extends connection {
 		return obj.get("seq");
 	}
 
-	// Neeraj: To add Project
+	// Neeraj: Code for add Project
+
+	/*
+	 * Create database called Scrum and create a collection called Project. Then
+	 * this step is done to auto increment the ProjectId field -
+	 * db.Project.insert({ProjectId:"id",seq : 0})
+	 */
+
 	public boolean insertProject(ProjectData projectData) throws Exception {
 		DB db;
 		DBCursor result = null;
@@ -78,9 +85,7 @@ public class ScrumDao extends connection {
 			while (results.hasNext()) {
 				return false;
 			}
-			System.out.println("Hello");
 			document.put("ProjectId", getNextSequence2("id"));
-			System.out.println("Hello1");
 			document.put("ProjectName", projectData.getProjectName());
 			document.put("Description", projectData.getProjectDesc());
 			document.put("Member", projectData.getMemberId());
@@ -108,11 +113,13 @@ public class ScrumDao extends connection {
 		return obj.get("seq");
 	}
 
-	// Neeraj: To delete Project
+	// Neeraj: Code for delete Project
+
 	public boolean subtractProject(ProjectData projectData) throws Exception {
 		DB db;
 		DBCursor result = null;
 		try {
+			db = databaseConnection();
 			MongoClient mongo = databaseConnection2();
 			MongoDatabase database = mongo.getDatabase("Scrum");
 			MongoCollection<Document> collection = database.getCollection("Project");
@@ -121,7 +128,6 @@ public class ScrumDao extends connection {
 			System.out.println("deletion ID is" + deletionId);
 			collection.deleteOne(Filters.eq("ProjectId", deletionId));
 			System.out.println("Document deleted successfully...");
-			db = databaseConnection();
 			DBCollection table = db.getCollection("Project");
 
 			DBObject query = new BasicDBObject("ProjectId", deletionId);
@@ -134,63 +140,38 @@ public class ScrumDao extends connection {
 		return true;
 	}
 
-	// Neeraj: To edit Project
+	// Neeraj: Code for edit project
 
 	public boolean updateProject(ProjectData projectData) throws Exception {
 		DB db;
-		DBCursor result = null;
 		try {
+			MongoClient mongo = databaseConnection2();
+			MongoDatabase database = mongo.getDatabase("Scrum");
+			MongoCollection<Document> collection = database.getCollection("Project");
+			System.out.println("Collection Project selected successfully");
+			int editId = projectData.getProjectId();
+			collection.updateOne(Filters.eq("ProjectId", editId),
+					Updates.set("ProjectName", projectData.getProjectName()));
+			collection.updateOne(Filters.eq("ProjectId", editId),
+					Updates.set("Description", projectData.getProjectDesc()));
+
+			// Neeraj: Code for update the array "Member"
+
+			BasicDBObject updateQuery = new BasicDBObject();
+			updateQuery.append("$set", new BasicDBObject().append("Member", projectData.getMemberId()));
+			BasicDBObject searchQuery = new BasicDBObject();
+			searchQuery.append("ProjectId", editId);
 			db = databaseConnection();
 			DBCollection table = db.getCollection("Project");
-			BasicDBObject document = new BasicDBObject();
+			table.update(searchQuery, updateQuery);
 
-			int editId = projectData.getProjectId();
-			System.out.println("Edit ID is" + editId);
-			document.put("ProjectId", editId);
-			document.put("ProjectName", projectData.getProjectName());
-			document.put("Description", projectData.getProjectDesc());
-			document.put("Member", projectData.getMemberId());
-			table.insert(document);
 			System.out.println("Document update successfully...");
-			boolean result1 = subtractProject(projectData);
-		}
-
-		catch (Exception e) {
+		} catch (Exception e) {
 			return false;
 		}
 		return true;
 	}
 
-	// Neeraj alternate code for edit project
-
-	// public boolean updateProject(ProjectData projectData) throws Exception {
-	// DB db;
-	// DBCursor result = null;
-	// try {
-	// MongoClient mongo = databaseConnection2();
-	// MongoDatabase database = mongo.getDatabase("Scrum");
-	// MongoCollection<Document> collection = database.getCollection("Project");
-	// System.out.println("Collection Project selected successfully");
-	//
-	// int editId=projectData.getProjectId();
-	// System.out.println("Edit ID is" + editId);
-	// System.out.println("Project Name is" + projectData.getProjectName());
-	//
-	// collection.updateOne(Filters.eq("ProjectId", editId),
-	// Updates.set("ProjectName", projectData.getProjectName()));
-	// collection.updateOne(Filters.eq("ProjectId", editId),
-	// Updates.set("Description", projectData.getProjectDesc()));
-	// collection.updateOne(Filters.eq("ProjectId", editId), Updates.set("Member",
-	// projectData.getMemberId()));
-	// //collection.updateOne(Filters.eq("ProjectId", editId), Updates.set("Member",
-	// [5,6,7,8]);
-	// System.out.println("Document update successfully...");
-	// }
-	// catch (Exception e) {
-	// return false;
-	// }
-	// return true;
-	// }
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
 		List<UsersData> userlist = new ArrayList<UsersData>();
