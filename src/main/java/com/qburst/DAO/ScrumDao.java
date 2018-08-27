@@ -1,19 +1,18 @@
 package com.qburst.DAO;
 
 import java.sql.SQLException;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.List;
 
-
-
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-
 import com.qburst.Model.ProjectData;
 import com.qburst.Model.TaskData;
 import com.qburst.Model.UsersData;
@@ -135,5 +134,61 @@ public class ScrumDao extends connection {
 
 	public List<UsersData> readData(int n) throws SQLException {
 		return null;
+	}
+
+	public boolean insertTask(TaskData taskData) throws Exception {
+
+		/*
+		 * Do this step to auto increment the TaskId field - db.Task.insert({taskId :
+		 * "id", seq : 0})
+		 */
+
+		DB db;
+		DBCursor result = null;
+		try {
+			db = databaseConnection();
+
+			DBCollection collection = db.getCollection("Task");
+			BasicDBObject document = new BasicDBObject();
+			document.put("taskId", generateTaskId("taskid"));
+
+			document.put("taskDesc", taskData.getTaskDesc());
+			document.put("impediment", taskData.getImpediment());
+			document.put("memberId", taskData.getMemberId());
+			document.put("projectId", taskData.getProjectId());
+			document.put("taskDate", taskData.getTaskDate().toString());
+			document.put("timeSpent", taskData.getTimeSpent().toString());
+			document.put("timeStamp", taskData.getTimeStamp().toString());
+
+			collection.insert(document);
+
+			DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp().toString());
+			query.put("projectId", taskData.getProjectId());
+			result = collection.find(query);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		while (result.hasNext()) {
+			return true;
+		}
+		return false;
+	}
+
+	public Object generateTaskId(String name) throws Exception {
+		DB con;
+
+		con = databaseConnection();
+
+		DBCollection collection = con.getCollection("Task");
+		BasicDBObject find = new BasicDBObject();
+		find.put("taskId", name);
+
+		BasicDBObject update = new BasicDBObject();
+		update.put("$inc", new BasicDBObject("seq", 1));
+
+		DBObject obj = collection.findAndModify(find, update);
+
+		return obj.get("seq");
+
 	}
 }
