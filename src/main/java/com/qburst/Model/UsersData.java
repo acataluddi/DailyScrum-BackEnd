@@ -1,59 +1,47 @@
 package com.qburst.Model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class UsersData {
 
-	private String name;
-	
-	private String email;
-		
-	private String user_type;
-	
-	private int memberID;
-	
-	@JsonProperty("pageID")
-	private int pageID;
-	
-	public Integer getPageID() {
-		return pageID;
-	}
-	
-	public Integer getMemberID() {
-		return memberID;
+	private String EmployeeID;
+
+	private String Name;
+
+	private String Email;
+
+
+	private String userType;
+
+	public String getEmployeeID() {
+		return EmployeeID;
+
 	}
 
 	public String getName() {
-		return name;
+		return Name;
 	}
 
 	public String getEmail() {
-		return email;
+		return Email;
 	}
 
 	public String getUserType() {
-		return user_type;
-	}
-	
-	
-	public void setPageID(Integer pageID) {
-		this.pageID = pageID;
-	}
-	
-	public void setMemberID(Integer memberID) {
-		this.memberID = memberID;
+		return userType;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setEmployeeID(String EmployeeID) {
+		this.EmployeeID = EmployeeID;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setName(String Name) {
+		this.Name = Name;
 	}
 
-	public void setUserType(String user_type) {
-		this.user_type = user_type;
+	public void setEmail(String Email) {
+		this.Email = Email;
+	}
+
+	public void setUserType(String userType) {
+		this.userType = userType;
 	}
 
 	

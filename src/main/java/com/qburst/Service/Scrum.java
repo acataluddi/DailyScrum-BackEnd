@@ -1,15 +1,14 @@
 package com.qburst.Service;
 
+import com.qburst.Model.ProjectData;
+
+import com.qburst.Model.TaskData;
+
 import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
-
-import java.sql.SQLException;
-import java.util.List;
-
 import com.qburst.DAO.ScrumDao;
 
 public class Scrum extends ScrumDao {
-
 	public boolean insertUser(UsersData incomingdata) throws Exception {
 		boolean result = false;
 		try {
@@ -20,23 +19,63 @@ public class Scrum extends ScrumDao {
 		return result;
 	}
 
-	public void update(UsersData usersData) throws Exception {
+
+	public UsersData update(UsersData usersData) throws Exception {
+	
+	    UsersData UserUpdate = new UsersData();
 		
 		try {
 //			String user_Type = usersData.getUserType();
 //			String user_name = usersData.getName();
 			
-			userTypeUpdate(usersData);
-								
+			UserUpdate = userTypeUpdate(usersData);
 		} catch (Exception e) {
-			throw new Exception();
+			System.out.println(e);
 		}
+
+		return UserUpdate;
+	}
+								
+
+	// To add Project
+	public boolean addProject(ProjectData incomingdata) throws Exception {
+		boolean result = false;
+		try {
+			result = insertProject(incomingdata);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return result;
 	}
 
+	// To delete Project
+	public boolean deleteProject(ProjectData incomingdata) throws Exception {
+		boolean result = false;
+		try {
+			result = subtractProject(incomingdata);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return result;
+	}
+
+	// To edit Project
+	public boolean editProject(ProjectData incomingdata) throws Exception {
+		boolean result = false;
+		try {
+			result = updateProject(incomingdata);
+
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return result;
+	}
+
+	
+
 	public View read(View viewInfo) throws Exception {
-
 		View mv = new View();
-
 		try {
 			int page_id = viewInfo.getPageid();
 			switch (page_id) {
@@ -50,14 +89,12 @@ public class Scrum extends ScrumDao {
 				mv.setYesterdayTask(readYesterdayTask());
 				mv.setTodayTask(readTodayTask());
 				break;
-
 			case 3:
-				//View UserList
+				// View UserList
 				int pagenum = viewInfo.getPagenum();
 				int num_of_rec = viewInfo.getNum_of_rec();
 				mv.setEmployeeData(readUserList(pagenum, num_of_rec));
 				break;
-
 			default:
 				mv.setProjectMemberData(readProjectMemberData());
 				mv.setProjectNames(readProjectNames());
@@ -71,9 +108,7 @@ public class Scrum extends ScrumDao {
 	}
 
 	public boolean loggingin(UsersData incomingdata) throws Exception {
-
 		boolean op = false;
-
 		try {
 			op = login(incomingdata);
 		} catch (Exception e) {
@@ -82,4 +117,14 @@ public class Scrum extends ScrumDao {
 		return op;
 	}
 
+	public boolean addTask(TaskData incomingdata) throws Exception {
+		boolean result = false;
+
+		try {
+			result = insertTask(incomingdata);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return result;
+	}
 }

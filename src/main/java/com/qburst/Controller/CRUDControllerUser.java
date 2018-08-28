@@ -16,11 +16,11 @@ import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
 import com.qburst.Service.Scrum;
 
-@WebServlet("/CRUDController")
-public class CRUDController extends HttpServlet {
+@WebServlet("/CRUDControllerUser")
+public class CRUDControllerUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	public CRUDController() {
+	public CRUDControllerUser() {
 		super();
 	}
 
@@ -46,9 +46,9 @@ public class CRUDController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (result == true) {
-			out.println("Registered");
+			out.println("{\"message\":\"User Registered\"}");
 		} else {
-			out.println("Could not register");
+			out.println("{\"message\":\"User Already Exist\"}");
 		}
 	}
 
@@ -70,8 +70,9 @@ public class CRUDController extends HttpServlet {
 		
 		
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		out.println(incomingdata.getName());
-       
+		System.out.println(incomingdata);
+		System.out.println(incomingdata.getEmail());
+//		System.out.println("inside put");
         out.println(incomingdata.getName());
 		try {
 			
@@ -134,13 +135,5 @@ public class CRUDController extends HttpServlet {
 
 		
 		out.close();
-
-		/*
-		 * String data1 = mapper.writeValueAsString(mv.getProjectNames()); 
-		 * String data2 = mapper.writeValueAsString(mv.getYesterdayTask()); 
-		 * String data3 = mapper.writeValueAsString(mv.getTodayTask()); 
-		 * String data4 = mapper.writeValueAsString(mv.getProjectMemberData()); 
-		 * String data5 = mapper.writeValueAsString(mv.getEmployeeData());
-		 */
 	}
 }
