@@ -8,7 +8,7 @@ public class UsersData {
 	
 	private String email;
 		
-	private String userType;
+	private String user_type;
 	
 	private int memberID;
 	
@@ -32,7 +32,7 @@ public class UsersData {
 	}
 
 	public String getUserType() {
-		return userType;
+		return user_type;
 	}
 	
 	
@@ -52,7 +52,9 @@ public class UsersData {
 		this.email = email;
 	}
 
-	public void setUserType(String userType) {
-		this.userType = userType;
+	public void setUserType(String user_type) {
+		this.user_type = user_type;
 	}
+
+	
 }

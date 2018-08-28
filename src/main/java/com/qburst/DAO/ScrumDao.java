@@ -25,7 +25,7 @@ public class ScrumDao extends connection {
 	public boolean insertIntoTable(UsersData usersData) throws Exception {
 
 		/*
-		 * Create database called Scrum and create a collection called Employee. Then
+		 * Create database called admin_view and create a collection called admin_view_all. Then
 		 * this step is done to auto increment the Employee ID field -
 		 * db.Employee.insert({EmployeeID : "id", seq : 0})
 		 */
@@ -36,23 +36,23 @@ public class ScrumDao extends connection {
 
 			db = databaseConnection();
 
-			DBCollection table = db.getCollection("Employee");
+			DBCollection table = db.getCollection("admin_view_all");
 
 			BasicDBObject document = new BasicDBObject();
 
-			DBObject query = new BasicDBObject("Email", usersData.getEmail());
+			DBObject query = new BasicDBObject("email", usersData.getEmail());
 			DBCursor results = table.find(query);
 			while (results.hasNext()) {
 				return false;
 			}
 
 			document.put("EmployeeID", getNextSequence("id")); // used to calculate the next value of the EmployeID
-			document.put("Name", usersData.getName());
-			document.put("Email", usersData.getEmail());
-			document.put("UserType", usersData.getUserType());
+			document.put("user", usersData.getName());
+			document.put("email", usersData.getEmail());
+			document.put("user_type", usersData.getUserType());
 			table.insert(document);
 
-			DBObject querycheck = new BasicDBObject("Email", usersData.getEmail());
+			DBObject querycheck = new BasicDBObject("email", usersData.getEmail());
 			result = table.find(querycheck);
 
 		} catch (Exception e) {
@@ -73,7 +73,7 @@ public class ScrumDao extends connection {
 
 		db = databaseConnection();
 
-		DBCollection collection = db.getCollection("Employee");
+		DBCollection collection = db.getCollection("admin_view_all");
 		BasicDBObject find = new BasicDBObject();
 		find.put("EmployeeID", name);
 		BasicDBObject update = new BasicDBObject();
@@ -92,15 +92,15 @@ public class ScrumDao extends connection {
 
 			db = databaseConnection();
 
-			DBCollection collection = db.getCollection("Employee");
+			DBCollection collection = db.getCollection("admin_view_all");
 
 			List<DBObject> cursor = collection.find().skip(num_of_rec * (pagenum - 1)).limit(num_of_rec).toArray();
 
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
-				String Name = userObj.getString("Name");
-				String Email = userObj.getString("Email");
-				String UserType = userObj.getString("UserType");
+				String Name = userObj.getString("user");
+				String Email = userObj.getString("email");
+				String UserType = userObj.getString("user_type");
 
 				UsersData user = new UsersData();
 				user.setName(Name);
@@ -115,12 +115,45 @@ public class ScrumDao extends connection {
 		}
 		return userlist;
 	}
+	
 
-	public UsersData MemberProjectUpdate(UsersData usersData) throws SQLException {
+	public UsersData userTypeUpdate(UsersData usersData) throws SQLException {
+		
+		DB db;
+		
+		DBCursor user = null;
+		
+		try {
+			
+			
+			db = databaseConnection();
+			DBCollection collection = db.getCollection("admin_view_all");
+			
+
+			BasicDBObject updateDocument = new BasicDBObject();
+			updateDocument.append("$set", new BasicDBObject().append("user_type", usersData.getUserType()));
+					
+			BasicDBObject searchQuery = new BasicDBObject().append("email", usersData.getEmail());
+
+			collection.update(searchQuery, updateDocument);
+			System.out.println(updateDocument);
+		    
+			DBCursor cursor = collection.find();
+			while(cursor.hasNext()) {
+			    System.out.println(cursor.next());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return null;
+		
 	}
 
 	public UsersData MemberTaskUpdate(UsersData usersData) throws SQLException {
+		
+		
 		return null;
 	}
 

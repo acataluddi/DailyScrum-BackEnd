@@ -26,6 +26,7 @@ public class CRUDController extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 
 		PrintWriter out = response.getWriter();
 		UsersData incomingdata = new UsersData();
@@ -34,7 +35,7 @@ public class CRUDController extends HttpServlet {
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
-
+		
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
 
 		boolean result = false;
@@ -53,32 +54,52 @@ public class CRUDController extends HttpServlet {
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+			
 
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
+	    response.setHeader("content-type", "application/json");
+		
 		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
-
+		System.out.println("inside put");
 		ServletInputStream inputjson = null;
 
 		inputjson = request.getInputStream();
-
+		
+		
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-
+		out.println(incomingdata.getName());
+       
+        out.println(incomingdata.getName());
 		try {
+			
 			scrum.update(incomingdata);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+		
+		String update = mapper.writeValueAsString(incomingdata);
+		
+		out.println(update);
 
+		out.close();
+
+	}
+	
+
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		/*
 		 * Retrieve Users List
 		 */
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		ObjectMapper mapper = new ObjectMapper();
+		
 
 		View myView = new View();
 		Scrum scrumService = new Scrum();
@@ -91,14 +112,16 @@ public class CRUDController extends HttpServlet {
 		myView.setPageid(pageid);
 
 		// number of records to be displayed in a page: from client
-		int numOfRec = 3;
+		int numOfRec = 8;
 
 		myView.setPagenum(pagenum);
 		myView.setNumOfRec(numOfRec);
+		
 
 		try {
 
 			myView = scrumService.read(myView);
+			System.out.println(myView);
 
 		} catch (Exception e) {
 
@@ -109,6 +132,7 @@ public class CRUDController extends HttpServlet {
 		String outputRecords = mapper.writeValueAsString(userlist);
 		out.println(outputRecords);
 
+		
 		out.close();
 
 		/*

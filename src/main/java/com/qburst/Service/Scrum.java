@@ -20,20 +20,14 @@ public class Scrum extends ScrumDao {
 		return result;
 	}
 
-	public void update(UsersData incomingdata) throws Exception {
-		UsersData usersData = null;
+	public void update(UsersData usersData) throws Exception {
+		
 		try {
-			int page_id = usersData.getPageID();
-			switch (page_id) {
-			case 1:
-				MemberProjectUpdate(incomingdata);
-				break;
-
-			case 2:
-				MemberTaskUpdate(incomingdata);
-				break;
-
-			}
+//			String user_Type = usersData.getUserType();
+//			String user_name = usersData.getName();
+			
+			userTypeUpdate(usersData);
+								
 		} catch (Exception e) {
 			throw new Exception();
 		}
