@@ -26,7 +26,7 @@ public class CRUDControllerUser extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		UsersData incomingdata = new UsersData();
 		Scrum scrum = new Scrum();
@@ -45,9 +45,9 @@ public class CRUDControllerUser extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (result == true) {
-			out.println("Registered");
+			out.println("{\"message\":\"User Registered\"}");
 		} else {
-			out.println("Could not register");
+			out.println("{\"message\":\"User Already Exist\"}");
 		}
 	}
 
@@ -77,6 +77,7 @@ public class CRUDControllerUser extends HttpServlet {
 		/*
 		 * Retrieve Users List
 		 */
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		ObjectMapper mapper = new ObjectMapper();
 
@@ -110,13 +111,5 @@ public class CRUDControllerUser extends HttpServlet {
 		out.println(outputRecords);
 
 		out.close();
-
-		/*
-		 * String data1 = mapper.writeValueAsString(mv.getProjectNames()); 
-		 * String data2 = mapper.writeValueAsString(mv.getYesterdayTask()); 
-		 * String data3 = mapper.writeValueAsString(mv.getTodayTask()); 
-		 * String data4 = mapper.writeValueAsString(mv.getProjectMemberData()); 
-		 * String data5 = mapper.writeValueAsString(mv.getEmployeeData());
-		 */
 	}
 }

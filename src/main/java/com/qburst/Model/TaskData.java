@@ -3,70 +3,93 @@ package com.qburst.Model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.qburst.serialization.LocalDateDeserializer;
+import com.qburst.serialization.LocalDateSerializer;
+import com.qburst.serialization.LocalTimeDeserializer;
+import com.qburst.serialization.LocalTimeSerializer;
+
 public class TaskData {
-	
-	private String task_disc, impediment;
-	private int member_id, page_id;
-	LocalTime time_stamp;
-	LocalDate task_date;
-	LocalTime time_spent;
-		
-	public Integer getPageID() {
-		return page_id;
+
+	private int taskId;
+	private String taskDesc, impediment;
+	private int memberId;
+	private int projectId;
+
+	@JsonDeserialize(using = LocalTimeDeserializer.class)
+	@JsonSerialize(using = LocalTimeSerializer.class)
+	LocalTime timeStamp;
+
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@JsonSerialize(using = LocalDateSerializer.class)
+	LocalDate taskDate;
+
+	@JsonDeserialize(using = LocalTimeDeserializer.class)
+	@JsonSerialize(using = LocalTimeSerializer.class)
+	LocalTime timeSpent;
+
+	public String getTaskDesc() {
+		return taskDesc;
 	}
-	
-	public Integer getMemberID() {
-		return member_id;
+
+	public void setTaskDesc(String taskDesc) {
+		this.taskDesc = taskDesc;
 	}
-	
-	public String getTaskDescription() {
-		return task_disc;
-	}
-	
-	public LocalTime getTimeSpent() {
-		return time_spent;
-	}
-	
-	public LocalDate getDate() {
-		task_date = LocalDate.now();
-		return task_date;
-	}
-	
+
 	public String getImpediment() {
 		return impediment;
-	}
-	
-	public LocalTime getTimeStamp() {
-		time_stamp = LocalTime.now();
-		return time_stamp;
-	}
-	
-	public void setPageID(Integer page_id) {
-		this.page_id = page_id;
-	}
-	
-	public void setMemberID(Integer member_id) {
-		this.member_id = member_id;
-	}
-	
-	public void setTaskDescription(String task_disc) {
-		this.task_disc = task_disc;
-	}
-
-	public void setTimeSpent(int hour, int minute) {
-		time_spent  = LocalTime.of(hour, minute);
-		this.time_spent = time_spent;
-	}
-
-	public void setDate(LocalDate task_date) {
-		this.task_date = task_date;
 	}
 
 	public void setImpediment(String impediment) {
 		this.impediment = impediment;
 	}
 
-	public void setTimeStamp(LocalTime time_stamp) {
-		this.time_stamp = time_stamp;
+	public int getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(int memberId) {
+		this.memberId = memberId;
+	}
+
+	public int getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
+	}
+
+	public int getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(int taskId) {
+		this.taskId = taskId;
+	}
+
+	public LocalTime getTimeStamp() {
+		return timeStamp;
+	}
+
+	public void setTimeStamp(LocalTime timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+
+	public LocalDate getTaskDate() {
+		return taskDate;
+	}
+
+	public void setTaskDate(LocalDate taskDate) {
+		this.taskDate = taskDate;
+	}
+
+	public LocalTime getTimeSpent() {
+		return timeSpent;
+	}
+
+	public void setTimeSpent(LocalTime timeSpent) {
+		this.timeSpent = timeSpent;
 	}
 }

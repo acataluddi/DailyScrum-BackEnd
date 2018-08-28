@@ -24,9 +24,7 @@ public class ScrumDao extends connection {
 	@SuppressWarnings("deprecation")
 	public boolean insertIntoTable(UsersData usersData) throws Exception {
 		/*
-		 * Create database called Scrum and create a collection called Employee. Then
-		 * this step is done to auto increment the Employee ID field -
-		 * db.Employee.insert({EmployeeID : "id", seq : 0})
+		 * Create database called Scrum and create a collection called Employee.
 		 */
 		DB db;
 		DBCursor result = null;
@@ -40,7 +38,7 @@ public class ScrumDao extends connection {
 			while (results.hasNext()) {
 				return false;
 			}
-			document.put("EmployeeID", getNextSequence1("id")); // used to calculate the next value of the EmployeID
+			document.put("EmployeeID", usersData.getEmployeeID()); // used to calculate the next value of the EmployeID
 			document.put("Name", usersData.getName());
 			document.put("Email", usersData.getEmail());
 			document.put("UserType", usersData.getUserType());
@@ -55,28 +53,10 @@ public class ScrumDao extends connection {
 		return false;
 	}
 
-	@SuppressWarnings("deprecation")
-	public Object getNextSequence1(String name) throws Exception {
-		DB db;
-		MongoClient mongo = databaseConnection();
-		db = mongo.getDB("Scrum");
-		DBCollection collection = db.getCollection("Employee");
-		BasicDBObject find = new BasicDBObject();
-		find.put("EmployeeID", name);
-		BasicDBObject update = new BasicDBObject();
-		update.put("$inc", new BasicDBObject("seq", 1));
-		DBObject obj = collection.findAndModify(find, update);
-		return obj.get("seq");
-	}
-
 	// Neeraj: Code for add Project
-
 	/*
-	 * Create database called Scrum and create a collection called Project. Then
-	 * this step is done to auto increment the ProjectId field -
-	 * db.Project.insert({ProjectId:"id",seq : 0})
+	 * Create database called Scrum and create a collection called Project.
 	 */
-
 	@SuppressWarnings("deprecation")
 	public boolean insertProject(ProjectData projectData) throws Exception {
 		DB db;
@@ -91,7 +71,7 @@ public class ScrumDao extends connection {
 			while (results.hasNext()) {
 				return false;
 			}
-			document.put("ProjectId", getNextSequence2("id"));
+			document.put("ProjectId", projectData.getProjectId());
 			document.put("ProjectName", projectData.getProjectName());
 			document.put("Description", projectData.getProjectDesc());
 			document.put("Member", projectData.getMemberId());
@@ -105,20 +85,6 @@ public class ScrumDao extends connection {
 			return true;
 		}
 		return false;
-	}
-
-	@SuppressWarnings("deprecation")
-	public Object getNextSequence2(String name) throws Exception {
-		DB db;
-		MongoClient mongo = databaseConnection();
-		db = mongo.getDB("Scrum");
-		DBCollection collection = db.getCollection("Project");
-		BasicDBObject find = new BasicDBObject();
-		find.put("ProjectId", name);
-		BasicDBObject update = new BasicDBObject();
-		update.put("$inc", new BasicDBObject("seq", 1));
-		DBObject obj = collection.findAndModify(find, update);
-		return obj.get("seq");
 	}
 
 	// Neeraj: Code for delete Project
@@ -193,10 +159,12 @@ public class ScrumDao extends connection {
 			List<DBObject> cursor = collection.find().skip(num_of_rec * (pagenum - 1)).limit(num_of_rec).toArray();
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
+				String MemberID = userObj.getString("MemberID");
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("UserType");
 				UsersData user = new UsersData();
+				user.setEmployeeID(MemberID);
 				user.setName(Name);
 				user.setEmail(Email);
 				user.setUserType(UserType);
@@ -242,5 +210,39 @@ public class ScrumDao extends connection {
 
 	public List<UsersData> readData(int n) throws SQLException {
 		return null;
+	}
+
+	public boolean insertTask(TaskData taskData) throws Exception {
+
+		DB db;
+		DBCursor result = null;
+		try {
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+
+			DBCollection collection = db.getCollection("Task");
+			BasicDBObject document = new BasicDBObject();
+			document.put("taskId", taskData.getTaskId());
+
+			document.put("taskDesc", taskData.getTaskDesc());
+			document.put("impediment", taskData.getImpediment());
+			document.put("memberId", taskData.getMemberId());
+			document.put("projectId", taskData.getProjectId());
+			document.put("taskDate", taskData.getTaskDate().toString());
+			document.put("timeSpent", taskData.getTimeSpent().toString());
+			document.put("timeStamp", taskData.getTimeStamp().toString());
+
+			collection.insert(document);
+
+			DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp().toString());
+			query.put("projectId", taskData.getProjectId());
+			result = collection.find(query);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		while (result.hasNext()) {
+			return true;
+		}
+		return false;
 	}
 }

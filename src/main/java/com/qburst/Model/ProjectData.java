@@ -7,7 +7,6 @@ public class ProjectData {
 	private int projectId;
 	private int memberId[] = new int[20];
 
-
 	public int getProjectId() {
 		return projectId;
 	}
