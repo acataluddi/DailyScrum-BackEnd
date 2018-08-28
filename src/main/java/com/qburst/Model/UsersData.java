@@ -1,5 +1,7 @@
 package com.qburst.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UsersData {
 
 	private String EmployeeID;
@@ -7,6 +9,9 @@ public class UsersData {
 	private String name;
 
 	private String email;
+
+	@JsonProperty("idToken")
+	private String idToken;
 
 	private String userType;
 
@@ -26,6 +31,10 @@ public class UsersData {
 		return userType;
 	}
 
+	public String getToken() {
+		return (idToken);
+	}
+
 	public void setEmployeeID(String EmployeeID) {
 		this.EmployeeID = EmployeeID;
 	}
@@ -40,5 +49,8 @@ public class UsersData {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+	public void setToken(String idToken) {
+		this.idToken = idToken;
 	}
 }
