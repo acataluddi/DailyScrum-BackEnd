@@ -19,6 +19,24 @@ public class Scrum extends ScrumDao {
 		return result;
 	}
 
+
+	public UsersData update(UsersData usersData) throws Exception {
+	
+	    UsersData UserUpdate = new UsersData();
+		
+		try {
+//			String user_Type = usersData.getUserType();
+//			String user_name = usersData.getName();
+			
+			UserUpdate = userTypeUpdate(usersData);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+
+		return UserUpdate;
+	}
+								
+
 	// To add Project
 	public boolean addProject(ProjectData incomingdata) throws Exception {
 		boolean result = false;
@@ -46,6 +64,7 @@ public class Scrum extends ScrumDao {
 		boolean result = false;
 		try {
 			result = updateProject(incomingdata);
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -53,9 +72,7 @@ public class Scrum extends ScrumDao {
 		return result;
 	}
 
-	public void update(UsersData incomingdata) throws Exception {
-		// Function to update user
-	}
+	
 
 	public View read(View viewInfo) throws Exception {
 		View mv = new View();

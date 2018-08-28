@@ -29,6 +29,7 @@ public class ScrumDao extends connection {
 		DB db;
 		DBCursor result = null;
 		try {
+
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Employee");
@@ -38,12 +39,14 @@ public class ScrumDao extends connection {
 			while (results.hasNext()) {
 				return false;
 			}
+
 			document.put("EmployeeID", usersData.getEmployeeID()); // used to calculate the next value of the EmployeID
 			document.put("Name", usersData.getName());
 			document.put("Email", usersData.getEmail());
 			document.put("UserType", usersData.getUserType());
 			table.insert(document);
 			DBObject querycheck = new BasicDBObject("Email", usersData.getEmail());
+
 			result = table.find(querycheck);
 		} catch (Exception e) {
 		}
@@ -87,7 +90,9 @@ public class ScrumDao extends connection {
 		return false;
 	}
 
+
 	// Neeraj: Code for delete Project
+
 
 	@SuppressWarnings("deprecation")
 	public boolean subtractProject(ProjectData projectData) throws Exception {
@@ -153,16 +158,20 @@ public class ScrumDao extends connection {
 		DB db;
 		List<UsersData> userlist = new ArrayList<UsersData>();
 		try {
+
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Employee");
+
 			List<DBObject> cursor = collection.find().skip(num_of_rec * (pagenum - 1)).limit(num_of_rec).toArray();
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
+
 				String MemberID = userObj.getString("MemberID");
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("UserType");
+
 				UsersData user = new UsersData();
 				user.setEmployeeID(MemberID);
 				user.setName(Name);
@@ -175,12 +184,46 @@ public class ScrumDao extends connection {
 		}
 		return userlist;
 	}
+	
 
-	public UsersData MemberProjectUpdate(UsersData usersData) throws SQLException {
+	public UsersData userTypeUpdate(UsersData usersData) throws SQLException {
+		
+		DB db;
+		
+		DBCursor user = null;
+		
+		try {
+			
+			
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection collection = db.getCollection("Employee");
+			
+
+			BasicDBObject updateDocument = new BasicDBObject();
+			updateDocument.append("$set", new BasicDBObject().append("UserType", usersData.getUserType()));
+					
+			BasicDBObject searchQuery = new BasicDBObject().append("Email", usersData.getEmail());
+
+			collection.update(searchQuery, updateDocument);
+			System.out.println(updateDocument);
+		    
+			DBCursor cursor = collection.find();
+			while(cursor.hasNext()) {
+			    System.out.println(cursor.next());
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return null;
+		
 	}
 
 	public UsersData MemberTaskUpdate(UsersData usersData) throws SQLException {
+		
+		
 		return null;
 	}
 

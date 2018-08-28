@@ -4,22 +4,24 @@ public class UsersData {
 
 	private String EmployeeID;
 
-	private String name;
+	private String Name;
 
-	private String email;
+	private String Email;
+
 
 	private String userType;
 
 	public String getEmployeeID() {
 		return EmployeeID;
+
 	}
 
 	public String getName() {
-		return name;
+		return Name;
 	}
 
 	public String getEmail() {
-		return email;
+		return Email;
 	}
 
 	public String getUserType() {
@@ -30,15 +32,17 @@ public class UsersData {
 		this.EmployeeID = EmployeeID;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String Name) {
+		this.Name = Name;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setEmail(String Email) {
+		this.Email = Email;
 	}
 
 	public void setUserType(String userType) {
 		this.userType = userType;
 	}
+
+	
 }
