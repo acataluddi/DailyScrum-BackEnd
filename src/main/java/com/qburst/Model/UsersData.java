@@ -1,17 +1,17 @@
 package com.qburst.Model;
 
 public class UsersData {
-	
-	private String memberID;
+
+	private String EmployeeID;
 
 	private String name;
-	
+
 	private String email;
-		
+
 	private String userType;
 
-	public String getMemberID() {
-		return memberID;
+	public String getEmployeeID() {
+		return EmployeeID;
 	}
 
 	public String getName() {
@@ -26,8 +26,8 @@ public class UsersData {
 		return userType;
 	}
 
-	public void setMemberID(String memberID) {
-		this.memberID = memberID;
+	public void setEmployeeID(String EmployeeID) {
+		this.EmployeeID = EmployeeID;
 	}
 
 	public void setName(String name) {
