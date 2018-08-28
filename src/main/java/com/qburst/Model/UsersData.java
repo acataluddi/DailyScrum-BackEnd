@@ -4,23 +4,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UsersData {
 
+	private String EmployeeID;
+
 	private String name;
-	
+
 	private String email;
-		
+
+	@JsonProperty("idToken")
+	private String idToken;
+
 	private String userType;
-	
-	private int memberID;
-	
-	@JsonProperty("pageID")
-	private int pageID;
-	
-	public Integer getPageID() {
-		return pageID;
-	}
-	
-	public Integer getMemberID() {
-		return memberID;
+
+	public String getEmployeeID() {
+		return EmployeeID;
 	}
 
 	public String getName() {
@@ -34,14 +30,13 @@ public class UsersData {
 	public String getUserType() {
 		return userType;
 	}
-	
-	
-	public void setPageID(Integer pageID) {
-		this.pageID = pageID;
+
+	public String getToken() {
+		return (idToken);
 	}
 	
-	public void setMemberID(Integer memberID) {
-		this.memberID = memberID;
+	public void setEmployeeID(String EmployeeID) {
+		this.EmployeeID = EmployeeID;
 	}
 
 	public void setName(String name) {
@@ -54,5 +49,8 @@ public class UsersData {
 
 	public void setUserType(String userType) {
 		this.userType = userType;
+	}
+	public void setToken(String idToken) {
+		this.idToken = idToken;
 	}
 }

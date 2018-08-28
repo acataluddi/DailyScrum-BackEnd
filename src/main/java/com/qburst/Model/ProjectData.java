@@ -1,49 +1,41 @@
 package com.qburst.Model;
 
 public class ProjectData {
-	
-	private String project_name, project_disc, role;
-	private int member_id, page_id;
-	
-	
-	public String getRole() {
-		return role;
+
+	private String projectName, projectDesc;
+
+	private int projectId;
+	private int memberId[] = new int[20];
+
+	public int getProjectId() {
+		return projectId;
 	}
 
-	public void setRole(String role) {
-		this.role = role;
+	public void setProjectId(int projectId) {
+		this.projectId = projectId;
 	}
-	
-	public Integer getPageID() {
-		return page_id;
-	}
-	
-	public Integer getMemberID() {
-		return member_id;
-	}
-	
+
 	public String getProjectName() {
-		return project_name;
-	}
-	
-	public String getProjectDescription() {
-		return project_disc;
-	}
-	
-	public void setPageID(Integer page_id) {
-		this.page_id = page_id;
-	}
-	
-	public void setMemberID(Integer member_id) {
-		this.member_id = member_id;
-	}
-	
-	public void setProjectName(String project_name) {
-		this.project_name = project_name;
+		return projectName;
 	}
 
-	public void setProjectDescription(String project_disc) {
-		this.project_disc = project_disc;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 
+	public String getProjectDesc() {
+		return projectDesc;
+	}
+
+	public void setProjectDesc(String projectDesc) {
+		this.projectDesc = projectDesc;
+	}
+
+	public int[] getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(int[] memberId) {
+		this.memberId = memberId;
+	}
 }

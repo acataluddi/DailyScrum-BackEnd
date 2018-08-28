@@ -7,12 +7,12 @@ public class View {
 	private List<ProjectData> project_names;
 	private List<ProjectData> project_member_data;
 	private List<TaskData> yesterday_task;
-	private List<TaskData> today_task; 
-	
+	private List<TaskData> today_task;
+
 	private int pagenum;
 	private int numOfRec;
 	private int pageid;
-	
+
 	public int getPageid() {
 		return pageid;
 	}
@@ -37,28 +37,26 @@ public class View {
 		this.numOfRec = num_of_rec;
 	}
 
-	
-	
 	public List<ProjectData> getProjectNames() {
 		return project_names;
 	}
-	
+
 	public List<TaskData> getYesterdayTask() {
 		return yesterday_task;
 	}
-	
+
 	public List<TaskData> getTodayTask() {
 		return today_task;
 	}
-	
+
 	public List<ProjectData> getProjectMemberData() {
 		return project_member_data;
 	}
-	
+
 	public List<UsersData> getEmployeeData() {
 		return employee_data;
 	}
-	
+
 	public void setProjectNames(List<ProjectData> project_names) {
 		this.project_names = project_names;
 	}
@@ -70,7 +68,7 @@ public class View {
 	public void setTodayTask(List<TaskData> today_task) {
 		this.today_task = today_task;
 	}
-	
+
 	public void setProjectMemberData(List<ProjectData> project_member_data) {
 		this.project_member_data = project_member_data;
 	}
@@ -78,9 +76,8 @@ public class View {
 	public void setEmployeeData(List<UsersData> employee_data) {
 		this.employee_data = employee_data;
 	}
-	
+
 	public List<UsersData> getEmployeeData(int pageno, int numOfRec) {
 		return employee_data;
 	}
-	
 }

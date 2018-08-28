@@ -35,7 +35,14 @@ public class Login extends HttpServlet {
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
 		
 		try {
-			boolean n = scrum.loggingin(incomingdata);
+//			boolean n = scrum.loggingin(incomingdata);
+			boolean n = true;
+			if(n) {
+				IdTokenVerification tokenverify = new IdTokenVerification();
+				String token = incomingdata.getToken();
+				String message = tokenverify.processToken(token);
+				out.println(message);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
