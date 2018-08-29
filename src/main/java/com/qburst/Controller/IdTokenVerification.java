@@ -26,20 +26,6 @@ public class IdTokenVerification {
 				if (idToken != null) {
 					Payload payload = idToken.getPayload();
 					returnVal = "Valid Token! User ID: " + payload.getSubject();
-//					String email = payload.getEmail();
-//					System.out.println(email);
-//					boolean emailVerified = Boolean.valueOf(payload.getEmailVerified());
-//					System.out.println(emailVerified);
-//					String name = (String) payload.get("name");
-//					System.out.println(name);
-//					String pictureUrl = (String) payload.get("picture");
-//					System.out.println(pictureUrl);
-//					String locale = (String) payload.get("locale");
-//					System.out.println(locale);
-//					String familyName = (String) payload.get("family_name");
-//					System.out.println(familyName);
-//					String givenName = (String) payload.get("given_name");
-//					System.out.println(givenName);
 				} else {
 					returnVal = "Invalid ID token.";
 				}
