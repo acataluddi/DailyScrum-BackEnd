@@ -44,7 +44,6 @@ public class ProjectController extends HttpServlet {
 	}
 
 	// To edit a project
-
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

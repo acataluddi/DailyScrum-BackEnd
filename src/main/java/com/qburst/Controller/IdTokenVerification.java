@@ -9,19 +9,20 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 
 public class IdTokenVerification {
-	
-	
+
 	public String processToken(String idTokenString) {
-		String returnVal="";
+		String returnVal = "";
 		NetHttpTransport transport = new NetHttpTransport();
 		GsonFactory gsonfactory = new GsonFactory();
-		
-		if(idTokenString != null && !idTokenString.equals("")){
+
+		if (idTokenString != null && !idTokenString.equals("")) {
 			GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, gsonfactory)
-				.setAudience(Collections.singletonList("967649209783-pi515k1vmqr1igmq535chm1o32hb7fet.apps.googleusercontent.com"))
-				//.setAudience(Arrays.asList(clientid1, clientid2, clientid3)) //if more than one client id
-				.build();
-			try{
+					.setAudience(Collections
+							.singletonList("967649209783-pi515k1vmqr1igmq535chm1o32hb7fet.apps.googleusercontent.com"))
+					// .setAudience(Arrays.asList(clientid1, clientid2, clientid3)) //if more than
+					// one client id
+					.build();
+			try {
 				GoogleIdToken idToken = verifier.verify(idTokenString);
 				if (idToken != null) {
 					Payload payload = idToken.getPayload();
@@ -29,14 +30,13 @@ public class IdTokenVerification {
 				} else {
 					returnVal = "Invalid ID token.";
 				}
-			} catch (Exception ex){
+			} catch (Exception ex) {
 				returnVal = ex.getMessage();
 			}
-		}
-		else{
+		} else {
 			returnVal = "Bad Token Passed";
 		}
-		
+
 		return returnVal;
 	}
 

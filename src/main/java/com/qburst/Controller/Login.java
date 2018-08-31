@@ -17,26 +17,23 @@ import com.qburst.Service.Scrum;
 @WebServlet("/Login")
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    public Login() {
-        super();
-    }
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public Login() {
+		super();
+	}
+
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
-		
 		ServletInputStream inputjson = null;
-
 		inputjson = request.getInputStream();
-
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		
 		try {
 			boolean n = scrum.loggingin(incomingdata);
-			if(n) {
+			if (n) {
 				IdTokenVerification tokenverify = new IdTokenVerification();
 				String token = incomingdata.getToken();
 				String message = tokenverify.processToken(token);
@@ -46,6 +43,4 @@ public class Login extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-	
-
 }
