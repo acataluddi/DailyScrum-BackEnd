@@ -1,33 +1,39 @@
 package com.qburst.Model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.qburst.serialization.LocalDateDeserializer;
-import com.qburst.serialization.LocalDateSerializer;
-import com.qburst.serialization.LocalTimeDeserializer;
-import com.qburst.serialization.LocalTimeSerializer;
+//import java.time.LocalDate;
+//import java.time.LocalTime;
+//
+//import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+//import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+//import com.qburst.serialization.LocalDateDeserializer;
+//import com.qburst.serialization.LocalDateSerializer;
+//import com.qburst.serialization.LocalTimeDeserializer;
+//import com.qburst.serialization.LocalTimeSerializer;
 
 public class TaskData {
+	private String employeeId;
 
-	private int taskId;
-	private String taskDesc, impediment;
-	private int memberId;
+	private String taskId;
+	private String taskDesc, impediment, timeStamp, taskDate;
+
 	private int projectId;
+	private int timeSpent;
 
-	@JsonDeserialize(using = LocalTimeDeserializer.class)
-	@JsonSerialize(using = LocalTimeSerializer.class)
-	LocalTime timeStamp;
+	public String getEmployeeId() {
+		return employeeId;
+	}
 
-	@JsonDeserialize(using = LocalDateDeserializer.class)
-	@JsonSerialize(using = LocalDateSerializer.class)
-	LocalDate taskDate;
+	public void setEmployeeId(String employeeId) {
+		this.employeeId = employeeId;
+	}
 
-	@JsonDeserialize(using = LocalTimeDeserializer.class)
-	@JsonSerialize(using = LocalTimeSerializer.class)
-	LocalTime timeSpent;
+	public String getTaskId() {
+		return taskId;
+	}
+
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
 
 	public String getTaskDesc() {
 		return taskDesc;
@@ -45,12 +51,20 @@ public class TaskData {
 		this.impediment = impediment;
 	}
 
-	public int getMemberId() {
-		return memberId;
+	public String getTimeStamp() {
+		return timeStamp;
 	}
 
-	public void setMemberId(int memberId) {
-		this.memberId = memberId;
+	public void setTimeStamp(String timeStamp) {
+		this.timeStamp = timeStamp;
+	}
+
+	public String getTaskDate() {
+		return taskDate;
+	}
+
+	public void setTaskDate(String taskDate) {
+		this.taskDate = taskDate;
 	}
 
 	public int getProjectId() {
@@ -61,35 +75,24 @@ public class TaskData {
 		this.projectId = projectId;
 	}
 
-	public int getTaskId() {
-		return taskId;
-	}
-
-	public void setTaskId(int taskId) {
-		this.taskId = taskId;
-	}
-
-	public LocalTime getTimeStamp() {
-		return timeStamp;
-	}
-
-	public void setTimeStamp(LocalTime timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-
-	public LocalDate getTaskDate() {
-		return taskDate;
-	}
-
-	public void setTaskDate(LocalDate taskDate) {
-		this.taskDate = taskDate;
-	}
-
-	public LocalTime getTimeSpent() {
+	public int getTimeSpent() {
 		return timeSpent;
 	}
 
-	public void setTimeSpent(LocalTime timeSpent) {
+	public void setTimeSpent(int timeSpent) {
 		this.timeSpent = timeSpent;
 	}
+
+	// @JsonDeserialize(using = LocalTimeDeserializer.class)
+	// @JsonSerialize(using = LocalTimeSerializer.class)
+	// LocalTime timeStamp;
+	//
+	// @JsonDeserialize(using = LocalDateDeserializer.class)
+	// @JsonSerialize(using = LocalDateSerializer.class)
+	// LocalDate taskDate;
+	//
+	// @JsonDeserialize(using = LocalTimeDeserializer.class)
+	// @JsonSerialize(using = LocalTimeSerializer.class)
+	// LocalTime timeSpent;
+
 }

@@ -4,14 +4,14 @@ public class ProjectData {
 
 	private String projectName, projectDesc;
 
-	private int projectId;
-	private int memberId[] = new int[20];
+	private String projectId;
+	private String memberId[] = new String[20];
 
-	public int getProjectId() {
+	public String getProjectId() {
 		return projectId;
 	}
 
-	public void setProjectId(int projectId) {
+	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
 
@@ -31,11 +31,11 @@ public class ProjectData {
 		this.projectDesc = projectDesc;
 	}
 
-	public int[] getMemberId() {
+	public String[] getMemberId() {
 		return memberId;
 	}
 
-	public void setMemberId(int[] memberId) {
+	public void setMemberId(String[] memberId) {
 		this.memberId = memberId;
 	}
 }

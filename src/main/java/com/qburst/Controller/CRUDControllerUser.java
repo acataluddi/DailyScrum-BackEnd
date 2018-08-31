@@ -33,11 +33,8 @@ public class CRUDControllerUser extends HttpServlet {
 		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
-
 		inputjson = request.getInputStream();
-		
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-
 		boolean result = false;
 
 		try {
@@ -54,44 +51,35 @@ public class CRUDControllerUser extends HttpServlet {
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-			
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
-	    response.setHeader("content-type", "application/json");
-		
+		response.setHeader("content-type", "application/json");
 		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println("inside put");
 		ServletInputStream inputjson = null;
-
 		inputjson = request.getInputStream();
-		
-		
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
 		System.out.println(incomingdata);
 		System.out.println(incomingdata.getEmail());
-//		System.out.println("inside put");
-        out.println(incomingdata.getName());
+		out.println(incomingdata.getName());
 		try {
-			
+
 			scrum.update(incomingdata);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		String update = mapper.writeValueAsString(incomingdata);
-		
+
 		out.println(update);
 
 		out.close();
-
 	}
-	
 
-	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		/*
@@ -100,7 +88,6 @@ public class CRUDControllerUser extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		ObjectMapper mapper = new ObjectMapper();
-		
 
 		View myView = new View();
 		Scrum scrumService = new Scrum();
@@ -117,23 +104,16 @@ public class CRUDControllerUser extends HttpServlet {
 
 		myView.setPagenum(pagenum);
 		myView.setNumOfRec(numOfRec);
-		
 
 		try {
-
 			myView = scrumService.read(myView);
 			System.out.println(myView);
-
 		} catch (Exception e) {
 
 		}
-
 		List<UsersData> userlist = myView.getEmployeeData(pagenum, numOfRec);
-
 		String outputRecords = mapper.writeValueAsString(userlist);
 		out.println(outputRecords);
-
-		
 		out.close();
 	}
 }

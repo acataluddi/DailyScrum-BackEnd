@@ -10,12 +10,24 @@ public class UsersData {
 
 	private String Email;
 
-
 	@JsonProperty("idToken")
 	private String idToken;
 
 	private String userType;
 
+	
+	
+	private String imageurl;
+	 public String getImageurl() {
+	return imageurl;
+
+	}
+	 public void setImageurl(String imageurl) {
+	this.imageurl = imageurl;
+	}
+	
+	
+	
 	public String getEmployeeID() {
 		return EmployeeID;
 
@@ -32,7 +44,7 @@ public class UsersData {
 	public String getUserType() {
 		return userType;
 	}
-
+	
 	public String getToken() {
 		return (idToken);
 	}
