@@ -4,6 +4,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import org.bson.Document;
+import org.mongojack.JacksonDBCollection;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -69,20 +71,30 @@ public class ScrumDao extends connection {
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			BasicDBObject document = new BasicDBObject();
-			DBObject query = new BasicDBObject("ProjectName", projectData.getProjectName());
+			DBObject query = new BasicDBObject("projectId", projectData.getProjectId());
 			DBCursor results = table.find(query);
 			while (results.hasNext()) {
 				return false;
 			}
-			document.put("ProjectId", projectData.getProjectId());
-			document.put("ProjectName", projectData.getProjectName());
-			document.put("Description", projectData.getProjectDesc());
-			document.put("Member", projectData.getMemberId());
-			
-			table.insert(document);
-
-			DBObject querycheck = new BasicDBObject("ProjectName", projectData.getProjectName());
+			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
+			        Object.class);
+		    coll.insert(projectData);
+		    
+//			document.put("ProjectId", projectData.getProjectId());
+//			document.put("ProjectName", projectData.getProjectName());
+//			document.put("Description", projectData.getProjectDesc());
+//			document.put("Members", projectData.getMembers());
+//			
+//			table.insert(document);
+//
+			DBObject querycheck = new BasicDBObject("projectId", projectData.getProjectId());
 			result = table.find(querycheck);
+			BasicDBObject whereQuery = new BasicDBObject();
+			whereQuery.put("projectId", projectData.getProjectId());
+			DBCursor cursor = table.find(whereQuery);
+			while(cursor.hasNext()) {
+			    System.out.println(cursor.next());
+			}
 		} catch (Exception e) {
 		}
 		while (result.hasNext()) {
@@ -133,14 +145,14 @@ public class ScrumDao extends connection {
 					Updates.set("Description", projectData.getProjectDesc()));
 			// Neeraj: Code for update the array "Member"
 			BasicDBObject updateQuery = new BasicDBObject();
-			updateQuery.append("$set", new BasicDBObject().append("Member", projectData.getMemberId()));
+			updateQuery.append("$set", new BasicDBObject().append("Members", projectData.getMembers()));
 			BasicDBObject searchQuery = new BasicDBObject();
 			searchQuery.append("ProjectId", editId);
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			table.update(searchQuery, updateQuery);
 
-			System.out.println("Document update successfully...");
+			System.out.println("Document updated successfully...");
 		} catch (Exception e) {
 			return false;
 		}

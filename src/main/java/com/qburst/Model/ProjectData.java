@@ -1,11 +1,16 @@
 package com.qburst.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ProjectData {
 
 	private String projectName, projectDesc;
 
 	private String projectId;
-	private String memberId[] = new String[20];
+//	private String members[];
+	
+	@JsonProperty("members")
+	ProjectMemberModel[] members;
 
 	public String getProjectId() {
 		return projectId;
@@ -31,11 +36,12 @@ public class ProjectData {
 		this.projectDesc = projectDesc;
 	}
 
-	public String[] getMemberId() {
-		return memberId;
+	public ProjectMemberModel[] getMembers() {
+		return members;
 	}
-
-	public void setMemberId(String[] memberId) {
-		this.memberId = memberId;
+	
+	@JsonProperty("members")
+	public void setMembers(ProjectMemberModel[] members) {
+		this.members = members;
 	}
 }

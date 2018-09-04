@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.ProjectData;
+import com.qburst.Model.ProjectMemberModel;
 import com.qburst.Service.Scrum;
 
 @WebServlet("/ProjectController")
@@ -23,13 +24,24 @@ public class ProjectController extends HttpServlet {
 	// To add a project
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
+		ProjectMemberModel[] members = null;
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, ProjectData.class);
+//		members = incomingdata.getMembers();
+//		System.out.println(incomingdata.getMembers());
+//		System.out.println(incomingdata.getProjectId());
+//		System.out.println(incomingdata.getProjectName());
+//		System.out.println(incomingdata.getProjectDesc());
+//		for(int i=0;i<members.length;i++) {
+//			System.out.println(members[i].getMemberemail());
+//			System.out.println(members[i].getRole());			
+//		}
 		boolean n = false;
 		try {
 			n = scrum.addProject(incomingdata);
@@ -48,6 +60,7 @@ public class ProjectController extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
@@ -72,6 +85,7 @@ public class ProjectController extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
