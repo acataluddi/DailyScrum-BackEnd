@@ -22,12 +22,14 @@ public class ScrumDao extends connection {
 	StringBuilder hash = new StringBuilder();
 
 	@SuppressWarnings("deprecation")
-	public boolean insertIntoTable(UsersData usersData) throws Exception {
+	public UsersData insertIntoTable(UsersData usersData) throws Exception {
 		/*
 		 * Create database called Scrum and create a collection called Employee.
 		 */
 		DB db;
 		DBCursor result = null;
+		String UserType;
+		UsersData user = new UsersData();
 		try {
 
 			MongoClient mongo = databaseConnection();
@@ -37,7 +39,21 @@ public class ScrumDao extends connection {
 			DBObject query = new BasicDBObject("Email", usersData.getEmail());
 			DBCursor results = table.find(query);
 			while (results.hasNext()) {
-				return false;
+				List<DBObject> cursor = results.toArray();
+				BasicDBObject userObj = (BasicDBObject) cursor.get(0);
+				String MemberID = userObj.getString("EmployeeID");
+				String Name = userObj.getString("Name");
+				String Email = userObj.getString("Email");
+				String imageURL = userObj.getString("imageurl");
+				UserType = userObj.getString("userType");
+
+				user.setEmployeeID(MemberID);
+				user.setName(Name);
+				user.setEmail(Email);
+				user.setUserType(UserType);
+				user.setImageurl(imageURL);
+
+				return user;
 			}
 			document.put("EmployeeID", usersData.getEmployeeID()); // used to calculate the next value of the EmployeID
 			document.put("Name", usersData.getName());
@@ -48,12 +64,26 @@ public class ScrumDao extends connection {
 			table.insert(document);
 			DBObject querycheck = new BasicDBObject("Email", usersData.getEmail());
 			result = table.find(querycheck);
+
+			List<DBObject> cursor = result.toArray();
+			BasicDBObject userObj = (BasicDBObject) cursor.get(0);
+			String MemberID = userObj.getString("EmployeeID");
+			String Name = userObj.getString("Name");
+			String Email = userObj.getString("Email");
+			String imageURL = userObj.getString("imageurl");
+			UserType = userObj.getString("userType");
+
+			user.setEmployeeID(MemberID);
+			user.setName(Name);
+			user.setEmail(Email);
+			user.setUserType(UserType);
+			user.setImageurl(imageURL);
 		} catch (Exception e) {
 		}
 		while (result.hasNext()) {
-			return true;
+			return user;
 		}
-		return false;
+		return user;
 	}
 
 	// Neeraj: Code for add Project
@@ -78,7 +108,7 @@ public class ScrumDao extends connection {
 			document.put("ProjectName", projectData.getProjectName());
 			document.put("Description", projectData.getProjectDesc());
 			document.put("Member", projectData.getMemberId());
-			
+
 			table.insert(document);
 
 			DBObject querycheck = new BasicDBObject("ProjectName", projectData.getProjectName());
@@ -161,12 +191,14 @@ public class ScrumDao extends connection {
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
 
-				String MemberID = userObj.getString("MemberID");
+				String MemberID = userObj.getString("EmployeeID");// change
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("userType");
+				String imageURL = userObj.getString("imageurl");
 
 				UsersData user = new UsersData();
+				user.setImageurl(imageURL);
 				user.setEmployeeID(MemberID);
 				user.setName(Name);
 				user.setEmail(Email);
