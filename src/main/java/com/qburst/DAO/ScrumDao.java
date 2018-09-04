@@ -176,6 +176,39 @@ public class ScrumDao extends connection {
 		}
 		return true;
 	}
+	
+	@SuppressWarnings("deprecation")
+	public List<ProjectData> readProject() throws Exception {
+		DB db;
+		List<ProjectData> tasklist = new ArrayList<ProjectData>();
+		try {
+
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection collection = db.getCollection("Project");
+		
+			System.out.println("hello");
+			List<DBObject> cursor = collection.find().toArray();
+			for (int i = 0; i < cursor.size(); i++) {
+				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
+
+				String ProjectId = userObj.getString("projectId");
+				String ProjectDescription = userObj.getString("projectDesc");
+				String ProjectName = userObj.getString("projectName");
+
+				ProjectData task = new ProjectData();
+				task.setProjectId(ProjectId);
+				task.setProjectDesc(ProjectDescription);
+				task.setProjectName(ProjectName);
+				tasklist.add(task);
+				System.out.println("hello");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return tasklist;
+	}
+
 
 	@SuppressWarnings("deprecation")
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {

@@ -2,6 +2,9 @@ package com.qburst.Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
@@ -10,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.ProjectData;
+import com.qburst.Model.TaskData;
+import com.qburst.Model.View;
 import com.qburst.Service.Scrum;
 
 @WebServlet("/ProjectController")
@@ -91,5 +96,31 @@ public class ProjectController extends HttpServlet {
 		} else {
 			out.println("Failed to delete Project");
 		}
+	}
+	
+	@SuppressWarnings("unused")
+	@Override
+	
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		PrintWriter out = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+
+		ProjectData projectData = new ProjectData();
+		Scrum scrumService = new Scrum();
+//		System.out.println("Hello");
+		String empty = null;
+		List<ProjectData> newlist = new ArrayList<ProjectData>();
+		System.out.println("Hello");
+		try {
+			newlist = scrumService.readProjectService();
+			System.out.println(newlist);
+			empty = mapper.writeValueAsString(newlist);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.println(empty);
 	}
 }

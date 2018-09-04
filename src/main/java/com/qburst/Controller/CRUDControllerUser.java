@@ -45,12 +45,12 @@ public class CRUDControllerUser extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		//
-		// if (result == "user") {
-		// out.println("{\"message\":\"User Registered\"}");
-		// } else {
-		// out.println("{\"message\":\"User Already Exist\"}");
-		// }
+//		
+//		 if (result == "user") {
+//		 out.println("{\"message\":\"User Registered\"}");
+//		 } else {
+//		 out.println("{\"message\":\"User Already Exist\"}");
+//		 }
 	}
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)

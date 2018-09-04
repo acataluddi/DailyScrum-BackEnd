@@ -31,6 +31,7 @@ public class Scrum extends ScrumDao {
 		return UserUpdate;
 	}
 
+
 	// To add Project
 	public boolean addProject(ProjectData incomingdata) throws Exception {
 		boolean result = false;
@@ -139,6 +140,18 @@ public class Scrum extends ScrumDao {
 			System.out.println(e);
 		}
 		return result;
+	}
+	
+	public List<ProjectData> readProjectService() {
+		List<ProjectData> list = new ArrayList<ProjectData>();
+		System.out.println("Hai");
+		try {
+			
+			list = readProject();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return list;
 	}
 
 	public List<TaskData> readService(String viewTaskDate, String viewTaskEmpId) {
