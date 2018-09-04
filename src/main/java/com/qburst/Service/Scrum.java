@@ -9,14 +9,14 @@ import java.util.List;
 import com.qburst.DAO.ScrumDao;
 
 public class Scrum extends ScrumDao {
-	public boolean insertUser(UsersData incomingdata) throws Exception {
-		boolean result = false;
+	public UsersData insertUser(UsersData incomingdata) throws Exception {
+		UsersData user = new UsersData();
 		try {
-			result = insertIntoTable(incomingdata);
+			user = insertIntoTable(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		return result;
+		return user;
 	}
 
 	public UsersData update(UsersData usersData) throws Exception {

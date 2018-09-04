@@ -35,18 +35,22 @@ public class CRUDControllerUser extends HttpServlet {
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		boolean result = false;
-
+		UsersData user = new UsersData();
 		try {
-			result = scrum.insertUser(incomingdata);
+			user = scrum.insertUser(incomingdata);
+			String receivedUserDetails = mapper.writeValueAsString(user);
+			System.out.println(receivedUserDetails);
+			out.println(receivedUserDetails);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (result == true) {
-			out.println("{\"message\":\"User Registered\"}");
-		} else {
-			out.println("{\"message\":\"User Already Exist\"}");
-		}
+
+		//
+		// if (result == "user") {
+		// out.println("{\"message\":\"User Registered\"}");
+		// } else {
+		// out.println("{\"message\":\"User Already Exist\"}");
+		// }
 	}
 
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
