@@ -66,6 +66,7 @@ public class ScrumDao extends connection {
 	public boolean insertProject(ProjectData projectData) throws Exception {
 		DB db;
 		DBCursor result = null;
+		ProjectData pdata = new ProjectData();
 		try {
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -93,7 +94,12 @@ public class ScrumDao extends connection {
 			whereQuery.put("projectId", projectData.getProjectId());
 			DBCursor cursor = table.find(whereQuery);
 			while(cursor.hasNext()) {
-			    System.out.println(cursor.next());
+				BasicDBObject userObj = (BasicDBObject) cursor.next();
+				pdata.setProjectId(userObj.getString("projectId"));
+				pdata.setProjectName(userObj.getString("projectName"));
+				pdata.setProjectDesc(userObj.getString("projectDesc"));
+//				pdata.setMembers(userObj.get("projectId"));
+			    System.out.println(userObj.toJson());
 			}
 		} catch (Exception e) {
 		}
