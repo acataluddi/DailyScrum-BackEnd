@@ -6,9 +6,13 @@ import com.qburst.Model.UsersData;
 import com.qburst.Model.View;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.qburst.DAO.ProjectDao;
 import com.qburst.DAO.ScrumDao;
 
 public class Scrum extends ScrumDao {
+	private ProjectDao pdao = new ProjectDao();
+
 	public UsersData insertUser(UsersData incomingdata) throws Exception {
 		UsersData user = new UsersData();
 		try {
@@ -32,10 +36,11 @@ public class Scrum extends ScrumDao {
 	}
 
 	// To add Project
-	public boolean addProject(ProjectData incomingdata) throws Exception {
-		boolean result = false;
+	public ProjectData addProject(ProjectData incomingdata) throws Exception {
+		ProjectData result = null;
 		try {
-			result = insertProject(incomingdata);
+			// result = insertProject(incomingdata);
+			result = this.pdao.insertProject(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -46,7 +51,7 @@ public class Scrum extends ScrumDao {
 	public boolean deleteProject(ProjectData incomingdata) throws Exception {
 		boolean result = false;
 		try {
-			result = subtractProject(incomingdata);
+			result = this.pdao.deleteProject(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -57,13 +62,24 @@ public class Scrum extends ScrumDao {
 	public boolean editProject(ProjectData incomingdata) throws Exception {
 		boolean result = false;
 		try {
-			result = updateProject(incomingdata);
+			result = this.pdao.updateProject(incomingdata);
 
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 
 		return result;
+	}
+
+	// To read all projects
+	public List<ProjectData> readProjectService(String memberEmail) {
+		List<ProjectData> projectlist = new ArrayList<ProjectData>();
+		try {
+			projectlist = this.pdao.getProjects(memberEmail);
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return projectlist;
 	}
 
 	public View read(View viewInfo) throws Exception {

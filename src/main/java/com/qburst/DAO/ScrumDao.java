@@ -3,7 +3,7 @@ package com.qburst.DAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.bson.Document;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -13,10 +13,6 @@ import com.mongodb.MongoClient;
 import com.qburst.Model.ProjectData;
 import com.qburst.Model.TaskData;
 import com.qburst.Model.UsersData;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 
 public class ScrumDao extends connection {
 	StringBuilder hash = new StringBuilder();
@@ -84,97 +80,6 @@ public class ScrumDao extends connection {
 			return user;
 		}
 		return user;
-	}
-
-	// Neeraj: Code for add Project
-	/*
-	 * Create database called Scrum and create a collection called Project.
-	 */
-	@SuppressWarnings("deprecation")
-	public boolean insertProject(ProjectData projectData) throws Exception {
-		DB db;
-		DBCursor result = null;
-		try {
-			MongoClient mongo = databaseConnection();
-			db = mongo.getDB("Scrum");
-			DBCollection table = db.getCollection("Project");
-			BasicDBObject document = new BasicDBObject();
-			DBObject query = new BasicDBObject("ProjectName", projectData.getProjectName());
-			DBCursor results = table.find(query);
-			while (results.hasNext()) {
-				return false;
-			}
-			document.put("ProjectId", projectData.getProjectId());
-			document.put("ProjectName", projectData.getProjectName());
-			document.put("Description", projectData.getProjectDesc());
-			document.put("Member", projectData.getMemberId());
-
-			table.insert(document);
-
-			DBObject querycheck = new BasicDBObject("ProjectName", projectData.getProjectName());
-			result = table.find(querycheck);
-		} catch (Exception e) {
-		}
-		while (result.hasNext()) {
-			return true;
-		}
-		return false;
-	}
-
-	// Neeraj: Code for delete Project
-	@SuppressWarnings("deprecation")
-	public boolean subtractProject(ProjectData projectData) throws Exception {
-		DB db;
-		DBCursor result = null;
-		try {
-			MongoClient mongo = databaseConnection();
-			db = mongo.getDB("Scrum");
-			MongoDatabase database = mongo.getDatabase("Scrum");
-			MongoCollection<Document> collection = database.getCollection("Project");
-			System.out.println("Collection Project selected successfully");
-			String deletionId = projectData.getProjectId();
-			System.out.println("deletion ID is" + deletionId);
-			collection.deleteOne(Filters.eq("ProjectId", deletionId));
-			System.out.println("Document deleted successfully...");
-			DBCollection table = db.getCollection("Project");
-			DBObject query = new BasicDBObject("ProjectId", deletionId);
-			result = table.find(query);
-			while (result.hasNext()) {
-				return false;
-			}
-		} catch (Exception e) {
-		}
-		return true;
-	}
-
-	// Neeraj: Code for edit project
-	@SuppressWarnings("deprecation")
-	public boolean updateProject(ProjectData projectData) throws Exception {
-		DB db;
-		try {
-			MongoClient mongo = databaseConnection();
-			MongoDatabase database = mongo.getDatabase("Scrum");
-			MongoCollection<Document> collection = database.getCollection("Project");
-			System.out.println("Collection Project selected successfully");
-			String editId = projectData.getProjectId();
-			collection.updateOne(Filters.eq("ProjectId", editId),
-					Updates.set("ProjectName", projectData.getProjectName()));
-			collection.updateOne(Filters.eq("ProjectId", editId),
-					Updates.set("Description", projectData.getProjectDesc()));
-			// Neeraj: Code for update the array "Member"
-			BasicDBObject updateQuery = new BasicDBObject();
-			updateQuery.append("$set", new BasicDBObject().append("Member", projectData.getMemberId()));
-			BasicDBObject searchQuery = new BasicDBObject();
-			searchQuery.append("ProjectId", editId);
-			db = mongo.getDB("Scrum");
-			DBCollection table = db.getCollection("Project");
-			table.update(searchQuery, updateQuery);
-
-			System.out.println("Document update successfully...");
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
 	}
 
 	@SuppressWarnings("deprecation")
