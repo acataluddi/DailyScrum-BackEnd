@@ -2,6 +2,9 @@ package com.qburst.Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
@@ -11,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.ProjectData;
 import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.TaskData;
 import com.qburst.Service.Scrum;
 
 @WebServlet("/ProjectController")
@@ -33,26 +37,29 @@ public class ProjectController extends HttpServlet {
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, ProjectData.class);
-//		members = incomingdata.getMembers();
-//		System.out.println(incomingdata.getMembers());
-//		System.out.println(incomingdata.getProjectId());
-//		System.out.println(incomingdata.getProjectName());
-//		System.out.println(incomingdata.getProjectDesc());
-//		for(int i=0;i<members.length;i++) {
-//			System.out.println(members[i].getMemberemail());
-//			System.out.println(members[i].getRole());			
-//		}
-		boolean n = false;
+		// members = incomingdata.getMembers();
+		// System.out.println(incomingdata.getMembers());
+		// System.out.println(incomingdata.getProjectId());
+		// System.out.println(incomingdata.getProjectName());
+		// System.out.println(incomingdata.getProjectDesc());
+		// for(int i=0;i<members.length;i++) {
+		// System.out.println(members[i].getMemberemail());
+		// System.out.println(members[i].getRole());
+		// }
+		ProjectData pdata = new ProjectData();
 		try {
-			n = scrum.addProject(incomingdata);
+			pdata = scrum.addProject(incomingdata);
+			String receivedProjectDetails = mapper.writeValueAsString(pdata);
+//			System.out.println(receivedProjectDetails);
+			out.println(receivedProjectDetails);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (n == true) {
-			out.println("Project Added Successfully");
-		} else {
-			out.println("Failed to add Project");
-		}
+//		if (n == true) {
+//			out.println("Project Added Successfully");
+//		} else {
+//			out.println("Failed to add Project");
+//		}
 	}
 
 	// To edit a project
@@ -105,5 +112,25 @@ public class ProjectController extends HttpServlet {
 		} else {
 			out.println("Failed to delete Project");
 		}
+	}
+
+	
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		PrintWriter out = response.getWriter();
+		Scrum scrum = new Scrum();
+		ObjectMapper mapper = new ObjectMapper();
+		List<ProjectData> projectlist = new ArrayList<ProjectData>();
+		String projects = null;
+		try {
+			projectlist = scrum.readProjectService();
+			projects = mapper.writeValueAsString(projectlist);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.println(projects);
 	}
 }

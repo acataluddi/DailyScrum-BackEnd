@@ -1,16 +1,31 @@
 package com.qburst.Model;
 
+import org.mongojack.ObjectId;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ProjectData {
-
-	private String projectName, projectDesc;
+	private String id;
 
 	private String projectId;
-//	private String members[];
-	
+
+	private String projectName, projectDesc;
+	// private String members[];
+
 	@JsonProperty("members")
 	ProjectMemberModel[] members;
+
+	@ObjectId
+	@JsonProperty("_id")
+	public String getId() {
+		return id;
+	}
+
+	@ObjectId
+	@JsonProperty("_id")
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getProjectId() {
 		return projectId;
@@ -39,7 +54,7 @@ public class ProjectData {
 	public ProjectMemberModel[] getMembers() {
 		return members;
 	}
-	
+
 	@JsonProperty("members")
 	public void setMembers(ProjectMemberModel[] members) {
 		this.members = members;
