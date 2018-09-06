@@ -3,7 +3,7 @@ package com.qburst.DAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import org.bson.Document;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -13,21 +13,19 @@ import com.mongodb.MongoClient;
 import com.qburst.Model.ProjectData;
 import com.qburst.Model.TaskData;
 import com.qburst.Model.UsersData;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.Updates;
 
 public class ScrumDao extends connection {
 	StringBuilder hash = new StringBuilder();
 
 	@SuppressWarnings("deprecation")
-	public boolean insertIntoTable(UsersData usersData) throws Exception {
+	public UsersData insertIntoTable(UsersData usersData) throws Exception {
 		/*
 		 * Create database called Scrum and create a collection called Employee.
 		 */
 		DB db;
 		DBCursor result = null;
+		String UserType;
+		UsersData user = new UsersData();
 		try {
 
 			MongoClient mongo = databaseConnection();
@@ -37,120 +35,51 @@ public class ScrumDao extends connection {
 			DBObject query = new BasicDBObject("Email", usersData.getEmail());
 			DBCursor results = table.find(query);
 			while (results.hasNext()) {
-				return false;
-			}
+				List<DBObject> cursor = results.toArray();
+				BasicDBObject userObj = (BasicDBObject) cursor.get(0);
+				String MemberID = userObj.getString("EmployeeID");
+				String Name = userObj.getString("Name");
+				String Email = userObj.getString("Email");
+				String imageURL = userObj.getString("imageurl");
+				UserType = userObj.getString("userType");
 
+				user.setEmployeeID(MemberID);
+				user.setName(Name);
+				user.setEmail(Email);
+				user.setUserType(UserType);
+				user.setImageurl(imageURL);
+
+				return user;
+			}
 			document.put("EmployeeID", usersData.getEmployeeID()); // used to calculate the next value of the EmployeID
 			document.put("Name", usersData.getName());
 			document.put("Email", usersData.getEmail());
 			document.put("userType", usersData.getUserType());
+			document.put("imageurl", usersData.getImageurl());
+
 			table.insert(document);
 			DBObject querycheck = new BasicDBObject("Email", usersData.getEmail());
-
 			result = table.find(querycheck);
+
+			List<DBObject> cursor = result.toArray();
+			BasicDBObject userObj = (BasicDBObject) cursor.get(0);
+			String MemberID = userObj.getString("EmployeeID");
+			String Name = userObj.getString("Name");
+			String Email = userObj.getString("Email");
+			String imageURL = userObj.getString("imageurl");
+			UserType = userObj.getString("userType");
+
+			user.setEmployeeID(MemberID);
+			user.setName(Name);
+			user.setEmail(Email);
+			user.setUserType(UserType);
+			user.setImageurl(imageURL);
 		} catch (Exception e) {
 		}
 		while (result.hasNext()) {
-			return true;
+			return user;
 		}
-		return false;
-	}
-
-	// Neeraj: Code for add Project
-	/*
-	 * Create database called Scrum and create a collection called Project.
-	 */
-	@SuppressWarnings("deprecation")
-	public boolean insertProject(ProjectData projectData) throws Exception {
-		DB db;
-		DBCursor result = null;
-		try {
-			MongoClient mongo = databaseConnection();
-			db = mongo.getDB("Scrum");
-			DBCollection table = db.getCollection("Project");
-			BasicDBObject document = new BasicDBObject();
-			DBObject query = new BasicDBObject("ProjectName", projectData.getProjectName());
-			DBCursor results = table.find(query);
-			while (results.hasNext()) {
-				return false;
-			}
-			document.put("ProjectId", projectData.getProjectId());
-			document.put("ProjectName", projectData.getProjectName());
-			document.put("Description", projectData.getProjectDesc());
-			document.put("Member", projectData.getMemberId());
-			table.insert(document);
-
-			DBObject querycheck = new BasicDBObject("ProjectName", projectData.getProjectName());
-			result = table.find(querycheck);
-		} catch (Exception e) {
-		}
-		while (result.hasNext()) {
-			return true;
-		}
-		return false;
-	}
-
-
-	// Neeraj: Code for delete Project
-
-
-	@SuppressWarnings("deprecation")
-	public boolean subtractProject(ProjectData projectData) throws Exception {
-		DB db;
-		DBCursor result = null;
-		try {
-			MongoClient mongo = databaseConnection();
-			db = mongo.getDB("Scrum");
-			MongoDatabase database = mongo.getDatabase("Scrum");
-			MongoCollection<Document> collection = database.getCollection("Project");
-			System.out.println("Collection Project selected successfully");
-			int deletionId = projectData.getProjectId();
-			System.out.println("deletion ID is" + deletionId);
-			collection.deleteOne(Filters.eq("ProjectId", deletionId));
-			System.out.println("Document deleted successfully...");
-			DBCollection table = db.getCollection("Project");
-
-			DBObject query = new BasicDBObject("ProjectId", deletionId);
-			result = table.find(query);
-			while (result.hasNext()) {
-				return false;
-			}
-		} catch (Exception e) {
-		}
-		return true;
-	}
-
-	// Neeraj: Code for edit project
-
-	@SuppressWarnings("deprecation")
-	public boolean updateProject(ProjectData projectData) throws Exception {
-		DB db;
-		try {
-			MongoClient mongo = databaseConnection();
-			MongoDatabase database = mongo.getDatabase("Scrum");
-			MongoCollection<Document> collection = database.getCollection("Project");
-			System.out.println("Collection Project selected successfully");
-			int editId = projectData.getProjectId();
-			collection.updateOne(Filters.eq("ProjectId", editId),
-					Updates.set("ProjectName", projectData.getProjectName()));
-			collection.updateOne(Filters.eq("ProjectId", editId),
-					Updates.set("Description", projectData.getProjectDesc()));
-
-			// Neeraj: Code for update the array "Member"
-
-			BasicDBObject updateQuery = new BasicDBObject();
-			updateQuery.append("$set", new BasicDBObject().append("Member", projectData.getMemberId()));
-			BasicDBObject searchQuery = new BasicDBObject();
-			searchQuery.append("ProjectId", editId);
-			db = mongo.getDB("Scrum");
-			DBCollection table = db.getCollection("Project");
-			table.update(searchQuery, updateQuery);
-
-			System.out.println("Document update successfully...");
-		} catch (Exception e) {
-			return false;
-		}
-		return true;
+		return user;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -167,12 +96,16 @@ public class ScrumDao extends connection {
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
 
-				String MemberID = userObj.getString("MemberID");
+
+				String MemberID = userObj.getString("EmployeeID");// change
+
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("userType");
+				String imageURL = userObj.getString("imageurl");
 
 				UsersData user = new UsersData();
+				user.setImageurl(imageURL);
 				user.setEmployeeID(MemberID);
 				user.setName(Name);
 				user.setEmail(Email);
@@ -184,46 +117,74 @@ public class ScrumDao extends connection {
 		}
 		return userlist;
 	}
-	
 
-	public UsersData userTypeUpdate(UsersData usersData) throws SQLException {
-		
+	@SuppressWarnings("deprecation")
+	public List<TaskData> readTaskList(String viewTaskDate, String viewTaskEmpId) throws Exception {
 		DB db;
-		
-		DBCursor user = null;
-		
+		List<TaskData> tasklist = new ArrayList<TaskData>();
 		try {
-			
-			
+
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
-			DBCollection collection = db.getCollection("Employee");
-			
+			DBCollection collection = db.getCollection("Task");
+			BasicDBObject andQuery = new BasicDBObject();
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("taskDate", viewTaskDate));
+			obj.add(new BasicDBObject("employeeId", viewTaskEmpId));
+			andQuery.put("$and", obj);
+			List<DBObject> cursor = collection.find(andQuery).toArray();
+			for (int i = 0; i < cursor.size(); i++) {
+				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
 
-			BasicDBObject updateDocument = new BasicDBObject();
-			updateDocument.append("$set", new BasicDBObject().append("userType", usersData.getUserType()));
-					
-			BasicDBObject searchQuery = new BasicDBObject().append("Email", usersData.getEmail());
+				String TaskID = userObj.getString("taskId");
+				String EmployeeID = userObj.getString("employeeId");
+				String TaskDescription = userObj.getString("taskDesc");
+				String Impediment = userObj.getString("impediment");
 
-			collection.update(searchQuery, updateDocument);
-			System.out.println(updateDocument);
-		    
-			DBCursor cursor = collection.find();
-			while(cursor.hasNext()) {
-			    System.out.println(cursor.next());
+				int ProjectID = userObj.getInt("projectId");
+				String TaskDate = userObj.getString("taskDate");
+				int TimeSpent = userObj.getInt("timeSpent");
+				String TimeStamp = userObj.getString("timeStamp");
+				TaskData task = new TaskData();
+				task.setTaskId(TaskID);
+				task.setEmployeeId(EmployeeID);
+				task.setTaskDesc(TaskDescription);
+				task.setImpediment(Impediment);
+				task.setProjectId(ProjectID);
+				task.setTaskDate(TaskDate);
+				task.setTimeSpent(TimeSpent);
+				task.setTimeStamp(TimeStamp);
+				tasklist.add(task);
 			}
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		return tasklist;
+	}
+
+	public UsersData userTypeUpdate(UsersData usersData) throws SQLException {
+
+		DB db;
+		try {
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection collection = db.getCollection("Employee");
+			BasicDBObject updateDocument = new BasicDBObject();
+			updateDocument.append("$set", new BasicDBObject().append("userType", usersData.getUserType()));
+			BasicDBObject searchQuery = new BasicDBObject().append("Email", usersData.getEmail());
+			collection.update(searchQuery, updateDocument);
+			System.out.println(updateDocument);
+			DBCursor cursor = collection.find();
+			while (cursor.hasNext()) {
+				System.out.println(cursor.next());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
-		
 	}
 
 	public UsersData MemberTaskUpdate(UsersData usersData) throws SQLException {
-		
-		
 		return null;
 	}
 
@@ -255,6 +216,7 @@ public class ScrumDao extends connection {
 		return null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public boolean insertTask(TaskData taskData) throws Exception {
 
 		DB db;
@@ -262,23 +224,18 @@ public class ScrumDao extends connection {
 		try {
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
-
 			DBCollection collection = db.getCollection("Task");
 			BasicDBObject document = new BasicDBObject();
-			document.put("taskId", taskData.getTaskId());
-
+			document.put("taskId", taskData.getTaskId().toString());
+			document.put("employeeId", taskData.getEmployeeId().toString());
 			document.put("taskDesc", taskData.getTaskDesc());
 			document.put("impediment", taskData.getImpediment());
-			document.put("memberId", taskData.getMemberId());
 			document.put("projectId", taskData.getProjectId());
 			document.put("taskDate", taskData.getTaskDate().toString());
-			document.put("timeSpent", taskData.getTimeSpent().toString());
+			document.put("timeSpent", taskData.getTimeSpent());
 			document.put("timeStamp", taskData.getTimeStamp().toString());
-
 			collection.insert(document);
-
-			DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp().toString());
-			query.put("projectId", taskData.getProjectId());
+			DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp());
 			result = collection.find(query);
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -287,5 +244,66 @@ public class ScrumDao extends connection {
 			return true;
 		}
 		return false;
+	}
+
+
+	@SuppressWarnings("deprecation")
+
+	public boolean updateTask(TaskData taskData) throws Exception {
+		DB db;
+		DBCursor result = null;
+		try {
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection collection = db.getCollection("Task");
+			// String taskDateView = taskData.getTaskDate();
+			String updationTaskId = taskData.getTaskId();
+			String updationEmployeeId = taskData.getEmployeeId();
+			BasicDBObject updateQuery = new BasicDBObject();
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("taskId", updationTaskId));
+			obj.add(new BasicDBObject("employeeId", updationEmployeeId));
+			updateQuery.put("$and", obj);
+			BasicDBObject newDocument = new BasicDBObject();
+			newDocument.put("taskId", taskData.getTaskId());
+			newDocument.put("employeeId", taskData.getEmployeeId());
+			newDocument.put("taskDesc", taskData.getTaskDesc());
+			newDocument.put("impediment", taskData.getImpediment());
+			newDocument.put("projectId", taskData.getProjectId());
+			newDocument.put("taskDate", taskData.getTaskDate());
+			newDocument.put("timeSpent", taskData.getTimeSpent());
+			newDocument.put("timeStamp", taskData.getTimeStamp());
+			collection.update(updateQuery, newDocument);
+			result = collection.find(updateQuery);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+
+	@SuppressWarnings("deprecation")
+	public boolean subtractTask(TaskData taskData) throws Exception {
+		DB db;
+		DBCursor result = null;
+		try {
+
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection collection = db.getCollection("Task");
+			String deletionTaskId = taskData.getTaskId();
+			String deletionEmployeeId = taskData.getEmployeeId();
+			BasicDBObject deleteQuery = new BasicDBObject();
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("taskId", deletionTaskId));
+			obj.add(new BasicDBObject("employeeId", deletionEmployeeId));
+			deleteQuery.put("$and", obj);
+			collection.remove(deleteQuery);
+			result = collection.find(deleteQuery);
+			while (result.hasNext()) {
+				return false;
+			}
+		} catch (Exception e) {
+		}
+		return true;
 	}
 }

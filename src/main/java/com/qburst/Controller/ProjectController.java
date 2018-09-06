@@ -2,12 +2,16 @@ package com.qburst.Controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.ProjectData;
 import com.qburst.Service.Scrum;
@@ -23,6 +27,7 @@ public class ProjectController extends HttpServlet {
 	// To add a project
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
@@ -30,25 +35,22 @@ public class ProjectController extends HttpServlet {
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, ProjectData.class);
-		boolean n = false;
+		ProjectData pdata = new ProjectData();
 		try {
-			n = scrum.addProject(incomingdata);
+			pdata = scrum.addProject(incomingdata);
+			String receivedProjectDetails = mapper.writeValueAsString(pdata);
+			out.println(receivedProjectDetails);
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		if (n == true) {
-			out.println("Project Added Successfully");
-		} else {
-			out.println("Failed to add Project");
 		}
 	}
 
 	// To edit a project
-
 	@Override
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
@@ -73,6 +75,7 @@ public class ProjectController extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
@@ -92,5 +95,25 @@ public class ProjectController extends HttpServlet {
 		} else {
 			out.println("Failed to delete Project");
 		}
+	}
+
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		PrintWriter out = response.getWriter();
+		String memberEmail = request.getParameter("memberEmail");
+		Scrum scrum = new Scrum();
+		ObjectMapper mapper = new ObjectMapper();
+		List<ProjectData> projectlist = new ArrayList<ProjectData>();
+		String projects = null;
+		try {
+			projectlist = scrum.readProjectService(memberEmail);
+			projects = mapper.writeValueAsString(projectlist);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		out.println(projects);
 	}
 }

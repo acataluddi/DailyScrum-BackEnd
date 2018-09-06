@@ -14,31 +14,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.UsersData;
 import com.qburst.Service.Scrum;
 
-@WebServlet("/Login")
-public class Login extends HttpServlet {
+
+@WebServlet("/AuthenticationController")
+public class AuthenticationController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-
-	public Login() {
-		super();
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+       
+    
+    public AuthenticationController() {
+        super();
+       
+    }
+	
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+    	response.addHeader("Access-Control-Allow-Origin", "*");
+
 		PrintWriter out = response.getWriter();
-		Scrum scrum = new Scrum();
 		UsersData incomingdata = new UsersData();
+		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, UsersData.class);
+		System.out.println(incomingdata.getImageurl());
+		UsersData user = new UsersData();
 		try {
-			boolean n = scrum.loggingin(incomingdata);
-			if (n) {
-				IdTokenVerification tokenverify = new IdTokenVerification();
-				String token = incomingdata.getToken();
-				String message = tokenverify.processToken(token);
-				out.println(message);
-			}
+			user = scrum.insertUser(incomingdata);
+			String receivedUserDetails = mapper.writeValueAsString(user);
+			System.out.println(receivedUserDetails);
+			out.println(receivedUserDetails);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
