@@ -20,6 +20,7 @@ public class UsersData {
 
 	public String getImageurl() {
 		return imageurl;
+
 	}
 
 	public void setImageurl(String imageurl) {

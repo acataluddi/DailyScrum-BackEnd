@@ -34,12 +34,10 @@ public class CRUDControllerUser extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 
-
 		System.out.println("inside put");
 		UsersData result = new UsersData();
 //	    response.setHeader("content-type", "text/plain");
 //		response.setHeader("Accept", "text/plain");
-
 
 		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
@@ -50,11 +48,8 @@ public class CRUDControllerUser extends HttpServlet {
 		System.out.println(incomingdata);
 		System.out.println(incomingdata.getEmail());
 		out.println(incomingdata.getName());
-		try {
-
-			
+		try {	
 			result = scrum.update(incomingdata);
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();

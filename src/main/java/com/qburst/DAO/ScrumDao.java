@@ -98,7 +98,6 @@ public class ScrumDao extends connection {
 
 
 				String MemberID = userObj.getString("EmployeeID");// change
-
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("userType");
