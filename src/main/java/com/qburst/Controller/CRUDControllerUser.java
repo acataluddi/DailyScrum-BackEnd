@@ -17,6 +17,7 @@ import com.qburst.Model.View;
 import com.qburst.Service.Scrum;
 
 @WebServlet("/CRUDControllerUser")
+
 public class CRUDControllerUser extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -26,40 +27,18 @@ public class CRUDControllerUser extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin", "*");
 
-		PrintWriter out = response.getWriter();
-		UsersData incomingdata = new UsersData();
-		Scrum scrum = new Scrum();
-		ObjectMapper mapper = new ObjectMapper();
-		ServletInputStream inputjson = null;
-		inputjson = request.getInputStream();
-		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		UsersData user = new UsersData();
-		try {
-			user = scrum.insertUser(incomingdata);
-			String receivedUserDetails = mapper.writeValueAsString(user);
-			System.out.println(receivedUserDetails);
-			out.println(receivedUserDetails);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		//
-		// if (result == "user") {
-		// out.println("{\"message\":\"User Registered\"}");
-		// } else {
-		// out.println("{\"message\":\"User Already Exist\"}");
-		// }
-	}
-
-	protected void doPut(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
+//		response.setHeader("Access-Control-Allow-Credentials", "true");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
-		response.setHeader("content-type", "application/json");
+
+		System.out.println("inside put");
+		UsersData result = new UsersData();
+//	    response.setHeader("content-type", "text/plain");
+//		response.setHeader("Accept", "text/plain");
+
 		UsersData incomingdata = new UsersData();
 		ObjectMapper mapper = new ObjectMapper();
 		System.out.println("inside put");
@@ -69,9 +48,8 @@ public class CRUDControllerUser extends HttpServlet {
 		System.out.println(incomingdata);
 		System.out.println(incomingdata.getEmail());
 		out.println(incomingdata.getName());
-		try {
-
-			scrum.update(incomingdata);
+		try {	
+			result = scrum.update(incomingdata);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,7 +82,7 @@ public class CRUDControllerUser extends HttpServlet {
 		myView.setPageid(pageid);
 
 		// number of records to be displayed in a page: from client
-		int numOfRec = 8;
+		int numOfRec = 10;
 
 		myView.setPagenum(pagenum);
 		myView.setNumOfRec(numOfRec);

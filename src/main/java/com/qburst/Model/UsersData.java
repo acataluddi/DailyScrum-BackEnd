@@ -15,6 +15,7 @@ public class UsersData {
 
 	private String userType;
 
+
 	private String imageurl;
 
 	public String getImageurl() {
