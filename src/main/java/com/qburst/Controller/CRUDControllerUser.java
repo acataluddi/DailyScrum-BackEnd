@@ -88,7 +88,7 @@ public class CRUDControllerUser extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		ObjectMapper mapper = new ObjectMapper();
-
+		int totalCount = 0 ;
 		View myView = new View();
 		Scrum scrumService = new Scrum();
 
@@ -101,19 +101,24 @@ public class CRUDControllerUser extends HttpServlet {
 
 		// number of records to be displayed in a page: from client
 		int numOfRec = 8;
+		
 
 		myView.setPagenum(pagenum);
 		myView.setNumOfRec(numOfRec);
 
 		try {
+			totalCount = (int) scrumService.getTotalCount();
 			myView = scrumService.read(myView);
-			System.out.println(myView);
 		} catch (Exception e) {
 
 		}
 		List<UsersData> userlist = myView.getEmployeeData(pagenum, numOfRec);
 		String outputRecords = mapper.writeValueAsString(userlist);
+		
+//		out.println(totalCount);
+		System.out.println(outputRecords);
 		out.println(outputRecords);
+		
 		out.close();
 	}
 }

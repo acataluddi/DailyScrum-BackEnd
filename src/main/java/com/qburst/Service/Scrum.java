@@ -47,9 +47,10 @@ public class Scrum extends ScrumDao {
 	}
 
 	// To delete Project
-	public boolean deleteProject(ProjectData incomingdata) throws Exception {
+	public boolean deleteProject(String incomingdata) throws Exception {
 		boolean result = false;
 		try {
+			System.out.println("Scrum");
 			result = subtractProject(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -164,5 +165,18 @@ public class Scrum extends ScrumDao {
 			System.out.println(e);
 		}
 		return list;
+	}
+	
+	public float getTotalCount() {
+		float NoOfRecords = 0;
+		try {
+			
+		NoOfRecords = getCount();
+		System.out.println("jh");
+		
+	}catch (Exception e){
+		System.out.println(e);
+	}
+		return NoOfRecords;
 	}
 }

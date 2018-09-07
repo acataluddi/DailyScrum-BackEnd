@@ -24,8 +24,20 @@ public class ProjectController extends HttpServlet {
 	public ProjectController() {
 		super();
 	}
+	//for Preflight
+	 @Override
+	 protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+	         throws ServletException, IOException {
+	     setAccessControlHeaders(resp);
+	     resp.setStatus(HttpServletResponse.SC_OK);
+	 }
+	 private void setAccessControlHeaders(HttpServletResponse resp) {
+		 resp.setHeader("Access-Control-Allow-Origin", "*");
+		 resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+		 }
 
-	// To add a project
+
+//	 To add a project
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.addHeader("Access-Control-Allow-Origin", "*");
@@ -89,21 +101,28 @@ public class ProjectController extends HttpServlet {
 	}
 
 	// To delete a project
+	@SuppressWarnings("unused")
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin", "*");
-		// TODO Auto-generated method stub
+		System.out.println("received DELETE request,requestURI="+request.getRequestURI()); 
+		
+//		response.addHeader("Access-Control-Allow-Origin", "*");
+	
 		PrintWriter out = response.getWriter();
+		String projectId = request.getParameter("projectId");
+		System.out.println("Hello");
+		System.out.println(projectId);
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
-		inputjson = request.getInputStream();
-		incomingdata = mapper.readValue(inputjson, ProjectData.class);
+//		inputjson = request.getInputStream();
+//		incomingdata = mapper.readValue(inputjson, ProjectData.class);
 		boolean n = false;
 		try {
-			n = scrum.deleteProject(incomingdata);
+			System.out.println("Iam going");
+			n = scrum.deleteProject(projectId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

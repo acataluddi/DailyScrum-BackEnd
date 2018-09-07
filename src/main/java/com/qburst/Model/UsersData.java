@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UsersData {
 
 	private String EmployeeID;
+	
 
 	private String Name;
 
@@ -68,5 +69,7 @@ public class UsersData {
 	public void setToken(String idToken) {
 		this.idToken = idToken;
 	}
+	
+
 
 }
