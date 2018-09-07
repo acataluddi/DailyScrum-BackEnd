@@ -38,12 +38,10 @@ public class ProjectDao extends connection {
 			if (result.hasNext()) {
 				pdata = result.next();
 				return pdata;
-			}
-			System.out.println("Here3");
+			};
 			coll.insert(projectData);
 			result = coll.find().is("projectId", projectData.getProjectId());
 			if (result.hasNext()) {
-				System.out.println("Here4");
 				pdata = result.next();
 				return pdata;
 			}
@@ -114,7 +112,6 @@ public class ProjectDao extends connection {
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
 					Object.class);
 			coll.update(DBQuery.is("projectId", projectData.getProjectId()), projectData);
-			System.out.println("Document updated successfully...");
 		} catch (Exception e) {
 			return false;
 		}

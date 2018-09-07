@@ -24,10 +24,22 @@ public class ProjectController extends HttpServlet {
 		super();
 	}
 
+	private void setAccessControlHeaders(HttpServletResponse resp) {
+		resp.setHeader("Access-Control-Allow-Origin", "*");
+		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+	}
+
+	// for Preflight
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		setAccessControlHeaders(resp);
+		resp.setStatus(HttpServletResponse.SC_OK);
+	}
+
 	// To add a project
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
@@ -50,7 +62,7 @@ public class ProjectController extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
@@ -65,9 +77,9 @@ public class ProjectController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (n == true) {
-			out.println("Project Edited Successfully");
+			out.println("{\"message\":\"Project Edited Successfully\"}");
 		} else {
-			out.println("Failed to Edit Project");
+			out.println("{\"message\":\"Failed to Edit Project\"}");
 		}
 	}
 
@@ -75,7 +87,7 @@ public class ProjectController extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
@@ -101,7 +113,7 @@ public class ProjectController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		String memberEmail = request.getParameter("memberEmail");
 		Scrum scrum = new Scrum();
