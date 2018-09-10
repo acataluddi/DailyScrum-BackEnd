@@ -96,6 +96,7 @@ public class ScrumDao extends connection {
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
 
+
 				String MemberID = userObj.getString("EmployeeID");// change
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
@@ -243,6 +244,9 @@ public class ScrumDao extends connection {
 		}
 		return false;
 	}
+
+
+	@SuppressWarnings("deprecation")
 
 	public boolean updateTask(TaskData taskData) throws Exception {
 		DB db;
