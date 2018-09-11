@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.ProjectData;
+import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.TaskData;
 import com.qburst.Service.Scrum;
 
 @WebServlet("/ProjectController")
@@ -23,18 +25,19 @@ public class ProjectController extends HttpServlet {
 	public ProjectController() {
 		super();
 	}
+	//for Preflight
+	 @Override
+	 protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
+	         throws ServletException, IOException {
+	     setAccessControlHeaders(resp);
+	     resp.setStatus(HttpServletResponse.SC_OK);
+	 }
+	 private void setAccessControlHeaders(HttpServletResponse resp) {
+		 resp.setHeader("Access-Control-Allow-Origin", "*");
+		 resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+		 }
 
-	private void setAccessControlHeaders(HttpServletResponse resp) {
-		resp.setHeader("Access-Control-Allow-Origin", "*");
-		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
-	}
 
-	// for Preflight
-	@Override
-	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		setAccessControlHeaders(resp);
-		resp.setStatus(HttpServletResponse.SC_OK);
-	}
 
 	// To add a project
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -43,10 +46,12 @@ public class ProjectController extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
+		ProjectMemberModel[] members = null;
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, ProjectData.class);
+
 		ProjectData pdata = new ProjectData();
 		try {
 			pdata = scrum.addProject(incomingdata);
@@ -55,6 +60,7 @@ public class ProjectController extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	// To edit a project
@@ -62,8 +68,11 @@ public class ProjectController extends HttpServlet {
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+
+		response.addHeader("Access-Control-Allow-Origin", "*");
+
 		setAccessControlHeaders(response);
-		PrintWriter out = response.getWriter();
+	    PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
 		ObjectMapper mapper = new ObjectMapper();
@@ -84,21 +93,26 @@ public class ProjectController extends HttpServlet {
 	}
 
 	// To delete a project
+	@SuppressWarnings("unused")
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		setAccessControlHeaders(response);
+    	setAccessControlHeaders(response);
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
+		String projectId = request.getParameter("projectId");
+		System.out.println("Hello");
+		System.out.println(projectId);
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
-		inputjson = request.getInputStream();
-		incomingdata = mapper.readValue(inputjson, ProjectData.class);
+//		inputjson = request.getInputStream();
+//		incomingdata = mapper.readValue(inputjson, ProjectData.class);
 		boolean n = false;
 		try {
-			n = scrum.deleteProject(incomingdata);
+			System.out.println("Iam going");
+			n = scrum.deleteProject(projectId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -109,19 +123,26 @@ public class ProjectController extends HttpServlet {
 		}
 	}
 
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		setAccessControlHeaders(response);
+
+		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
+
+		setAccessControlHeaders(response);
 		String memberEmail = request.getParameter("memberEmail");
+
 		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		String projects = null;
 		try {
+
 			projectlist = scrum.readProjectService(memberEmail);
+
 			projects = mapper.writeValueAsString(projectlist);
 		} catch (Exception e) {
 			e.printStackTrace();

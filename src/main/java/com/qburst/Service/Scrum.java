@@ -23,6 +23,7 @@ public class Scrum extends ScrumDao {
 		return user;
 	}
 
+
 	public UsersData update(UsersData usersData) throws Exception {
 
 		UsersData UserUpdate = new UsersData();
@@ -39,7 +40,6 @@ public class Scrum extends ScrumDao {
 	public ProjectData addProject(ProjectData incomingdata) throws Exception {
 		ProjectData result = null;
 		try {
-			// result = insertProject(incomingdata);
 			result = this.pdao.insertProject(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -48,9 +48,12 @@ public class Scrum extends ScrumDao {
 	}
 
 	// To delete Project
-	public boolean deleteProject(ProjectData incomingdata) throws Exception {
+	public boolean deleteProject(String incomingdata) throws Exception {
 		boolean result = false;
 		try {
+
+//			result = subtractProject(incomingdata);
+
 			result = this.pdao.deleteProject(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -70,6 +73,8 @@ public class Scrum extends ScrumDao {
 
 		return result;
 	}
+	
+
 
 	// To read all projects
 	public List<ProjectData> readProjectService(String memberEmail) {
@@ -165,5 +170,18 @@ public class Scrum extends ScrumDao {
 			System.out.println(e);
 		}
 		return list;
+	}
+	
+	public float getTotalCount() {
+		float NoOfRecords = 0;
+		try {
+			
+		NoOfRecords = getCount();
+		System.out.println("jh");
+		
+	}catch (Exception e){
+		System.out.println(e);
+	}
+		return NoOfRecords;
 	}
 }
