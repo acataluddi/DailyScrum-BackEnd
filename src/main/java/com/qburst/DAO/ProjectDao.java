@@ -3,7 +3,9 @@ package com.qburst.DAO;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.bson.Document;
+
 import org.mongojack.DBCursor;
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
@@ -13,6 +15,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.qburst.Model.ProjectData;
+import com.qburst.Model.UsersData;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -26,18 +30,21 @@ public class ProjectDao extends connection {
 	@SuppressWarnings("deprecation")
 	public ProjectData insertProject(ProjectData projectData) throws Exception {
 		DB db;
+
 		ProjectData pdata = new ProjectData();
 		try {
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
+
 					Object.class);
 			DBObject query = new BasicDBObject("projectId", projectData.getProjectId());
 			DBCursor<ProjectData> result = coll.find(query);
 			if (result.hasNext()) {
 				pdata = result.next();
 				return pdata;
+
 			};
 			coll.insert(projectData);
 			result = coll.find().is("projectId", projectData.getProjectId());
@@ -50,8 +57,10 @@ public class ProjectDao extends connection {
 		return null;
 	}
 
+
 	@SuppressWarnings("deprecation")
 	public List<ProjectData> getProjects(String memberEmail) throws Exception {
+
 		DB db;
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		ProjectData pdata = new ProjectData();
@@ -60,6 +69,7 @@ public class ProjectDao extends connection {
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
+
 					Object.class);
 			DBObject query = new BasicDBObject("members.email", memberEmail);
 			memberEmail = memberEmail.trim();
@@ -72,6 +82,7 @@ public class ProjectDao extends connection {
 			}
 			while (result.hasNext()) {
 				pdata = result.next();
+
 				projectlist.add(pdata);
 			}
 		} catch (Exception e) {
@@ -80,27 +91,34 @@ public class ProjectDao extends connection {
 		return projectlist;
 	}
 
+
 	@SuppressWarnings("deprecation")
-	public boolean deleteProject(ProjectData projectData) throws Exception {
+	public boolean deleteProject(String incomingdata) throws Exception {
 		DB db;
+		com.mongodb.DBCursor result = null;
 		try {
+
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
-			MongoDatabase database = mongo.getDatabase("Scrum");
-			MongoCollection<Document> collection = database.getCollection("Project");
-			collection.deleteOne(Filters.eq("projectId", projectData.getProjectId()));
-			DBCollection table = db.getCollection("Project");
-			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
-					Object.class);
-			DBObject query = new BasicDBObject("projectId", projectData.getProjectId());
-			DBCursor<ProjectData> result = coll.find(query);
-			if (result.hasNext()) {
+			DBCollection collection = db.getCollection("Project");
+//			String deletionProjectId = projectData.getProjectId();
+			BasicDBObject deleteQuery = new BasicDBObject();
+			System.out.println("ScrumDAO");
+			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+			obj.add(new BasicDBObject("projectId", incomingdata));
+			deleteQuery.put("$and", obj);
+			collection.remove(deleteQuery);
+			System.out.println("Project Deleted");
+			result = collection.find(deleteQuery);
+			while (result.hasNext()) {
 				return false;
 			}
 		} catch (Exception e) {
 		}
 		return true;
 	}
+	
+	
 
 	@SuppressWarnings("deprecation")
 	public boolean updateProject(ProjectData projectData) throws Exception {
@@ -117,5 +135,6 @@ public class ProjectDao extends connection {
 		}
 		return true;
 	}
+
 
 }
