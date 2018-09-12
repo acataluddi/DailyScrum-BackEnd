@@ -31,12 +31,24 @@ public class TaskController extends HttpServlet {
 		// TODO Auto-generated constructor stub
 	}
 
+	private void setAccessControlHeaders(HttpServletResponse resp) {
+		resp.setHeader("Access-Control-Allow-Origin", "*");
+		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+	}
+
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		setAccessControlHeaders(resp);
+		resp.setStatus(HttpServletResponse.SC_OK);
+	}
+
 	/**
 	 * @see HttpServlet#doPut(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
 	protected void doPut(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		TaskData incomingData = new TaskData();
 
@@ -55,9 +67,9 @@ public class TaskController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (result == true) {
-			out.println("Task Successfully Edited");
+			out.println("{\"message\":\"Task Successfully Edited\"}");
 		} else {
-			out.println("Failed To Edit");
+			out.println("{\"message\":\"Failed To Edit\"}");
 		}
 	}
 
@@ -65,8 +77,10 @@ public class TaskController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
@@ -75,6 +89,7 @@ public class TaskController extends HttpServlet {
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, TaskData.class);
+		System.out.println(incomingdata.getLastEdit());
 		boolean n = false;
 		try {
 			n = scrum.addTask(incomingdata);
@@ -82,9 +97,9 @@ public class TaskController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (n == true) {
-			out.println("Task Added Successfully");
+			out.println("{\"message\":\"Task Added Successfully\"}");
 		} else {
-			out.println("Failed to add Task");
+			out.println("{\"message\":\"Failed to add Task\"}");
 		}
 	}
 
@@ -92,6 +107,7 @@ public class TaskController extends HttpServlet {
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		TaskData incomingdata = new TaskData();
@@ -106,9 +122,9 @@ public class TaskController extends HttpServlet {
 			e.printStackTrace();
 		}
 		if (n == true) {
-			out.println("Project Deleted Successfully");
+			out.println("{\"message\":\"Task Deleted Successfully\"}");
 		} else {
-			out.println("Failed to delete Project");
+			out.println("{\"message\":\"Failed to delete Task\"}");
 		}
 	}
 
@@ -116,21 +132,22 @@ public class TaskController extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		setAccessControlHeaders(response);
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		String viewTaskDate = request.getParameter("taskDate");
-		String viewTaskEmpId = request.getParameter("employeeId");
-		out.println(viewTaskDate);
+		String viewTaskMemberEmail = request.getParameter("memberEmail");
+		String viewTaskProjectId = request.getParameter("projectId");
 		ObjectMapper mapper = new ObjectMapper();
 		List<TaskData> list = new ArrayList<TaskData>();
-		String example = null;
+		String receivedData = null;
 		try {
-			list = scrum.readService(viewTaskDate, viewTaskEmpId);
-			example = mapper.writeValueAsString(list);
+			list = scrum.readService(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId);
+			receivedData = mapper.writeValueAsString(list);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		out.println(example);
+		out.println(receivedData);
 	}
 }

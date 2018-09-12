@@ -1,31 +1,20 @@
 package com.qburst.Model;
 
-//import java.time.LocalDate;
-//import java.time.LocalTime;
-//
-//import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-//import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-//import com.qburst.serialization.LocalDateDeserializer;
-//import com.qburst.serialization.LocalDateSerializer;
-//import com.qburst.serialization.LocalTimeDeserializer;
-//import com.qburst.serialization.LocalTimeSerializer;
-
 public class TaskData {
-	private String employeeId;
 
+	private String memberEmail;
 	private String taskId;
-	private String taskDesc, impediment, timeStamp, taskDate;
+	private String description;
+	private String impediments;
+	private String projectId;
+	private String taskDate;
+	private String lastEdit;
 
-	private int projectId;
-	private int timeSpent;
+	private int hourSpent;
+	private int minuteSpent;
 
-	public String getEmployeeId() {
-		return employeeId;
-	}
 
-	public void setEmployeeId(String employeeId) {
-		this.employeeId = employeeId;
-	}
+	private boolean taskCompleted;
 
 	public String getTaskId() {
 		return taskId;
@@ -35,28 +24,20 @@ public class TaskData {
 		this.taskId = taskId;
 	}
 
-	public String getTaskDesc() {
-		return taskDesc;
+	public String getDescription() {
+		return description;
 	}
 
-	public void setTaskDesc(String taskDesc) {
-		this.taskDesc = taskDesc;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
-	public String getImpediment() {
-		return impediment;
+	public String getImpediments() {
+		return impediments;
 	}
 
-	public void setImpediment(String impediment) {
-		this.impediment = impediment;
-	}
-
-	public String getTimeStamp() {
-		return timeStamp;
-	}
-
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
+	public void setImpediments(String impediment) {
+		this.impediments = impediment;
 	}
 
 	public String getTaskDate() {
@@ -67,32 +48,53 @@ public class TaskData {
 		this.taskDate = taskDate;
 	}
 
-	public int getProjectId() {
+	public int getHourSpent() {
+		return hourSpent;
+	}
+
+	public void setHourSpent(int hourSpent) {
+		this.hourSpent = hourSpent;
+	}
+
+	public int getMinuteSpent() {
+		return minuteSpent;
+	}
+
+	public void setMinuteSpent(int minuteSpent) {
+		this.minuteSpent = minuteSpent;
+	}
+
+	public Boolean getTaskCompleted() {
+		return taskCompleted;
+	}
+
+	public void setTaskCompleted(Boolean taskCompleted) {
+		this.taskCompleted = taskCompleted;
+	}
+
+	public String getMemberEmail() {
+		return memberEmail;
+	}
+
+	public void setMemberEmail(String memberEmail) {
+		this.memberEmail = memberEmail;
+	}
+
+	public String getProjectId() {
 		return projectId;
 	}
 
-	public void setProjectId(int projectId) {
+	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
 
-	public int getTimeSpent() {
-		return timeSpent;
+	public String getLastEdit() {
+		return lastEdit;
 	}
 
-	public void setTimeSpent(int timeSpent) {
-		this.timeSpent = timeSpent;
+	public void setLastEdit(String lastEdit) {
+		this.lastEdit = lastEdit;
 	}
 
-	// @JsonDeserialize(using = LocalTimeDeserializer.class)
-	// @JsonSerialize(using = LocalTimeSerializer.class)
-	// LocalTime timeStamp;
-	//
-	// @JsonDeserialize(using = LocalDateDeserializer.class)
-	// @JsonSerialize(using = LocalDateSerializer.class)
-	// LocalDate taskDate;
-	//
-	// @JsonDeserialize(using = LocalTimeDeserializer.class)
-	// @JsonSerialize(using = LocalTimeSerializer.class)
-	// LocalTime timeSpent;
 
 }
