@@ -7,7 +7,6 @@ import java.util.List;
 import org.bson.Document;
 import org.mongojack.JacksonDBCollection;
 
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -89,8 +88,6 @@ public class ScrumDao extends connection {
 
 	}
 
-	
-
 	// Neeraj: Code for delete Project
 //	@SuppressWarnings("deprecation")
 //	public boolean subtractProject(String projectData) throws Exception {
@@ -118,8 +115,6 @@ public class ScrumDao extends connection {
 //		return true;
 //	}
 
-	
-
 	@SuppressWarnings("deprecation")
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
@@ -129,19 +124,16 @@ public class ScrumDao extends connection {
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Employee");
-			
 
 			List<DBObject> cursor = collection.find().skip(num_of_rec * (pagenum - 1)).limit(num_of_rec).toArray();
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
-
 
 				String MemberID = userObj.getString("EmployeeID");// change
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String UserType = userObj.getString("userType");
 				String imageURL = userObj.getString("imageurl");
-
 
 				UsersData user = new UsersData();
 				user.setImageurl(imageURL);
@@ -159,27 +151,11 @@ public class ScrumDao extends connection {
 	}
 
 	@SuppressWarnings("deprecation")
-	public float getCount() {
-		
-		float NoOfRecords = 0;
+	public List<TaskData> readTaskList(String viewTaskDate, String viewTaskMemberEmail, String viewTaskProjectId)
+			throws Exception {
+
 		DB db;
-		try {
-			
-		MongoClient mongo = databaseConnection();
-		db = mongo.getDB("Scrum");
-		DBCollection collection = db.getCollection("Employee");
-		NoOfRecords = collection.count();
-		System.out.println(NoOfRecords);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return NoOfRecords;
-	}
-	
-	@SuppressWarnings("deprecation")
-	public List<TaskData> readTaskList(String viewTaskDate, String viewTaskEmpId) throws Exception {
-		DB db;
+
 		List<TaskData> tasklist = new ArrayList<TaskData>();
 		try {
 
@@ -189,30 +165,34 @@ public class ScrumDao extends connection {
 			BasicDBObject andQuery = new BasicDBObject();
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 			obj.add(new BasicDBObject("taskDate", viewTaskDate));
-			obj.add(new BasicDBObject("employeeId", viewTaskEmpId));
+			obj.add(new BasicDBObject("memberEmail", viewTaskMemberEmail));
+			obj.add(new BasicDBObject("projectId", viewTaskProjectId));
 			andQuery.put("$and", obj);
 			List<DBObject> cursor = collection.find(andQuery).toArray();
 			for (int i = 0; i < cursor.size(); i++) {
 				BasicDBObject userObj = (BasicDBObject) cursor.get(i);
-
 				String TaskID = userObj.getString("taskId");
-				String EmployeeID = userObj.getString("employeeId");
-				String TaskDescription = userObj.getString("taskDesc");
-				String Impediment = userObj.getString("impediment");
-
-				int ProjectID = userObj.getInt("projectId");
+				String memberEmail = userObj.getString("memberEmail");
+				String description = userObj.getString("description");
+				String Impediment = userObj.getString("impediments");
+				String ProjectID = userObj.getString("projectId");
 				String TaskDate = userObj.getString("taskDate");
-				int TimeSpent = userObj.getInt("timeSpent");
-				String TimeStamp = userObj.getString("timeStamp");
+				int hourSpent = userObj.getInt("hourSpent");
+				int minuteSpent = userObj.getInt("minuteSpent");
+				boolean taskCompleted = userObj.getBoolean("taskCompleted");
+				String lastEdit = userObj.getString("lastEdit");
+
 				TaskData task = new TaskData();
 				task.setTaskId(TaskID);
-				task.setEmployeeId(EmployeeID);
-				task.setTaskDesc(TaskDescription);
-				task.setImpediment(Impediment);
+				task.setMemberEmail(memberEmail);
+				task.setDescription(description);
+				task.setImpediments(Impediment);
 				task.setProjectId(ProjectID);
 				task.setTaskDate(TaskDate);
-				task.setTimeSpent(TimeSpent);
-				task.setTimeStamp(TimeStamp);
+				task.setHourSpent(hourSpent);
+				task.setMinuteSpent(minuteSpent);
+				task.setTaskCompleted(taskCompleted);
+				task.setLastEdit(lastEdit);
 				tasklist.add(task);
 			}
 		} catch (Exception e) {
@@ -285,26 +265,27 @@ public class ScrumDao extends connection {
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Task");
 			BasicDBObject document = new BasicDBObject();
-			document.put("taskId", taskData.getTaskId().toString());
-			document.put("employeeId", taskData.getEmployeeId().toString());
-			document.put("taskDesc", taskData.getTaskDesc());
-			document.put("impediment", taskData.getImpediment());
+			document.put("taskId", taskData.getTaskId());
+			document.put("memberEmail", taskData.getMemberEmail());
+			document.put("description", taskData.getDescription());
+			document.put("impediments", taskData.getImpediments());
+			document.put("taskDate", taskData.getTaskDate());
 			document.put("projectId", taskData.getProjectId());
-			document.put("taskDate", taskData.getTaskDate().toString());
-			document.put("timeSpent", taskData.getTimeSpent());
-			document.put("timeStamp", taskData.getTimeStamp().toString());
+			document.put("hourSpent", taskData.getHourSpent());
+			document.put("minuteSpent", taskData.getMinuteSpent());
+			document.put("taskCompleted", taskData.getTaskCompleted());
+			document.put("lastEdit", taskData.getLastEdit());
 			collection.insert(document);
-			DBObject query = new BasicDBObject("timeStamp", taskData.getTimeStamp());
+			DBObject query = new BasicDBObject("taskId", taskData.getTaskId());
 			result = collection.find(query);
 		} catch (Exception e) {
-			// TODO: handle exception
+			System.out.println(e);
 		}
 		while (result.hasNext()) {
 			return true;
 		}
 		return false;
 	}
-
 
 	@SuppressWarnings("deprecation")
 
@@ -317,21 +298,23 @@ public class ScrumDao extends connection {
 			DBCollection collection = db.getCollection("Task");
 			// String taskDateView = taskData.getTaskDate();
 			String updationTaskId = taskData.getTaskId();
-			String updationEmployeeId = taskData.getEmployeeId();
+			String updationMemberEmail = taskData.getMemberEmail();
 			BasicDBObject updateQuery = new BasicDBObject();
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 			obj.add(new BasicDBObject("taskId", updationTaskId));
-			obj.add(new BasicDBObject("employeeId", updationEmployeeId));
+			obj.add(new BasicDBObject("memberEmail", updationMemberEmail));
 			updateQuery.put("$and", obj);
 			BasicDBObject newDocument = new BasicDBObject();
 			newDocument.put("taskId", taskData.getTaskId());
-			newDocument.put("employeeId", taskData.getEmployeeId());
-			newDocument.put("taskDesc", taskData.getTaskDesc());
-			newDocument.put("impediment", taskData.getImpediment());
+			newDocument.put("memberEmail", taskData.getMemberEmail());
+			newDocument.put("description", taskData.getDescription());
+			newDocument.put("impediments", taskData.getImpediments());
 			newDocument.put("projectId", taskData.getProjectId());
 			newDocument.put("taskDate", taskData.getTaskDate());
-			newDocument.put("timeSpent", taskData.getTimeSpent());
-			newDocument.put("timeStamp", taskData.getTimeStamp());
+			newDocument.put("hourSpent", taskData.getHourSpent());
+			newDocument.put("minuteSpent", taskData.getMinuteSpent());
+			newDocument.put("taskCompleted", taskData.getTaskCompleted());
+			newDocument.put("lastEdit", taskData.getLastEdit());
 			collection.update(updateQuery, newDocument);
 			result = collection.find(updateQuery);
 		} catch (Exception e) {
@@ -350,11 +333,11 @@ public class ScrumDao extends connection {
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Task");
 			String deletionTaskId = taskData.getTaskId();
-			String deletionEmployeeId = taskData.getEmployeeId();
+			String deletionMemberEmail = taskData.getMemberEmail();
 			BasicDBObject deleteQuery = new BasicDBObject();
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 			obj.add(new BasicDBObject("taskId", deletionTaskId));
-			obj.add(new BasicDBObject("employeeId", deletionEmployeeId));
+			obj.add(new BasicDBObject("memberEmail", deletionMemberEmail));
 			deleteQuery.put("$and", obj);
 			collection.remove(deleteQuery);
 			result = collection.find(deleteQuery);
