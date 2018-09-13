@@ -35,23 +35,27 @@ public class CRUDControllerUser extends HttpServlet {
 	private void setAccessControlHeaders(HttpServletResponse resp) {
 		resp.setHeader("Access-Control-Allow-Origin", "*");
 		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+		resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.addHeader("Access-Control-Allow-Origin", "*");
-
+		// request.getHeader("token");
+//		IdTokenVerification id_verifier = new IdTokenVerification();
+//		String msg = id_verifier.processToken(request.getHeader("token"));
 		PrintWriter out = response.getWriter();
-		UsersData incomingdata = new UsersData();
+//		UsersData incomingdata = new UsersData();
+		String token ="";
 		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
-		ServletInputStream inputjson = null;
-		inputjson = request.getInputStream();
-		incomingdata = mapper.readValue(inputjson, UsersData.class);
-		System.out.println(incomingdata.getImageurl());
+//		ServletInputStream inputjson = null;
+//		inputjson = request.getInputStream();
+//		incomingdata = mapper.readValue(inputjson, UsersData.class);
+		token = request.getHeader("token");
 		UsersData user = new UsersData();
 		try {
-			user = scrum.insertUser(incomingdata);
+			user = scrum.insertUser(token);
 			String receivedUserDetails = mapper.writeValueAsString(user);
 			System.out.println(receivedUserDetails);
 			out.println(receivedUserDetails);
@@ -64,7 +68,7 @@ public class CRUDControllerUser extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
-//		response.setHeader("Access-Control-Allow-Credentials", "true");
+		// response.setHeader("Access-Control-Allow-Credentials", "true");
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 
@@ -102,7 +106,7 @@ public class CRUDControllerUser extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
 		ObjectMapper mapper = new ObjectMapper();
-		
+
 		View myView = new View();
 		Scrum scrumService = new Scrum();
 
@@ -115,8 +119,8 @@ public class CRUDControllerUser extends HttpServlet {
 
 		// number of records to be displayed in a page: from client
 		int numOfRec = 0;
-		
-		if(pagenum != 0) {
+
+		if (pagenum != 0) {
 			numOfRec = 10;
 		}
 

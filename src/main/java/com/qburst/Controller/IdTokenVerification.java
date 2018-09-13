@@ -7,13 +7,16 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken.Payload;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
+import com.qburst.Model.UsersData;
 
 public class IdTokenVerification {
 
-	public String processToken(String idTokenString) {
+	public UsersData processToken(String idTokenString) {
 		String returnVal = "";
 		NetHttpTransport transport = new NetHttpTransport();
 		GsonFactory gsonfactory = new GsonFactory();
+		UsersData user = new UsersData();
+
 
 		if (idTokenString != null && !idTokenString.equals("")) {
 			GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, gsonfactory)
@@ -26,18 +29,27 @@ public class IdTokenVerification {
 				GoogleIdToken idToken = verifier.verify(idTokenString);
 				if (idToken != null) {
 					Payload payload = idToken.getPayload();
-					returnVal = "Valid Token! User ID: " + payload.getSubject();
+
+					String id = payload.getSubject();
+					String name = (String) payload.get("name");
+					String email = payload.getEmail();
+					String imageurl = (String) payload.get("picture");
+					user.setEmployeeID(id);
+					user.setEmail(email);
+					user.setName(name);
+					user.setImageurl(imageurl);
+					user.setUserType("User");
 				} else {
-					returnVal = "Invalid ID token.";
+					System.out.println("Invalid token");
 				}
 			} catch (Exception ex) {
-				returnVal = ex.getMessage();
+				System.out.println(ex.getMessage());
 			}
 		} else {
-			returnVal = "Bad Token Passed";
+			System.out.println("Invalid token");
 		}
 
-		return returnVal;
+		return user;
 	}
 
 }

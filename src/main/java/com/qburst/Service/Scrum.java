@@ -7,15 +7,20 @@ import com.qburst.Model.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qburst.Controller.IdTokenVerification;
 import com.qburst.DAO.ProjectDao;
 import com.qburst.DAO.ScrumDao;
 
 public class Scrum extends ScrumDao {
 	private ProjectDao pdao = new ProjectDao();
 
-	public UsersData insertUser(UsersData incomingdata) throws Exception {
+	public UsersData insertUser(String token) throws Exception {
+		UsersData incomingdata = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		incomingdata = id_verifier.processToken(token);
 		UsersData user = new UsersData();
 		try {
+			
 			user = insertIntoTable(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
