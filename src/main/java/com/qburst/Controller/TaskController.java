@@ -34,6 +34,8 @@ public class TaskController extends HttpServlet {
 	private void setAccessControlHeaders(HttpServletResponse resp) {
 		resp.setHeader("Access-Control-Allow-Origin", "*");
 		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+		resp.setHeader("Access-Control-Allow-Headers",
+				"Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
 	}
 
 	@Override
@@ -55,6 +57,8 @@ public class TaskController extends HttpServlet {
 		Scrum scrumService = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
+		String token = "";
+		token = request.getHeader("token");
 
 		inputjson = request.getInputStream();
 
@@ -62,7 +66,7 @@ public class TaskController extends HttpServlet {
 		boolean result = false;
 
 		try {
-			result = scrumService.editTask(incomingData);
+			result = scrumService.editTask(incomingData,token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -77,22 +81,24 @@ public class TaskController extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
-	
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		setAccessControlHeaders(response);
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
+		String token = "";
 		TaskData incomingdata = new TaskData();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, TaskData.class);
 		System.out.println(incomingdata.getLastEdit());
+		token = request.getHeader("token");
 		boolean n = false;
 		try {
-			n = scrum.addTask(incomingdata);
+			n = scrum.addTask(incomingdata, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -113,11 +119,13 @@ public class TaskController extends HttpServlet {
 		TaskData incomingdata = new TaskData();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
+		String token = "";
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, TaskData.class);
+		token = request.getHeader("token");
 		boolean n = false;
 		try {
-			n = scrum.deleteTask(incomingdata);
+			n = scrum.deleteTask(incomingdata,token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -142,8 +150,10 @@ public class TaskController extends HttpServlet {
 		ObjectMapper mapper = new ObjectMapper();
 		List<TaskData> list = new ArrayList<TaskData>();
 		String receivedData = null;
+		String token = "";
+		token = request.getParameter("token");
 		try {
-			list = scrum.readService(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId);
+			list = scrum.readService(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId,token);
 			receivedData = mapper.writeValueAsString(list);
 		} catch (Exception e) {
 			e.printStackTrace();

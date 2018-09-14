@@ -25,37 +25,40 @@ public class ProjectController extends HttpServlet {
 	public ProjectController() {
 		super();
 	}
-	//for Preflight
-	 @Override
-	 protected void doOptions(HttpServletRequest req, HttpServletResponse resp)
-	         throws ServletException, IOException {
-	     setAccessControlHeaders(resp);
-	     resp.setStatus(HttpServletResponse.SC_OK);
-	 }
-	 private void setAccessControlHeaders(HttpServletResponse resp) {
-		 resp.setHeader("Access-Control-Allow-Origin", "*");
-		 resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
-			resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
-		 }
 
+	// for Preflight
+	@Override
+	protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		setAccessControlHeaders(resp);
+		resp.setStatus(HttpServletResponse.SC_OK);
+	}
 
+	private void setAccessControlHeaders(HttpServletResponse resp) {
+		resp.setHeader("Access-Control-Allow-Origin", "*");
+		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+		resp.setHeader("Access-Control-Allow-Headers",
+				"Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
+	}
 
 	// To add a project
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
+		String token = "";
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
 		ProjectMemberModel[] members = null;
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
+
 		inputjson = request.getInputStream();
+		token = request.getHeader("token");
 		incomingdata = mapper.readValue(inputjson, ProjectData.class);
 
 		ProjectData pdata = new ProjectData();
 		try {
-			pdata = scrum.addProject(incomingdata);
+			pdata = scrum.addProject(incomingdata, token);
 			String receivedProjectDetails = mapper.writeValueAsString(pdata);
 			out.println(receivedProjectDetails);
 		} catch (Exception e) {
@@ -73,16 +76,18 @@ public class ProjectController extends HttpServlet {
 		response.addHeader("Access-Control-Allow-Origin", "*");
 
 		setAccessControlHeaders(response);
-	    PrintWriter out = response.getWriter();
+		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
+		String token = "";
 		ProjectData incomingdata = new ProjectData();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
+		token = request.getHeader("token");
 		inputjson = request.getInputStream();
 		incomingdata = mapper.readValue(inputjson, ProjectData.class);
 		boolean n = false;
 		try {
-			n = scrum.editProject(incomingdata);
+			n = scrum.editProject(incomingdata, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -98,22 +103,24 @@ public class ProjectController extends HttpServlet {
 	@Override
 	protected void doDelete(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-    	setAccessControlHeaders(response);
+		setAccessControlHeaders(response);
 		// TODO Auto-generated method stub
 		PrintWriter out = response.getWriter();
 		String projectId = request.getParameter("projectId");
 		System.out.println("Hello");
 		System.out.println(projectId);
+		String token = "";
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
-//		inputjson = request.getInputStream();
-//		incomingdata = mapper.readValue(inputjson, ProjectData.class);
+		token = request.getHeader("token");
+		// inputjson = request.getInputStream();
+		// incomingdata = mapper.readValue(inputjson, ProjectData.class);
 		boolean n = false;
 		try {
 			System.out.println("Iam going");
-			n = scrum.deleteProject(projectId);
+			n = scrum.deleteProject(projectId, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -124,18 +131,16 @@ public class ProjectController extends HttpServlet {
 		}
 	}
 
-
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
-		String token ="";
+		String token = "";
 
 		setAccessControlHeaders(response);
-//		String memberEmail = request.getParameter("memberEmail");
+		// String memberEmail = request.getParameter("memberEmail");
 
 		token = request.getHeader("token");
 		Scrum scrum = new Scrum();
@@ -150,7 +155,7 @@ public class ProjectController extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("Projects \n"+projectlist);
+		System.out.println("Projects \n" + projectlist);
 		out.println(projects);
 	}
 }
