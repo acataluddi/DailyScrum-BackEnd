@@ -35,6 +35,7 @@ public class ProjectController extends HttpServlet {
 	 private void setAccessControlHeaders(HttpServletResponse resp) {
 		 resp.setHeader("Access-Control-Allow-Origin", "*");
 		 resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
+			resp.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
 		 }
 
 
@@ -131,22 +132,25 @@ public class ProjectController extends HttpServlet {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
 		PrintWriter out = response.getWriter();
+		String token ="";
 
 		setAccessControlHeaders(response);
-		String memberEmail = request.getParameter("memberEmail");
+//		String memberEmail = request.getParameter("memberEmail");
 
+		token = request.getHeader("token");
 		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		String projects = null;
 		try {
 
-			projectlist = scrum.readProjectService(memberEmail);
+			projectlist = scrum.readProjectService(token);
 
 			projects = mapper.writeValueAsString(projectlist);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Projects \n"+projectlist);
 		out.println(projects);
 	}
 }

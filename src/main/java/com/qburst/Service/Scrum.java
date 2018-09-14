@@ -20,7 +20,7 @@ public class Scrum extends ScrumDao {
 		incomingdata = id_verifier.processToken(token);
 		UsersData user = new UsersData();
 		try {
-			
+
 			user = insertIntoTable(incomingdata);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -56,7 +56,7 @@ public class Scrum extends ScrumDao {
 		boolean result = false;
 		try {
 
-//			result = subtractProject(incomingdata);
+			// result = subtractProject(incomingdata);
 
 			result = this.pdao.deleteProject(incomingdata);
 		} catch (Exception e) {
@@ -79,15 +79,49 @@ public class Scrum extends ScrumDao {
 	}
 
 	// To read all projects
-	public List<ProjectData> readProjectService(String memberEmail) {
+	public List<ProjectData> readProjectService(String token) {
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
+		UsersData user = new UsersData();
+		String project_param = "";
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if(user!=null) {
+			try {
+
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}			
+		}
+		System.out.println("In get projects");
+		System.out.println("User type "+user.getUserType());
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			project_param = "getall";
+			System.out.println("if Project param"+project_param);
+		} else {
+			if (user.getEmail() != "") {
+				project_param = user.getEmail();
+			} else {
+				project_param = "";
+			}
+			System.out.println("Else Project param"+project_param);
+		}
 		try {
-			projectlist = this.pdao.getProjects(memberEmail);
+			projectlist = this.pdao.getProjects(project_param);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 		return projectlist;
 	}
+	// public List<ProjectData> readProjectService(String memberEmail) {
+	// List<ProjectData> projectlist = new ArrayList<ProjectData>();
+	// try {
+	// projectlist = this.pdao.getProjects(memberEmail);
+	// } catch (Exception e) {
+	// System.out.println(e);
+	// }
+	// return projectlist;
+	// }
 
 	public View read(View viewInfo) throws Exception {
 		View mv = new View();
