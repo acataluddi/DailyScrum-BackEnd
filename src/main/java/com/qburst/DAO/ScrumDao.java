@@ -88,33 +88,6 @@ public class ScrumDao extends connection {
 
 	}
 
-	// Neeraj: Code for delete Project
-//	@SuppressWarnings("deprecation")
-//	public boolean subtractProject(String projectData) throws Exception {
-//		DB db;
-//		DBCursor result = null;
-//		try {
-//
-//			MongoClient mongo = databaseConnection();
-//			db = mongo.getDB("Scrum");
-//			DBCollection collection = db.getCollection("Project");
-//			String deletionProjectId = projectData.getProjectId();
-//			BasicDBObject deleteQuery = new BasicDBObject();
-//			System.out.println("ScrumDAO");
-//			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
-//			obj.add(new BasicDBObject("projectId", projectData));
-//			deleteQuery.put("$and", obj);
-//			collection.remove(deleteQuery);
-//			System.out.println("Project Deleted");
-//			result = collection.find(deleteQuery);
-//			while (result.hasNext()) {
-//				return false;
-//			}
-//		} catch (Exception e) {
-//		}
-//		return true;
-//	}
-
 	@SuppressWarnings("deprecation")
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;

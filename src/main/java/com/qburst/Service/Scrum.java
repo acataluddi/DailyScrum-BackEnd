@@ -1,120 +1,190 @@
 package com.qburst.Service;
 
-import com.qburst.Model.ProjectData;
-import com.qburst.Model.TaskData;
-import com.qburst.Model.UsersData;
-import com.qburst.Model.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.qburst.Controller.IdTokenVerification;
 import com.qburst.DAO.ProjectDao;
 import com.qburst.DAO.ScrumDao;
+import com.qburst.Model.ProjectData;
+import com.qburst.Model.TaskData;
+import com.qburst.Model.UsersData;
 
 public class Scrum extends ScrumDao {
 	private ProjectDao pdao = new ProjectDao();
 
-	public UsersData insertUser(UsersData incomingdata) throws Exception {
+	public UsersData insertUser(String token) throws Exception {
+		UsersData incomingdata = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		incomingdata = id_verifier.processToken(token);
 		UsersData user = new UsersData();
-		try {
-			user = insertIntoTable(incomingdata);
-		} catch (Exception e) {
-			System.out.println(e);
+		System.out.println("The user id" + incomingdata.getEmployeeID());
+		if (incomingdata.getEmployeeID() != null) {
+			try {
+
+				user = insertIntoTable(incomingdata);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return user;
 	}
 
-	public UsersData update(UsersData usersData) throws Exception {
+	public UsersData update(UsersData usersData, String token) throws Exception {
 
 		UsersData UserUpdate = new UsersData();
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
 
-		try {
-			UserUpdate = userTypeUpdate(usersData);
-		} catch (Exception e) {
-			System.out.println(e);
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			try {
+				UserUpdate = userTypeUpdate(usersData);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return UserUpdate;
 	}
 
 	// To add Project
-	public ProjectData addProject(ProjectData incomingdata) throws Exception {
-		ProjectData result = null;
-		try {
-			result = this.pdao.insertProject(incomingdata);
-		} catch (Exception e) {
-			System.out.println(e);
+	public ProjectData addProject(ProjectData incomingdata, String token) throws Exception {
+		ProjectData result = new ProjectData();
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
+
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			try {
+				result = this.pdao.insertProject(incomingdata);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return result;
 	}
 
 	// To delete Project
-	public boolean deleteProject(String incomingdata) throws Exception {
+	public boolean deleteProject(String incomingdata, String token) throws Exception {
 		boolean result = false;
-		try {
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
 
-//			result = subtractProject(incomingdata);
-
-			result = this.pdao.deleteProject(incomingdata);
-		} catch (Exception e) {
-			System.out.println(e);
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			try {
+				result = this.pdao.deleteProject(incomingdata);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return result;
 	}
 
 	// To edit Project
-	public boolean editProject(ProjectData incomingdata) throws Exception {
+	public boolean editProject(ProjectData incomingdata, String token) throws Exception {
 		boolean result = false;
-		try {
-			result = this.pdao.updateProject(incomingdata);
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
 
-		} catch (Exception e) {
-			System.out.println(e);
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			try {
+				result = this.pdao.updateProject(incomingdata);
+
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 
 		return result;
 	}
 
 	// To read all projects
-	public List<ProjectData> readProjectService(String memberEmail) {
+	public List<ProjectData> readProjectService(String token) {
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
+		UsersData user = new UsersData();
+		String project_param = "";
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		System.out.println("In get projects");
+		System.out.println("User type " + user.getUserType());
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			project_param = "getall";
+			System.out.println("if Project param" + project_param);
+		} else {
+			if (user.getEmail() != "") {
+				project_param = user.getEmail();
+			} else {
+				project_param = "";
+			}
+			System.out.println("Else Project param" + project_param);
+		}
 		try {
-			projectlist = this.pdao.getProjects(memberEmail);
+			projectlist = this.pdao.getProjects(project_param);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 		return projectlist;
 	}
 
-	public View read(View viewInfo) throws Exception {
-		View mv = new View();
-		try {
-			int page_id = viewInfo.getPageid();
-			switch (page_id) {
-			case 1:
-				mv.setProjectNames(readProjectNames());
-				mv.setEmployeeData(readEmployeeData());
-				break;
+	public List<UsersData> readUserService(int pagenum, int numOfRec, String token) {
+		List<UsersData> usersList = new ArrayList<UsersData>();
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
 
-			case 2:
-				mv.setProjectNames(readProjectNames());
-				mv.setYesterdayTask(readYesterdayTask());
-				mv.setTodayTask(readTodayTask());
-				break;
-			case 3:
-				// View UserList
-				int pagenum = viewInfo.getPagenum();
-				int num_of_rec = viewInfo.getNum_of_rec();
-				mv.setEmployeeData(readUserList(pagenum, num_of_rec));
-				break;
-			default:
-				mv.setProjectMemberData(readProjectMemberData());
-				mv.setProjectNames(readProjectNames());
-				mv.setYesterdayTask(readYesterdayTask());
-				mv.setTodayTask(readTodayTask());
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
 			}
-		} catch (Exception e) {
-			throw new Exception();
 		}
-		return mv;
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")
+				|| user.getUserType().equals("User")) {
+			try {
+				usersList = readUserList(pagenum, numOfRec);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		return usersList;
 	}
 
 	public boolean loggingin(UsersData incomingdata) throws Exception {
@@ -127,44 +197,100 @@ public class Scrum extends ScrumDao {
 		return op;
 	}
 
-	public boolean addTask(TaskData incomingdata) throws Exception {
+	public boolean addTask(TaskData incomingdata, String token) throws Exception {
 		boolean result = false;
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
 
-		try {
-			result = insertTask(incomingdata);
-		} catch (Exception e) {
-			System.out.println(e);
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")
+				|| user.getUserType().equals("User")) {
+			try {
+				result = insertTask(incomingdata);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return result;
 	}
 
-	public boolean editTask(TaskData incomingdata) throws Exception {
+	public boolean editTask(TaskData incomingdata, String token) throws Exception {
 		boolean result = false;
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
 
-		try {
-			result = updateTask(incomingdata);
-		} catch (Exception e) {
-			System.out.println(e);
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")
+				|| user.getUserType().equals("User")) {
+
+			try {
+				result = updateTask(incomingdata);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return result;
 	}
 
-	public boolean deleteTask(TaskData incomingdata) throws Exception {
+	public boolean deleteTask(TaskData incomingdata, String token) throws Exception {
 		boolean result = false;
-		try {
-			result = subtractTask(incomingdata);
-		} catch (Exception e) {
-			System.out.println(e);
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
+
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")
+				|| user.getUserType().equals("User")) {
+			try {
+				result = subtractTask(incomingdata);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return result;
 	}
 
-	public List<TaskData> readService(String viewTaskDate, String viewTaskMemberEmail, String viewTaskProjectId) {
+	public List<TaskData> readService(String viewTaskDate, String viewTaskMemberEmail, String viewTaskProjectId,
+			String token) {
 		List<TaskData> list = new ArrayList<TaskData>();
-		try {
-			list = readTaskList(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId);
-		} catch (Exception e) {
-			System.out.println(e);
+		UsersData user = new UsersData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
+
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")
+				|| user.getUserType().equals("User")) {
+			try {
+				list = readTaskList(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
 		}
 		return list;
 	}
