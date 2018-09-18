@@ -63,6 +63,7 @@ public class CRUDControllerUser extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		String token = "";
 		Scrum scrum = new Scrum();
@@ -98,6 +99,7 @@ public class CRUDControllerUser extends HttpServlet {
 			* Retrieve Users List
 			*/
 			response.addHeader("Access-Control-Allow-Origin", "*");
+			setAccessControlHeaders(response);
 			PrintWriter out = response.getWriter();
 			ObjectMapper mapper = new ObjectMapper();
 			String token = "";

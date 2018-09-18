@@ -44,7 +44,6 @@ public class ProjectDao extends connection {
 			if (result.hasNext()) {
 				pdata = result.next();
 				return pdata;
-
 			};
 			coll.insert(projectData);
 			result = coll.find().is("projectId", projectData.getProjectId());

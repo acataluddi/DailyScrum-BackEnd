@@ -7,6 +7,7 @@ import com.qburst.Controller.IdTokenVerification;
 import com.qburst.DAO.ProjectDao;
 import com.qburst.DAO.ScrumDao;
 import com.qburst.Model.ProjectData;
+import com.qburst.Model.ProjectMemberModel;
 import com.qburst.Model.TaskData;
 import com.qburst.Model.UsersData;
 
@@ -62,7 +63,6 @@ public class Scrum extends ScrumDao {
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
-
 				user = insertIntoTable(user);
 			} catch (Exception e) {
 				System.out.println(e);
@@ -70,6 +70,19 @@ public class Scrum extends ScrumDao {
 		}
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
+				ProjectMemberModel[] members = incomingdata.getMembers();
+				for (int i = 0; i < members.length; i++) {
+					UsersData current_user = new UsersData();
+					current_user = getIndividualUser(members[i].getemail());
+					if(current_user.getName()==null) {
+						members[i].setname("");
+						members[i].setimage("https://image.flaticon.com/icons/svg/146/146007.svg");
+					} else {
+						members[i].setname(current_user.getName());
+						members[i].setimage(current_user.getImageurl());
+					}
+				}
+				incomingdata.setMembers(members);
 				result = this.pdao.insertProject(incomingdata);
 			} catch (Exception e) {
 				System.out.println(e);
@@ -118,6 +131,19 @@ public class Scrum extends ScrumDao {
 		}
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
+				ProjectMemberModel[] members = incomingdata.getMembers();
+				for (int i = 0; i < members.length; i++) {
+					UsersData current_user = new UsersData();
+					current_user = getIndividualUser(members[i].getemail());
+					if(current_user.getName()==null) {
+						members[i].setname("");
+						members[i].setimage("https://image.flaticon.com/icons/svg/146/146007.svg");
+					} else {
+						members[i].setname(current_user.getName());
+						members[i].setimage(current_user.getImageurl());
+					}
+				}
+				incomingdata.setMembers(members);
 				result = this.pdao.updateProject(incomingdata);
 
 			} catch (Exception e) {
@@ -144,11 +170,11 @@ public class Scrum extends ScrumDao {
 		}
 		System.out.println("In get projects");
 		System.out.println("User type " + user.getUserType());
-		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+		if (user.getUserType().equals("Admin")) {
 			project_param = "getall";
 			System.out.println("if Project param" + project_param);
 		} else {
-			if (user.getEmail() != "") {
+			if (user.getEmail() != "" && (user.getUserType().equals("Manager") || user.getUserType().equals("User"))) {
 				project_param = user.getEmail();
 			} else {
 				project_param = "";
@@ -185,16 +211,6 @@ public class Scrum extends ScrumDao {
 			}
 		}
 		return usersList;
-	}
-
-	public boolean loggingin(UsersData incomingdata) throws Exception {
-		boolean op = false;
-		try {
-			op = login(incomingdata);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return op;
 	}
 
 	public boolean addTask(TaskData incomingdata, String token) throws Exception {
