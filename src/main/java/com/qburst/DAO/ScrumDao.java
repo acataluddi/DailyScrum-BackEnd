@@ -83,9 +83,33 @@ public class ScrumDao extends connection {
 		while (result.hasNext()) {
 			return user;
 		}
-
 		return user;
+	}
 
+	@SuppressWarnings("deprecation")
+	public UsersData getIndividualUser(String email) throws Exception {
+		DB db;
+		UsersData user = new UsersData();
+		try {
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection table = db.getCollection("Employee");
+			DBObject query = new BasicDBObject("Email", email);
+			DBCursor result = table.find(query);
+			while (result.hasNext()) {
+				List<DBObject> cursor = result.toArray();
+				BasicDBObject userObj = (BasicDBObject) cursor.get(0);
+				String Name = userObj.getString("Name");
+				String Email = userObj.getString("Email");
+				String imageURL = userObj.getString("imageurl");
+				user.setName(Name);
+				user.setEmail(Email);
+				user.setImageurl(imageURL);
+				return user;
+			}
+		} catch (Exception e) {
+		}
+		return user;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -193,38 +217,6 @@ public class ScrumDao extends connection {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
-	}
-
-	public UsersData MemberTaskUpdate(UsersData usersData) throws SQLException {
-		return null;
-	}
-
-	public List<ProjectData> readProjectNames() throws SQLException {
-		return null;
-	}
-
-	public List<UsersData> readEmployeeData() throws SQLException {
-		return null;
-	}
-
-	public List<ProjectData> readProjectMemberData() throws SQLException {
-		return null;
-	}
-
-	public List<TaskData> readYesterdayTask() throws SQLException {
-		return null;
-	}
-
-	public List<TaskData> readTodayTask() throws SQLException {
-		return null;
-	}
-
-	public boolean login(UsersData usersData) {
-		return false;
-	}
-
-	public List<UsersData> readData(int n) throws SQLException {
 		return null;
 	}
 

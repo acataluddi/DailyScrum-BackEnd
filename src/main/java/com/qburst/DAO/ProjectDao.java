@@ -3,7 +3,6 @@ package com.qburst.DAO;
 import java.util.ArrayList;
 import java.util.List;
 
-
 import org.bson.Document;
 
 import org.mongojack.DBCursor;
@@ -44,8 +43,8 @@ public class ProjectDao extends connection {
 			if (result.hasNext()) {
 				pdata = result.next();
 				return pdata;
-
-			};
+			}
+			;
 			coll.insert(projectData);
 			result = coll.find().is("projectId", projectData.getProjectId());
 			if (result.hasNext()) {
@@ -56,7 +55,6 @@ public class ProjectDao extends connection {
 		}
 		return null;
 	}
-
 
 	@SuppressWarnings("deprecation")
 	public List<ProjectData> getProjects(String memberEmail) throws Exception {
@@ -74,11 +72,10 @@ public class ProjectDao extends connection {
 			DBObject query = new BasicDBObject("members.email", memberEmail);
 			memberEmail = memberEmail.trim();
 			DBCursor<ProjectData> result;
-			if(memberEmail.equals("getall")) { 
-				result = coll.find();				
-			}
-			else {
-				result = coll.find(query);				
+			if (memberEmail.equals("getall")) {
+				result = coll.find();
+			} else {
+				result = coll.find(query);
 			}
 			while (result.hasNext()) {
 				pdata = result.next();
@@ -91,7 +88,6 @@ public class ProjectDao extends connection {
 		return projectlist;
 	}
 
-
 	@SuppressWarnings("deprecation")
 	public boolean deleteProject(String incomingdata) throws Exception {
 		DB db;
@@ -101,7 +97,7 @@ public class ProjectDao extends connection {
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Project");
-//			String deletionProjectId = projectData.getProjectId();
+			// String deletionProjectId = projectData.getProjectId();
 			BasicDBObject deleteQuery = new BasicDBObject();
 			System.out.println("ScrumDAO");
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
@@ -117,8 +113,6 @@ public class ProjectDao extends connection {
 		}
 		return true;
 	}
-	
-	
 
 	@SuppressWarnings("deprecation")
 	public boolean updateProject(ProjectData projectData) throws Exception {
@@ -135,6 +129,5 @@ public class ProjectDao extends connection {
 		}
 		return true;
 	}
-
 
 }

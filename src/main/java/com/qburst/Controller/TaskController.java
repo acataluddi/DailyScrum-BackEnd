@@ -66,7 +66,7 @@ public class TaskController extends HttpServlet {
 		boolean result = false;
 
 		try {
-			result = scrumService.editTask(incomingData,token);
+			result = scrumService.editTask(incomingData, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -125,7 +125,7 @@ public class TaskController extends HttpServlet {
 		token = request.getHeader("token");
 		boolean n = false;
 		try {
-			n = scrum.deleteTask(incomingdata,token);
+			n = scrum.deleteTask(incomingdata, token);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -153,7 +153,7 @@ public class TaskController extends HttpServlet {
 		String token = "";
 		token = request.getParameter("token");
 		try {
-			list = scrum.readService(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId,token);
+			list = scrum.readService(viewTaskDate, viewTaskMemberEmail, viewTaskProjectId, token);
 			receivedData = mapper.writeValueAsString(list);
 		} catch (Exception e) {
 			e.printStackTrace();
