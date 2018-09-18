@@ -10,7 +10,6 @@ public class ProjectData {
 	private String projectId;
 
 	private String projectName, projectDesc;
-	// private String members[];
 
 	@JsonProperty("members")
 	ProjectMemberModel[] members;

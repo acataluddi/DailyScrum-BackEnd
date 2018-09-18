@@ -17,12 +17,11 @@ public class IdTokenVerification {
 		GsonFactory gsonfactory = new GsonFactory();
 		UsersData user = new UsersData();
 
-
 		if (idTokenString != null && !idTokenString.equals("")) {
 			GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(transport, gsonfactory)
 					.setAudience(Collections
 							.singletonList("967649209783-pi515k1vmqr1igmq535chm1o32hb7fet.apps.googleusercontent.com"))
-							.build();
+					.build();
 			try {
 				GoogleIdToken idToken = verifier.verify(idTokenString);
 				if (idToken != null) {

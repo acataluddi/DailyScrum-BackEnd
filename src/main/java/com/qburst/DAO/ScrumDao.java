@@ -85,7 +85,7 @@ public class ScrumDao extends connection {
 		}
 		return user;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public UsersData getIndividualUser(String email) throws Exception {
 		DB db;
@@ -219,7 +219,7 @@ public class ScrumDao extends connection {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public boolean insertTask(TaskData taskData) throws Exception {
 

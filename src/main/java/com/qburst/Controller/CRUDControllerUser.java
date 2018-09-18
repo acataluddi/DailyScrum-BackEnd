@@ -47,7 +47,7 @@ public class CRUDControllerUser extends HttpServlet {
 		Scrum scrum = new Scrum();
 		ObjectMapper mapper = new ObjectMapper();
 		token = request.getHeader("token");
-		System.out.println("token is "+ token);
+		System.out.println("token is " + token);
 		UsersData user = new UsersData();
 		try {
 			user = scrum.insertUser(token);
@@ -95,40 +95,39 @@ public class CRUDControllerUser extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-			/*
-			* Retrieve Users List
-			*/
-			response.addHeader("Access-Control-Allow-Origin", "*");
-			setAccessControlHeaders(response);
-			PrintWriter out = response.getWriter();
-			ObjectMapper mapper = new ObjectMapper();
-			String token = "";
-			token = request.getHeader("token");
+		/*
+		 * Retrieve Users List
+		 */
+		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
+		PrintWriter out = response.getWriter();
+		ObjectMapper mapper = new ObjectMapper();
+		String token = "";
+		token = request.getHeader("token");
 
+		Scrum scrumService = new Scrum();
 
-			Scrum scrumService = new Scrum();
+		List<UsersData> userlist = new ArrayList<UsersData>();
+		String outputRecords = null;
 
-			List<UsersData> userlist = new ArrayList<UsersData>();
-			String outputRecords =null;
+		String spagenum = request.getParameter("page");
+		int pagenum = Integer.parseInt(spagenum);
 
-			String spagenum = request.getParameter("page");
-			int pagenum = Integer.parseInt(spagenum);
+		int numOfRec = 0;
 
-			int numOfRec = 0;
-
-			if(pagenum != 0) {
+		if (pagenum != 0) {
 			numOfRec = 10;
-			}
-			try {
-			userlist = scrumService.readUserService(pagenum, numOfRec,token);
+		}
+		try {
+			userlist = scrumService.readUserService(pagenum, numOfRec, token);
 			outputRecords = mapper.writeValueAsString(userlist);
-			} catch (Exception e) {
+		} catch (Exception e) {
 
-			}
+		}
 
-			System.out.println(outputRecords);
-			out.print(outputRecords);
+		System.out.println(outputRecords);
+		out.print(outputRecords);
 
-			out.close();
-			}
+		out.close();
+	}
 }

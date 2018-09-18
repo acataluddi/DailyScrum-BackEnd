@@ -13,7 +13,6 @@ public class TaskData {
 	private int hourSpent;
 	private int minuteSpent;
 
-
 	private boolean taskCompleted;
 
 	public String getTaskId() {
@@ -95,6 +94,5 @@ public class TaskData {
 	public void setLastEdit(String lastEdit) {
 		this.lastEdit = lastEdit;
 	}
-
 
 }

@@ -74,7 +74,7 @@ public class Scrum extends ScrumDao {
 				for (int i = 0; i < members.length; i++) {
 					UsersData current_user = new UsersData();
 					current_user = getIndividualUser(members[i].getemail());
-					if(current_user.getName()==null) {
+					if (current_user.getName() == null) {
 						members[i].setname("");
 						members[i].setimage("https://image.flaticon.com/icons/svg/146/146007.svg");
 					} else {
@@ -135,7 +135,7 @@ public class Scrum extends ScrumDao {
 				for (int i = 0; i < members.length; i++) {
 					UsersData current_user = new UsersData();
 					current_user = getIndividualUser(members[i].getemail());
-					if(current_user.getName()==null) {
+					if (current_user.getName() == null) {
 						members[i].setname("");
 						members[i].setimage("https://image.flaticon.com/icons/svg/146/146007.svg");
 					} else {
