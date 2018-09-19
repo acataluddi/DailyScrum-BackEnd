@@ -130,4 +130,27 @@ public class ProjectDao extends connection {
 		return true;
 	}
 
+	@SuppressWarnings("deprecation")
+	public ProjectData getIndividualProject(String projectId) throws Exception {
+
+		DB db;
+		ProjectData pdata = new ProjectData();
+		try {
+			MongoClient mongo = databaseConnection();
+			db = mongo.getDB("Scrum");
+			DBCollection table = db.getCollection("Project");
+			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
+					Object.class);
+			DBObject query = new BasicDBObject("projectId", projectId);
+			DBCursor<ProjectData> result;
+			result = coll.find(query);
+			while (result.hasNext()) {
+				pdata = result.next();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return pdata;
+	}
+
 }

@@ -9,6 +9,7 @@ import com.qburst.DAO.ScrumDao;
 import com.qburst.Model.ProjectData;
 import com.qburst.Model.ProjectMemberModel;
 import com.qburst.Model.TaskData;
+import com.qburst.Model.TaskMember;
 import com.qburst.Model.UsersData;
 
 public class Scrum extends ScrumDao {
@@ -168,18 +169,14 @@ public class Scrum extends ScrumDao {
 				System.out.println(e);
 			}
 		}
-		System.out.println("In get projects");
-		System.out.println("User type " + user.getUserType());
 		if (user.getUserType().equals("Admin")) {
 			project_param = "getall";
-			System.out.println("if Project param" + project_param);
 		} else {
 			if (user.getEmail() != "" && (user.getUserType().equals("Manager") || user.getUserType().equals("User"))) {
 				project_param = user.getEmail();
 			} else {
 				project_param = "";
 			}
-			System.out.println("Else Project param" + project_param);
 		}
 		try {
 			projectlist = this.pdao.getProjects(project_param);
@@ -311,4 +308,50 @@ public class Scrum extends ScrumDao {
 		return list;
 	}
 
+	public List<TaskMember> taskPageService(String viewTaskDate, String viewTaskProjectId, String token) {
+		UsersData user = new UsersData();
+		ProjectData pdata = new ProjectData();
+		IdTokenVerification id_verifier = new IdTokenVerification();
+		List<TaskMember> taskList = new ArrayList<TaskMember>();
+		user = id_verifier.processToken(token);
+		if (user.getEmployeeID() != null) {
+			try {
+				user = insertIntoTable(user);
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
+			try {
+				pdata = this.pdao.getIndividualProject(viewTaskProjectId);
+				ProjectMemberModel[] members;
+				members = pdata.getMembers();
+				for(int i=0;i<members.length;i++) {
+					TaskMember tmember = new TaskMember();
+					List<TaskData> tasklist = new ArrayList<TaskData>();
+					int totalHour=0;
+					int totalMinute=0;
+					tmember.setName(members[i].getname());
+					tmember.setEmail(members[i].getemail());
+					tmember.setImage(members[i].getimage());
+					tmember.setRole(members[i].getrole());
+					tasklist = readTaskList(viewTaskDate, members[i].getemail(), viewTaskProjectId);
+					TaskData[] tasks = new TaskData[tasklist.size()];
+					tasks = tasklist.toArray(tasks);
+					tmember.setTasks(tasks);
+					for(int j=0;j<tasks.length;j++) {
+						totalHour+=tasks[j].getHourSpent();
+						totalMinute+=tasks[j].getMinuteSpent();
+					}
+					tmember.setHour(totalHour);
+					tmember.setMinute(totalMinute);
+					taskList.add(tmember);
+				}
+				return taskList;
+			} catch (Exception e) {
+				System.out.println(e);
+			}
+		}
+		return taskList;
+	}
 }
