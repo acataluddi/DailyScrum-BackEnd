@@ -72,6 +72,7 @@ public class Scrum extends ScrumDao {
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
 				ProjectMemberModel[] members = incomingdata.getMembers();
+				SendEmailService mailService = new SendEmailService();
 				for (int i = 0; i < members.length; i++) {
 					UsersData current_user = new UsersData();
 					current_user = getIndividualUser(members[i].getemail());
@@ -82,6 +83,7 @@ public class Scrum extends ScrumDao {
 						members[i].setname(current_user.getName());
 						members[i].setimage(current_user.getImageurl());
 					}
+					mailService.sendEmail(members[i], incomingdata.getProjectName(), user.getName());
 				}
 				incomingdata.setMembers(members);
 				result = this.pdao.insertProject(incomingdata);
@@ -120,19 +122,24 @@ public class Scrum extends ScrumDao {
 	public boolean editProject(ProjectData incomingdata, String token) throws Exception {
 		boolean result = false;
 		UsersData user = new UsersData();
+		SendEmailService mailService = new SendEmailService();
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
-
 				user = insertIntoTable(user);
 			} catch (Exception e) {
 				System.out.println(e);
 			}
 		}
+		String pid = incomingdata.getProjectId();
+		ProjectData current_project = this.pdao.getIndividualProject(pid);
+		ProjectMemberModel[] current_members = current_project.getMembers();
+		ProjectMemberModel[] members = incomingdata.getMembers();
+		
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
-				ProjectMemberModel[] members = incomingdata.getMembers();
+
 				for (int i = 0; i < members.length; i++) {
 					UsersData current_user = new UsersData();
 					current_user = getIndividualUser(members[i].getemail());
@@ -144,6 +151,23 @@ public class Scrum extends ScrumDao {
 						members[i].setimage(current_user.getImageurl());
 					}
 				}
+				
+				//send mail to new member
+				if (members.length > current_members.length) {
+					for (int i = 0; i < members.length; i++) {
+						int count = 0;
+						for (int j = 0; j < current_members.length; j++) {
+							if (members[i].getemail().equals(current_members[j].getemail())) {
+								count++;
+							}					
+						}
+						if (count == 0) {
+							System.out.println("new mem " +members[i].getemail());
+							mailService.sendEmail(members[i], incomingdata.getProjectName(), user.getName());
+						}
+					}
+				}
+				
 				incomingdata.setMembers(members);
 				result = this.pdao.updateProject(incomingdata);
 
@@ -326,11 +350,11 @@ public class Scrum extends ScrumDao {
 				pdata = this.pdao.getIndividualProject(viewTaskProjectId);
 				ProjectMemberModel[] members;
 				members = pdata.getMembers();
-				for(int i=0;i<members.length;i++) {
+				for (int i = 0; i < members.length; i++) {
 					TaskMember tmember = new TaskMember();
 					List<TaskData> tasklist = new ArrayList<TaskData>();
-					int totalHour=0;
-					int totalMinute=0;
+					int totalHour = 0;
+					int totalMinute = 0;
 					tmember.setName(members[i].getname());
 					tmember.setEmail(members[i].getemail());
 					tmember.setImage(members[i].getimage());
@@ -339,9 +363,9 @@ public class Scrum extends ScrumDao {
 					TaskData[] tasks = new TaskData[tasklist.size()];
 					tasks = tasklist.toArray(tasks);
 					tmember.setTasks(tasks);
-					for(int j=0;j<tasks.length;j++) {
-						totalHour+=tasks[j].getHourSpent();
-						totalMinute+=tasks[j].getMinuteSpent();
+					for (int j = 0; j < tasks.length; j++) {
+						totalHour += tasks[j].getHourSpent();
+						totalMinute += tasks[j].getMinuteSpent();
 					}
 					tmember.setHour(totalHour);
 					tmember.setMinute(totalMinute);
