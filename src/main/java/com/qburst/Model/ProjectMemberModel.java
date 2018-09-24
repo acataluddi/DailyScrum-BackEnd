@@ -1,7 +1,9 @@
 package com.qburst.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ProjectMemberModel {
 	@JsonProperty("email")
 	private String email;
