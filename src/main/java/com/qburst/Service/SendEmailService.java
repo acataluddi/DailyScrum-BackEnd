@@ -46,14 +46,13 @@ public class SendEmailService {
 			});
 
 			Message message = new MimeMessage(session);
-			message.setFrom(new InternetAddress("nishaantony97@gmail.com"));
+			message.setFrom(new InternetAddress(fromID));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(CC));
 			message.setSubject("Allocation Update");
-			message.setText("Hi " + name + "," + "\n\n You have been added as a " + member.getrole() + " by " + assignee
-					+ " in the " + projectName
-					+ ". If you have any questions/concerns, please feel free to talk to your reporting manager. ");
-
+			message.setText("Hi " + name + "," + "\n\nYou have been allocated to  " + projectName+ " project as "
+				+	member.getrole() + " by " + assignee +". \n\nIf you have any questions/concerns, "
+				+ "please feel free to talk to your reporting manager. " + "\n\nThanks,\nDaily Scrum");
 			Transport.send(message);
 
 			System.out.println("Done");
