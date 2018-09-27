@@ -274,6 +274,20 @@ public class Scrum extends ScrumDao {
 		}
 		try {
 			projectlist = this.pdao.getProjects(project_param);
+			if (user.getEmail() != "" && (user.getUserType().equals("User"))) {
+				Iterator<ProjectData> itr = projectlist.iterator();
+				ProjectMemberModel[] current_members;
+				while (itr.hasNext()) {
+					ProjectData project = (ProjectData)itr.next();
+					current_members = project.getMembers();
+					for (int i = 0; i < current_members.length; i++) {
+						if (current_members[i].getIsActive()==false) {
+							itr.remove();
+							break;
+						}
+					}
+				}
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
