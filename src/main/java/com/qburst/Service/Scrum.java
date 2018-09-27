@@ -24,11 +24,27 @@ public class Scrum extends ScrumDao {
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		incomingdata = id_verifier.processToken(token);
 		UsersData user = new UsersData();
-		System.out.println("The user id" + incomingdata.getEmployeeID());
+		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		if (incomingdata.getEmployeeID() != null) {
 			try {
 
 				user = insertIntoTable(incomingdata);
+				projectlist = this.pdao.getProjects(user.getEmail());
+				Iterator<ProjectData> itr = projectlist.iterator();
+				ProjectMemberModel[] current_members;
+				while (itr.hasNext()) {
+					ProjectData project = (ProjectData)itr.next();
+					current_members = project.getMembers();
+					for (int i = 0; i < current_members.length; i++) {
+						if (current_members[i].getemail().equals(user.getEmail())) {
+							current_members[i].setname(user.getName());
+							current_members[i].setimage(user.getImageurl());
+							break;
+						}
+					}
+					project.setMembers(current_members);
+					this.pdao.updateProject(project);
+				}
 			} catch (Exception e) {
 				System.out.println(e);
 			}
