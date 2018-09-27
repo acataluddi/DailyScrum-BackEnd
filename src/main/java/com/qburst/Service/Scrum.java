@@ -60,6 +60,7 @@ public class Scrum extends ScrumDao {
 	public ProjectData addProject(ProjectData incomingdata, String token) throws Exception {
 		ProjectData result = new ProjectData();
 		UsersData user = new UsersData();
+		
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
@@ -83,7 +84,9 @@ public class Scrum extends ScrumDao {
 						members[i].setname(current_user.getName());
 						members[i].setimage(current_user.getImageurl());
 					}
-					mailService.sendEmail(members[i], incomingdata.getProjectName(), user.getName());
+					
+					MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user.getName());
+					mailthread.start();
 				}
 				incomingdata.setMembers(members);
 				result = this.pdao.insertProject(incomingdata);
@@ -163,7 +166,8 @@ public class Scrum extends ScrumDao {
 						}
 						if (count == 0) {
 							System.out.println("new mem " +members[i].getemail());
-							mailService.sendEmail(members[i], incomingdata.getProjectName(), user.getName());
+							MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user.getName());
+							mailthread.start();
 						}
 					}
 				}
