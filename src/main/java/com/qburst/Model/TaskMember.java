@@ -17,6 +17,12 @@ public class TaskMember {
 	private int hour;
 	@JsonProperty("minute")
 	private int minute;
+	@JsonProperty("addedDate")
+	private String addedDate;
+	@JsonProperty("deletedDate")
+	private String deletedDate;
+	@JsonProperty("isActive")
+	private boolean isActive;
 	public String getName() {
 		return name;
 	}
@@ -58,6 +64,30 @@ public class TaskMember {
 	}
 	public void setMinute(int minute) {
 		this.minute = minute;
+	}
+
+	public String getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(String addedDate) {
+		this.addedDate = addedDate;
+	}
+
+	public String getDeletedDate() {
+		return deletedDate;
+	}
+
+	public void setDeletedDate(String deletedDate) {
+		this.deletedDate = deletedDate;
+	}
+
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 	
 }
