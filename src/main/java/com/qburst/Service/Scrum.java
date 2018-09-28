@@ -118,9 +118,6 @@ public class Scrum extends ScrumDao {
 					members[i].setAddedDate(strDate);
 					members[i].setDeletedDate("");
 					members[i].setIsActive(true);
-
-					// mailService.sendEmail(members[i], incomingdata.getProjectName(),
-					// user.getName());
 					
 					MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user.getName());
 					mailthread.start();
@@ -246,8 +243,6 @@ public class Scrum extends ScrumDao {
 							newMember.setimage(current_user.getImageurl());
 						}
 						membersList.add(newMember);
-						// mailService.sendEmail(newMember, incomingdata.getProjectName(),
-						// user.getName());
 						MailThread mailthread = new MailThread(newMember, incomingdata.getProjectName(), user.getName());
 						mailthread.start();
 					}
@@ -291,7 +286,7 @@ public class Scrum extends ScrumDao {
 		}
 		try {
 			projectlist = this.pdao.getProjects(project_param);
-			if (user.getEmail() != "" && (user.getUserType().equals("User"))) {
+			if (user.getEmail() != "" && (user.getUserType().equals("Manager") || user.getUserType().equals("User"))) {
 				Iterator<ProjectData> itr = projectlist.iterator();
 				ProjectMemberModel[] current_members;
 				while (itr.hasNext()) {
