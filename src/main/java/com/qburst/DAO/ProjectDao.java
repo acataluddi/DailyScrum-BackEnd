@@ -3,8 +3,6 @@ package com.qburst.DAO;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bson.Document;
-
 import org.mongojack.DBCursor;
 import org.mongojack.DBQuery;
 import org.mongojack.JacksonDBCollection;
@@ -14,11 +12,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.qburst.Model.ProjectData;
-import com.qburst.Model.UsersData;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.qburst.Model.ProjectData;
 
 public class ProjectDao extends connection {
@@ -31,6 +24,7 @@ public class ProjectDao extends connection {
 		DB db;
 
 		ProjectData pdata = new ProjectData();
+
 		try {
 			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");

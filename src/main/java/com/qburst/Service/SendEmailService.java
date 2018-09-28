@@ -27,9 +27,10 @@ public class SendEmailService {
 			String fromID = property.getProperty("Email_ID");
 			String password = property.getProperty("Password");
 			String CC = property.getProperty("CC");
-			
+			String loginurl = property.getProperty("Login_URL");
+
 			Properties props = new Properties();
-			
+
 			props.put("mail.smtp.host", host);
 			props.put("mail.smtp.socketFactory.port", socketport);
 			props.put("mail.smtp.socketFactory.class", socketclass);
@@ -50,9 +51,10 @@ public class SendEmailService {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(CC));
 			message.setSubject("Allocation Update");
-			message.setText("Hi " + name + "," + "\n\nYou have been allocated to  " + projectName+ " project as "
-				+	member.getrole() + " by " + assignee +". \n\nIf you have any questions/concerns, "
-				+ "please feel free to talk to your reporting manager. " + "\n\nThanks,\nDaily Scrum");
+			message.setText("Hi " + name + "," + "\n\nYou have been allocated to  " + projectName + " project as "
+					+ member.getrole() + " by " + assignee + ". \n\nIf you have any questions/concerns, "
+					+ "please feel free to talk to your reporting manager. "
+					+ "\n\nPlease start adding your tasks by logging into " + loginurl + "\n\nThanks,\nDaily Scrum");
 			Transport.send(message);
 
 			System.out.println("Done");

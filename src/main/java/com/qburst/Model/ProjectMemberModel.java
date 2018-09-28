@@ -13,6 +13,12 @@ public class ProjectMemberModel {
 	private String name;
 	@JsonProperty("image")
 	private String image;
+	@JsonProperty("addedDate")
+	private String addedDate;
+	@JsonProperty("deletedDate")
+	private String deletedDate;
+	@JsonProperty("isActive")
+	private boolean isActive;
 
 	public String getemail() {
 		return email;
@@ -44,5 +50,29 @@ public class ProjectMemberModel {
 
 	public void setimage(String image) {
 		this.image = image;
+	}
+
+	public String getAddedDate() {
+		return addedDate;
+	}
+
+	public void setAddedDate(String addedDate) {
+		this.addedDate = addedDate;
+	}
+
+	public String getDeletedDate() {
+		return deletedDate;
+	}
+
+	public void setDeletedDate(String deletedDate) {
+		this.deletedDate = deletedDate;
+	}
+
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
 	}
 }

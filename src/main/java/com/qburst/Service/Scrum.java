@@ -1,6 +1,10 @@
 package com.qburst.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import com.qburst.Controller.IdTokenVerification;
@@ -20,11 +24,27 @@ public class Scrum extends ScrumDao {
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		incomingdata = id_verifier.processToken(token);
 		UsersData user = new UsersData();
-		System.out.println("The user id" + incomingdata.getEmployeeID());
+		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		if (incomingdata.getEmployeeID() != null) {
 			try {
 
 				user = insertIntoTable(incomingdata);
+				projectlist = this.pdao.getProjects(user.getEmail());
+				Iterator<ProjectData> itr = projectlist.iterator();
+				ProjectMemberModel[] current_members;
+				while (itr.hasNext()) {
+					ProjectData project = (ProjectData) itr.next();
+					current_members = project.getMembers();
+					for (int i = 0; i < current_members.length; i++) {
+						if (current_members[i].getemail().equals(user.getEmail())) {
+							current_members[i].setname(user.getName());
+							current_members[i].setimage(user.getImageurl());
+							break;
+						}
+					}
+					project.setMembers(current_members);
+					this.pdao.updateProject(project);
+				}
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -62,6 +82,9 @@ public class Scrum extends ScrumDao {
 		UsersData user = new UsersData();
 		
 		IdTokenVerification id_verifier = new IdTokenVerification();
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String strDate = formatter.format(date);
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
@@ -72,7 +95,15 @@ public class Scrum extends ScrumDao {
 		}
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
-				ProjectMemberModel[] members = incomingdata.getMembers();
+				ProjectMemberModel[] membersWithoutManager = incomingdata.getMembers();
+				ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(
+						Arrays.asList(membersWithoutManager));
+				ProjectMemberModel manager = new ProjectMemberModel();
+				manager.setemail(user.getEmail());
+				manager.setrole("Project Manager");
+				membersList.add(manager);
+				ProjectMemberModel[] members = new ProjectMemberModel[membersWithoutManager.length + 1];
+				members = membersList.toArray(members);
 				SendEmailService mailService = new SendEmailService();
 				for (int i = 0; i < members.length; i++) {
 					UsersData current_user = new UsersData();
@@ -84,11 +115,19 @@ public class Scrum extends ScrumDao {
 						members[i].setname(current_user.getName());
 						members[i].setimage(current_user.getImageurl());
 					}
+					members[i].setAddedDate(strDate);
+					members[i].setDeletedDate("");
+					members[i].setIsActive(true);
+
+					// mailService.sendEmail(members[i], incomingdata.getProjectName(),
+					// user.getName());
 					
 					MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user.getName());
 					mailthread.start();
 				}
 				incomingdata.setMembers(members);
+				incomingdata.setStartDate(strDate);
+				incomingdata.setEndDate("");
 				result = this.pdao.insertProject(incomingdata);
 			} catch (Exception e) {
 				System.out.println(e);
@@ -128,6 +167,9 @@ public class Scrum extends ScrumDao {
 		SendEmailService mailService = new SendEmailService();
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		user = id_verifier.processToken(token);
+		Date date = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+		String strDate = formatter.format(date);
 		if (user.getEmployeeID() != null) {
 			try {
 				user = insertIntoTable(user);
@@ -139,40 +181,81 @@ public class Scrum extends ScrumDao {
 		ProjectData current_project = this.pdao.getIndividualProject(pid);
 		ProjectMemberModel[] current_members = current_project.getMembers();
 		ProjectMemberModel[] members = incomingdata.getMembers();
-		
+		ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(Arrays.asList(members));
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
+				for (ProjectMemberModel oldMember : current_members) {
+					boolean memberPresent = false;
+					boolean memberIsActive = false;
+					for (ProjectMemberModel newMember : members) {
+						if (oldMember.getemail().equals(newMember.getemail())) {
+							memberPresent = true;
+							break;
+						}
+					}
+					if (!memberPresent) {
+						oldMember.setIsActive(false);
+						oldMember.setDeletedDate(strDate);
+						membersList.add(oldMember);
+					}
+				}
+				for (ProjectMemberModel newMember : members) {
+					boolean memberPresent = false;
+					for (ProjectMemberModel oldMember : current_members) {
+						if (newMember.getemail().equals(oldMember.getemail())) {
+							if (oldMember.getIsActive() == true) {
+								memberPresent = true;
+								break;
+							} else if (oldMember.getIsActive() == false) {
+								newMember.setDeletedDate("");
+								newMember.setIsActive(true);
+								newMember.setAddedDate(oldMember.getAddedDate());
+								newMember.setimage(oldMember.getimage());
+								newMember.setname(oldMember.getname());
+								Iterator<ProjectMemberModel> itr = membersList.iterator();
+								while (itr.hasNext()) {
+									ProjectMemberModel m = (ProjectMemberModel) itr.next();
+									if (m.getemail().equals(newMember.getemail())) {
+										itr.remove();
+									}
+								}
+								membersList.add(newMember);
+								memberPresent = true;
+								break;
+							}
+						}
+					}
+					if (!memberPresent) {
+						newMember.setAddedDate(strDate);
+						newMember.setDeletedDate("");
+						newMember.setIsActive(true);
+						Iterator<ProjectMemberModel> itr = membersList.iterator();
+						while (itr.hasNext()) {
+							ProjectMemberModel m = (ProjectMemberModel) itr.next();
+							if (m.getemail().equals(newMember.getemail())) {
+								itr.remove();
+							}
+						}
+						UsersData current_user = new UsersData();
+						current_user = getIndividualUser(newMember.getemail());
+						if (current_user.getName() == null) {
+							newMember.setname("");
+							newMember.setimage("https://image.flaticon.com/icons/svg/146/146007.svg");
+						} else {
+							newMember.setname(current_user.getName());
+							newMember.setimage(current_user.getImageurl());
+						}
+						membersList.add(newMember);
+						// mailService.sendEmail(newMember, incomingdata.getProjectName(),
+						// user.getName());
+						MailThread mailthread = new MailThread(newMember, incomingdata.getProjectName(), user.getName());
+						mailthread.start();
+					}
+				}
+				members = membersList.toArray(members);
 
-				for (int i = 0; i < members.length; i++) {
-					UsersData current_user = new UsersData();
-					current_user = getIndividualUser(members[i].getemail());
-					if (current_user.getName() == null) {
-						members[i].setname("");
-						members[i].setimage("https://image.flaticon.com/icons/svg/146/146007.svg");
-					} else {
-						members[i].setname(current_user.getName());
-						members[i].setimage(current_user.getImageurl());
-					}
-				}
-				
-				//send mail to new member
-				if (members.length > current_members.length) {
-					for (int i = 0; i < members.length; i++) {
-						int count = 0;
-						for (int j = 0; j < current_members.length; j++) {
-							if (members[i].getemail().equals(current_members[j].getemail())) {
-								count++;
-							}					
-						}
-						if (count == 0) {
-							System.out.println("new mem " +members[i].getemail());
-							MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user.getName());
-							mailthread.start();
-						}
-					}
-				}
-				
 				incomingdata.setMembers(members);
+				incomingdata.setStartDate(current_project.getStartDate());
 				result = this.pdao.updateProject(incomingdata);
 
 			} catch (Exception e) {
@@ -208,6 +291,41 @@ public class Scrum extends ScrumDao {
 		}
 		try {
 			projectlist = this.pdao.getProjects(project_param);
+			if (user.getEmail() != "" && (user.getUserType().equals("User"))) {
+				Iterator<ProjectData> itr = projectlist.iterator();
+				ProjectMemberModel[] current_members;
+				while (itr.hasNext()) {
+					ProjectData project = (ProjectData) itr.next();
+					current_members = project.getMembers();
+					for (int i = 0; i < current_members.length; i++) {
+						if (current_members[i].getIsActive() == false) {
+							itr.remove();
+							break;
+						}
+					}
+				}
+			} else {
+				Iterator<ProjectData> itr = projectlist.iterator();
+				ProjectMemberModel[] current_members;
+				while (itr.hasNext()) {
+					ProjectData project = (ProjectData) itr.next();
+					current_members = project.getMembers();
+					ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(
+							Arrays.asList(current_members));
+					Iterator<ProjectMemberModel> itr1 = membersList.iterator();
+					while (itr1.hasNext()) {
+						ProjectMemberModel mem = (ProjectMemberModel) itr1.next();
+						if (mem.getIsActive() == false) {
+							itr1.remove();
+						}
+					}
+					ProjectMemberModel[] updated_members = new ProjectMemberModel[membersList.size()];
+					updated_members = membersList.toArray(updated_members);
+					int index = projectlist.indexOf(project);
+					project.setMembers(updated_members);
+					projectlist.set(index,project);
+				}
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -363,7 +481,20 @@ public class Scrum extends ScrumDao {
 					tmember.setEmail(members[i].getemail());
 					tmember.setImage(members[i].getimage());
 					tmember.setRole(members[i].getrole());
-					tasklist = readTaskList(viewTaskDate, members[i].getemail(), viewTaskProjectId);
+					tmember.setAddedDate(members[i].getAddedDate());
+					tmember.setDeletedDate(members[i].getDeletedDate());
+					tmember.setIsActive(members[i].getIsActive());
+					Date date1 = new SimpleDateFormat("dd-MM-yyyy").parse(members[i].getAddedDate());
+					Date date2;
+					if (!members[i].getDeletedDate().equals("")) {
+						date2 = new SimpleDateFormat("dd-MM-yyyy").parse(members[i].getDeletedDate());
+					} else {
+						date2 = new Date();
+					}
+					Date date3 = new SimpleDateFormat("dd-MM-yyyy").parse(viewTaskDate);
+					if ((date3.after(date1) || date3.equals(date1)) && (date3.before(date2) || date3.equals(date2))) {
+						tasklist = readTaskList(viewTaskDate, members[i].getemail(), viewTaskProjectId);
+					}
 					TaskData[] tasks = new TaskData[tasklist.size()];
 					tasks = tasklist.toArray(tasks);
 					tmember.setTasks(tasks);

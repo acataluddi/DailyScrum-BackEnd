@@ -11,6 +11,10 @@ public class ProjectData {
 
 	private String projectName, projectDesc;
 
+	private String startDate;
+
+	private String endDate;
+
 	@JsonProperty("members")
 	ProjectMemberModel[] members;
 
@@ -57,5 +61,21 @@ public class ProjectData {
 	@JsonProperty("members")
 	public void setMembers(ProjectMemberModel[] members) {
 		this.members = members;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
 	}
 }
