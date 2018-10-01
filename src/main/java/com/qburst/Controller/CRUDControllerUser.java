@@ -42,6 +42,7 @@ public class CRUDControllerUser extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		String token = "";
 		Scrum scrum = new Scrum();

@@ -36,6 +36,8 @@ public class TaskController extends HttpServlet {
 		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
 		resp.setHeader("Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
+
+		resp.setContentType("text/html; charset=UTF-8");
 	}
 
 	@Override
