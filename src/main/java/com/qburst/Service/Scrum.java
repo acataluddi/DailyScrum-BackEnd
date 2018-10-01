@@ -119,7 +119,7 @@ public class Scrum extends ScrumDao {
 					members[i].setDeletedDate("");
 					members[i].setIsActive(true);
 					
-					MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user.getName());
+					MailThread mailthread = new MailThread(members[i], incomingdata.getProjectName(), user);
 					mailthread.start();
 				}
 				incomingdata.setMembers(members);
@@ -243,7 +243,7 @@ public class Scrum extends ScrumDao {
 							newMember.setimage(current_user.getImageurl());
 						}
 						membersList.add(newMember);
-						MailThread mailthread = new MailThread(newMember, incomingdata.getProjectName(), user.getName());
+						MailThread mailthread = new MailThread(newMember, incomingdata.getProjectName(), user);
 						mailthread.start();
 					}
 				}
