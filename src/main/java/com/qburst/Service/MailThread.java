@@ -1,19 +1,20 @@
 package com.qburst.Service;
 
 import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.UsersData;
 
 public class MailThread implements Runnable{
 	
 	ProjectMemberModel member;
 	String projectname;
-	String name;
+	UsersData user;
 	
 	Thread mailthread;
 	 private String mailthreadname;
-	 MailThread(ProjectMemberModel member, String projectname, String name) {
+	 MailThread(ProjectMemberModel member, String projectname, UsersData user) {
 		 this.member = member;
 		 this.projectname = projectname;
-		 this.mailthreadname = name;
+		 this.user = user;
 	 }
 	
 	@Override
@@ -26,11 +27,11 @@ public class MailThread implements Runnable{
 		 
 			SendEmailService mailService = new SendEmailService();
 
-	  mailService.sendEmail(member, projectname, mailthreadname);
+	  mailService.sendEmail(member, projectname, user);
 	 }
 	public void start() {
 		  if (mailthread == null) {
-		   mailthread = new Thread(this, mailthreadname);
+		   mailthread = new Thread(this);
 		   mailthread.start();
 		  }
 	}

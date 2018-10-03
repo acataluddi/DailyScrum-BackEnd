@@ -11,9 +11,10 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.UsersData;
 
 public class SendEmailService {
-	public void sendEmail(ProjectMemberModel member, String projectName, String assignee) {
+	public void sendEmail(ProjectMemberModel member, String projectName, UsersData assignee) {
 		InputStream input = null;
 		Properties property = new Properties();
 		try {
@@ -50,12 +51,21 @@ public class SendEmailService {
 			message.setFrom(new InternetAddress(fromID));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(CC));
-			message.setSubject("Allocation Update");
-			message.setText("Hi " + name + "," + "\n\nYou have been allocated to  " + projectName + " project as "
-					+ member.getrole() + " by " + assignee + ". \n\nIf you have any questions/concerns, "
-					+ "please feel free to talk to your reporting manager. "
-					+ "\n\nPlease start adding your tasks by logging into " + loginurl + "\n\nThanks,\nDaily Scrum");
-			Transport.send(message);
+			if (member.getemail().equals(assignee.getEmail())) {
+				message.setSubject("Daily Scrum Updates");
+				message.setText("Hi " + name + "," + "\n\nYou have created '" + projectName
+						+ "' project under the Daily Scrum tool."
+						+ "\n\nThanks,\nDaily Scrum");
+				Transport.send(message);
+			} else {
+				message.setSubject("Allocation Update");
+				message.setText("Hi " + name + "," + "\n\nYou have been allocated to '" + projectName + "' project as "
+						+ member.getrole() + " by " + assignee.getName() + ". \n\nIf you have any questions/concerns, "
+						+ "please feel free to talk to your reporting manager. "
+						+ "\n\nPlease start adding your tasks by logging into " + loginurl
+						+ "\n\nThanks,\nDaily Scrum");
+				Transport.send(message);
+			}
 
 			System.out.println("Done");
 
