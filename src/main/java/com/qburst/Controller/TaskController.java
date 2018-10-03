@@ -119,12 +119,15 @@ public class TaskController extends HttpServlet {
 		PrintWriter out = response.getWriter();
 		Scrum scrum = new Scrum();
 		TaskData incomingdata = new TaskData();
-		ObjectMapper mapper = new ObjectMapper();
-		ServletInputStream inputjson = null;
+		incomingdata.setTaskId(request.getParameter("taskId"));
+		incomingdata.setMemberEmail(request.getParameter("memberEmail"));
+
+//		ObjectMapper mapper = new ObjectMapper();
+//		ServletInputStream inputjson = null;
 		String token = "";
-		inputjson = request.getInputStream();
-		incomingdata = mapper.readValue(inputjson, TaskData.class);
-		token = request.getHeader("token");
+//		inputjson = request.getInputStream();
+//		incomingdata = mapper.readValue(inputjson, TaskData.class);
+		token = request.getParameter("token");
 		boolean n = false;
 		try {
 			n = scrum.deleteTask(incomingdata, token);
