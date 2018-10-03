@@ -38,6 +38,7 @@ public class ProjectController extends HttpServlet {
 		resp.setHeader("Access-Control-Allow-Methods", "PUT,GET,POST,DELETE");
 		resp.setHeader("Access-Control-Allow-Headers",
 				"Origin, X-Requested-With, Content-Type, Accept, Authorization, token");
+		resp.setContentType("text/html; charset=UTF-8");
 	}
 
 	// To add a project
@@ -134,10 +135,9 @@ public class ProjectController extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.addHeader("Access-Control-Allow-Origin", "*");
+		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		String token = "";
-
-		setAccessControlHeaders(response);
 
 		token = request.getHeader("token");
 		Scrum scrum = new Scrum();
@@ -152,7 +152,7 @@ public class ProjectController extends HttpServlet {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("Projects \n" + projectlist);
+		System.out.println("Projects \n" + projects);
 		out.println(projects);
 	}
 }
