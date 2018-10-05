@@ -201,6 +201,19 @@ public class Scrum extends ScrumDao {
 					for (ProjectMemberModel oldMember : current_members) {
 						if (newMember.getemail().equals(oldMember.getemail())) {
 							if (oldMember.getIsActive() == true) {
+								newMember.setDeletedDate("");
+								newMember.setIsActive(true);
+								newMember.setAddedDate(oldMember.getAddedDate());
+								newMember.setimage(oldMember.getimage());
+								newMember.setname(oldMember.getname());
+								Iterator<ProjectMemberModel> itr = membersList.iterator();
+								while (itr.hasNext()) {
+									ProjectMemberModel m = (ProjectMemberModel) itr.next();
+									if (m.getemail().equals(newMember.getemail())) {
+										itr.remove();
+									}
+								}
+								membersList.add(newMember);
 								memberPresent = true;
 								break;
 							} else if (oldMember.getIsActive() == false) {
