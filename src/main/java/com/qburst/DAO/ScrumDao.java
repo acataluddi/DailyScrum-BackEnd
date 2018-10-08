@@ -27,16 +27,18 @@ public class ScrumDao extends connection {
 		 */
 		DB db;
 		DBCursor result = null;
+		DBCursor results = null;
 		String UserType;
 		UsersData user = new UsersData();
+		MongoClient mongo = null;
 		try {
 
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Employee");
 			BasicDBObject document = new BasicDBObject();
 			DBObject query = new BasicDBObject("Email", usersData.getEmail());
-			DBCursor results = table.find(query);
+			results = table.find(query);
 			while (results.hasNext()) {
 				List<DBObject> cursor = results.toArray();
 				BasicDBObject userObj = (BasicDBObject) cursor.get(0);
@@ -77,12 +79,20 @@ public class ScrumDao extends connection {
 			user.setEmail(Email);
 			user.setUserType(UserType);
 			user.setImageurl(imageURL);
-
+			while (result.hasNext()) {
+				return user;
+			}
 		} catch (Exception e) {
 		}
-		while (result.hasNext()) {
-			return user;
+		finally{
+			if(result!=null && mongo!=null) {
+			result.close();
+			results.close();
+			mongo.close();
+			}
 		}
+		
+		
 		return user;
 	}
 
@@ -90,12 +100,14 @@ public class ScrumDao extends connection {
 	public UsersData getIndividualUser(String email) throws Exception {
 		DB db;
 		UsersData user = new UsersData();
+		DBCursor result = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Employee");
 			DBObject query = new BasicDBObject("Email", email);
-			DBCursor result = table.find(query);
+			result = table.find(query);
 			while (result.hasNext()) {
 				List<DBObject> cursor = result.toArray();
 				BasicDBObject userObj = (BasicDBObject) cursor.get(0);
@@ -109,6 +121,12 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 		}
+		finally{
+			if(result!=null && mongo!=null) {
+				result.close();
+				mongo.close();
+				}
+		}
 		return user;
 	}
 
@@ -116,9 +134,10 @@ public class ScrumDao extends connection {
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
 		List<UsersData> userlist = new ArrayList<UsersData>();
+		MongoClient mongo = null;
 		try {
 
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Employee");
 
@@ -144,6 +163,11 @@ public class ScrumDao extends connection {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally {
+			if(mongo!=null) {
+			mongo.close();
+			}
+		}
 		return userlist;
 	}
 
@@ -152,11 +176,11 @@ public class ScrumDao extends connection {
 			throws Exception {
 
 		DB db;
-
+		MongoClient mongo = null;
 		List<TaskData> tasklist = new ArrayList<TaskData>();
 		try {
 
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Task");
 			BasicDBObject andQuery = new BasicDBObject();
@@ -195,14 +219,21 @@ public class ScrumDao extends connection {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally {
+			if(mongo!=null) {
+				mongo.close();
+			}
+		}
 		return tasklist;
 	}
 
 	public UsersData userTypeUpdate(UsersData usersData) throws SQLException {
 
 		DB db;
+		DBCursor cursor = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Employee");
 			BasicDBObject updateDocument = new BasicDBObject();
@@ -210,12 +241,18 @@ public class ScrumDao extends connection {
 			BasicDBObject searchQuery = new BasicDBObject().append("Email", usersData.getEmail());
 			collection.update(searchQuery, updateDocument);
 			System.out.println(updateDocument);
-			DBCursor cursor = collection.find();
+			cursor = collection.find();
 			while (cursor.hasNext()) {
 				System.out.println(cursor.next());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally{
+			if(cursor!=null && mongo!=null) {
+				cursor.close();
+				mongo.close();
+				}
 		}
 		return null;
 	}
@@ -225,8 +262,9 @@ public class ScrumDao extends connection {
 
 		DB db;
 		DBCursor result = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Task");
 			BasicDBObject document = new BasicDBObject();
@@ -243,13 +281,20 @@ public class ScrumDao extends connection {
 			collection.insert(document);
 			DBObject query = new BasicDBObject("taskId", taskData.getTaskId());
 			result = collection.find(query);
+			while (result.hasNext()) {
+				return true;
+			}
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		while (result.hasNext()) {
-			return true;
+		finally{
+			if(result!=null && mongo!=null) {
+				result.close();
+				mongo.close();
+				}
 		}
 		return false;
+		
 	}
 
 	@SuppressWarnings("deprecation")
@@ -257,8 +302,9 @@ public class ScrumDao extends connection {
 	public boolean updateTask(TaskData taskData) throws Exception {
 		DB db;
 		DBCursor result = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Task");
 			// String taskDateView = taskData.getTaskDate();
@@ -285,6 +331,12 @@ public class ScrumDao extends connection {
 		} catch (Exception e) {
 			return false;
 		}
+		finally{
+			if(result!=null && mongo!=null) {
+				result.close();
+				mongo.close();
+				}
+		}
 		return true;
 	}
 
@@ -292,9 +344,10 @@ public class ScrumDao extends connection {
 	public boolean subtractTask(TaskData taskData) throws Exception {
 		DB db;
 		DBCursor result = null;
+		MongoClient mongo = null;
 		try {
 
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Task");
 			String deletionTaskId = taskData.getTaskId();
@@ -310,6 +363,12 @@ public class ScrumDao extends connection {
 				return false;
 			}
 		} catch (Exception e) {
+		}
+		finally{
+			if(result!=null && mongo!=null) {
+				result.close();
+				mongo.close();
+				}
 		}
 		return true;
 	}

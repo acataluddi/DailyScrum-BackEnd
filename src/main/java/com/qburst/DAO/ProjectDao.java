@@ -24,16 +24,17 @@ public class ProjectDao extends connection {
 		DB db;
 
 		ProjectData pdata = new ProjectData();
-
+		DBCursor<ProjectData> result = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
 
 					Object.class);
 			DBObject query = new BasicDBObject("projectId", projectData.getProjectId());
-			DBCursor<ProjectData> result = coll.find(query);
+			result = coll.find(query);
 			if (result.hasNext()) {
 				pdata = result.next();
 				return pdata;
@@ -47,6 +48,12 @@ public class ProjectDao extends connection {
 			}
 		} catch (Exception e) {
 		}
+		finally{
+			if(result!=null && mongo!=null) {
+			result.close();
+			mongo.close();
+			}
+		}
 		return null;
 	}
 
@@ -56,8 +63,10 @@ public class ProjectDao extends connection {
 		DB db;
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		ProjectData pdata = new ProjectData();
+		DBCursor<ProjectData> result = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
@@ -65,7 +74,7 @@ public class ProjectDao extends connection {
 					Object.class);
 			DBObject query = new BasicDBObject("members.email", memberEmail);
 			memberEmail = memberEmail.trim();
-			DBCursor<ProjectData> result;
+			
 			if (memberEmail.equals("getall")) {
 				result = coll.find();
 			} else {
@@ -79,6 +88,12 @@ public class ProjectDao extends connection {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		finally{
+			if(result!=null && mongo!=null) {
+			result.close();
+			mongo.close();
+			}
+		}
 		return projectlist;
 	}
 
@@ -86,9 +101,10 @@ public class ProjectDao extends connection {
 	public boolean deleteProject(String incomingdata) throws Exception {
 		DB db;
 		com.mongodb.DBCursor result = null;
+		MongoClient mongo = null;
 		try {
 
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection collection = db.getCollection("Project");
 			// String deletionProjectId = projectData.getProjectId();
@@ -105,14 +121,21 @@ public class ProjectDao extends connection {
 			}
 		} catch (Exception e) {
 		}
+		finally{
+			if(result!=null && mongo!=null) {
+			result.close();
+			mongo.close();
+			}
+		}
 		return true;
 	}
 
 	@SuppressWarnings("deprecation")
 	public boolean updateProject(ProjectData projectData) throws Exception {
 		DB db;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
@@ -120,6 +143,11 @@ public class ProjectDao extends connection {
 			coll.update(DBQuery.is("projectId", projectData.getProjectId()), projectData);
 		} catch (Exception e) {
 			return false;
+		}
+		finally{
+			if(mongo!=null) {
+			mongo.close();
+			}
 		}
 		return true;
 	}
@@ -129,20 +157,28 @@ public class ProjectDao extends connection {
 
 		DB db;
 		ProjectData pdata = new ProjectData();
+		DBCursor<ProjectData> result = null;
+		MongoClient mongo = null;
 		try {
-			MongoClient mongo = databaseConnection();
+			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> coll = JacksonDBCollection.wrap(table, ProjectData.class,
 					Object.class);
 			DBObject query = new BasicDBObject("projectId", projectId);
-			DBCursor<ProjectData> result;
+			
 			result = coll.find(query);
 			while (result.hasNext()) {
 				pdata = result.next();
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		finally{
+			if(result!=null && mongo!=null) {
+			result.close();
+			mongo.close();
+			}
 		}
 		return pdata;
 	}
