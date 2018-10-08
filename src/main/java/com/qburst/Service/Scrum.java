@@ -306,9 +306,11 @@ public class Scrum extends ScrumDao {
 					ProjectData project = (ProjectData) itr.next();
 					current_members = project.getMembers();
 					for (int i = 0; i < current_members.length; i++) {
-						if (current_members[i].getIsActive() == false) {
-							itr.remove();
-							break;
+						if(current_members[i].getemail().equals(user.getEmail())) {
+							if (current_members[i].getIsActive() == false) {
+								itr.remove();
+								break;
+							}
 						}
 					}
 				}
