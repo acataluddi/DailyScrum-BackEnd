@@ -8,6 +8,7 @@ public class Feedback {
 	private String id;
 	private String feedbackId;
 	private String feedbackDate;
+	private String userName;
 	private String userEmail;
 	private String feedbackDescription;
 
@@ -22,28 +23,43 @@ public class Feedback {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public String getFeedbackId() {
 		return feedbackId;
 	}
+
 	public void setFeedbackId(String feedbackId) {
 		this.feedbackId = feedbackId;
 	}
+
 	public String getFeedbackDate() {
 		return feedbackDate;
 	}
+
 	public void setFeedbackDate(String feedbackDate) {
 		this.feedbackDate = feedbackDate;
 	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
 	public String getUserEmail() {
 		return userEmail;
 	}
+
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
+
 	public String getFeedbackDescription() {
 		return feedbackDescription;
 	}
+
 	public void setFeedbackDescription(String feedbackDescription) {
 		this.feedbackDescription = feedbackDescription;
 	}

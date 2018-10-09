@@ -25,9 +25,13 @@ public class FeedbackService {
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
+				feedback.setFeedbackId(String.valueOf(date.getTime()));
+				feedback.setUserName(user.getName());
 				feedback.setUserEmail(user.getEmail());
 				feedback.setFeedbackDate(strDate);
 				fb = fdao.insertFeedback(feedback);
+				FeedbackMailThread fbThread = new FeedbackMailThread(feedback);
+				fbThread.start();
 			} catch (Exception e) {
 				System.out.println(e);
 			}
