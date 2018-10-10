@@ -305,16 +305,34 @@ public class Scrum extends ScrumDao {
 				while (itr.hasNext()) {
 					ProjectData project = (ProjectData) itr.next();
 					current_members = project.getMembers();
+					ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(
+							Arrays.asList(current_members));
+					Iterator<ProjectMemberModel> itr1 = membersList.iterator();
+					while (itr1.hasNext()) {
+						ProjectMemberModel mem = (ProjectMemberModel) itr1.next();
+						if (mem.getIsActive() == false) {
+							itr1.remove();
+						}
+					}
+					ProjectMemberModel[] updated_members = new ProjectMemberModel[membersList.size()];
+					updated_members = membersList.toArray(updated_members);
+					int index = projectlist.indexOf(project);
+					boolean isProjectDeleted = false;
+					project.setMembers(updated_members);
 					for (int i = 0; i < current_members.length; i++) {
 						if(current_members[i].getemail().equals(user.getEmail())) {
 							if (current_members[i].getIsActive() == false) {
 								itr.remove();
+								isProjectDeleted = true;
 								break;
 							}
 						}
 					}
+					if(!isProjectDeleted) {
+						projectlist.set(index,project);
+					}
 				}
-			} else {
+			} else if (user.getEmail() != "" && (user.getUserType().equals("Admin"))){
 				Iterator<ProjectData> itr = projectlist.iterator();
 				ProjectMemberModel[] current_members;
 				while (itr.hasNext()) {
@@ -502,7 +520,12 @@ public class Scrum extends ScrumDao {
 						date2 = new Date();
 					}
 					Date date3 = new SimpleDateFormat("dd-MM-yyyy").parse(viewTaskDate);
-					if ((date3.after(date1) || date3.equals(date1)) && (date3.before(date2) || date3.equals(date2))) {
+					SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+					String addedDate = formatter.format(date1);
+					String deletedDate = formatter.format(date2);
+					String taskDate = formatter.format(date3);
+					if((date3.after(date1) || taskDate.equals(addedDate)) && (date3.before(date2) || taskDate.equals(deletedDate))) {
+					if ((date3.after(date1) || taskDate.equals(addedDate)) && (date3.before(date2) || taskDate.equals(deletedDate))) {
 						tasklist = readTaskList(viewTaskDate, members[i].getemail(), viewTaskProjectId);
 					}
 					TaskData[] tasks = new TaskData[tasklist.size()];
@@ -515,6 +538,7 @@ public class Scrum extends ScrumDao {
 					tmember.setHour(totalHour);
 					tmember.setMinute(totalMinute);
 					taskList.add(tmember);
+					}
 				}
 				return taskList;
 			} catch (Exception e) {
