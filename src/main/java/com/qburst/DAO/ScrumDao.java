@@ -83,16 +83,14 @@ public class ScrumDao extends connection {
 				return user;
 			}
 		} catch (Exception e) {
-		}
-		finally{
-			if(result!=null && mongo!=null) {
-			result.close();
-			results.close();
-			mongo.close();
+		} finally {
+			if (result != null && mongo != null) {
+				result.close();
+				results.close();
+				mongo.close();
 			}
 		}
-		
-		
+
 		return user;
 	}
 
@@ -114,18 +112,21 @@ public class ScrumDao extends connection {
 				String Name = userObj.getString("Name");
 				String Email = userObj.getString("Email");
 				String imageURL = userObj.getString("imageurl");
+				String type = userObj.getString("userType");
+				String id = userObj.getString("EmployeeID");
+				user.setEmployeeID(id);
 				user.setName(Name);
 				user.setEmail(Email);
 				user.setImageurl(imageURL);
+				user.setUserType(type);
 				return user;
 			}
 		} catch (Exception e) {
-		}
-		finally{
-			if(result!=null && mongo!=null) {
+		} finally {
+			if (result != null && mongo != null) {
 				result.close();
 				mongo.close();
-				}
+			}
 		}
 		return user;
 	}
@@ -162,10 +163,9 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
-			if(mongo!=null) {
-			mongo.close();
+		} finally {
+			if (mongo != null) {
+				mongo.close();
 			}
 		}
 		return userlist;
@@ -218,9 +218,8 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally {
-			if(mongo!=null) {
+		} finally {
+			if (mongo != null) {
 				mongo.close();
 			}
 		}
@@ -247,12 +246,11 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally{
-			if(cursor!=null && mongo!=null) {
+		} finally {
+			if (cursor != null && mongo != null) {
 				cursor.close();
 				mongo.close();
-				}
+			}
 		}
 		return null;
 	}
@@ -286,15 +284,14 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			System.out.println(e);
-		}
-		finally{
-			if(result!=null && mongo!=null) {
+		} finally {
+			if (result != null && mongo != null) {
 				result.close();
 				mongo.close();
-				}
+			}
 		}
 		return false;
-		
+
 	}
 
 	@SuppressWarnings("deprecation")
@@ -330,12 +327,11 @@ public class ScrumDao extends connection {
 			result = collection.find(updateQuery);
 		} catch (Exception e) {
 			return false;
-		}
-		finally{
-			if(result!=null && mongo!=null) {
+		} finally {
+			if (result != null && mongo != null) {
 				result.close();
 				mongo.close();
-				}
+			}
 		}
 		return true;
 	}
@@ -363,12 +359,11 @@ public class ScrumDao extends connection {
 				return false;
 			}
 		} catch (Exception e) {
-		}
-		finally{
-			if(result!=null && mongo!=null) {
+		} finally {
+			if (result != null && mongo != null) {
 				result.close();
 				mongo.close();
-				}
+			}
 		}
 		return true;
 	}
