@@ -16,7 +16,7 @@ public class ProjectData {
 	private String endDate;
 
 	@JsonProperty("members")
-	ProjectMemberModel[] members;
+	private ProjectMemberModel[] members;
 
 	@ObjectId
 	@JsonProperty("_id")

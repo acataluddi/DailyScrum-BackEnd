@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.Feedback;
+import com.qburst.Model.FeedbackMember;
+import com.qburst.Model.NavBarMember;
 import com.qburst.Service.FeedbackService;
 
 /**
@@ -22,14 +24,14 @@ import com.qburst.Service.FeedbackService;
 @WebServlet("/FeedbackController")
 public class FeedbackController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public FeedbackController() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+
+	/**
+	 * @see HttpServlet#HttpServlet()
+	 */
+	public FeedbackController() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
 	// for Preflight
 	@Override
@@ -47,41 +49,48 @@ public class FeedbackController extends HttpServlet {
 	}
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		String token = "";
-		String spagenum = "";
-		String feedbackString = "";
+		String readParameter = "";
+		String feedbackStatusString = "";
+		String feedbackMemberString = "";
 		FeedbackService fbService = new FeedbackService();
+		FeedbackMember feedbackmember = new FeedbackMember();
+		List<NavBarMember> membersStatusList = new ArrayList<NavBarMember>();
 		ObjectMapper mapper = new ObjectMapper();
-		List<Feedback> feedbackList = new ArrayList<Feedback>();
 		token = request.getHeader("token");
-		spagenum = request.getParameter("page");
-		int pagenum = Integer.parseInt(spagenum);
-		int numOfRec = 0;
-		if (pagenum != 0) {
-			numOfRec = 10;
+		readParameter = request.getParameter("feedbackParam");
+		if (readParameter.equals("getStatusList")) {
+			try {
+				membersStatusList = fbService.getFeedbackStatus(token);
+				feedbackStatusString = mapper.writeValueAsString(membersStatusList);
+			} catch (Exception e) {
+			}
+			out.print(feedbackStatusString);
+			out.close();
+		} else {
+			try {
+				feedbackmember = fbService.getFeedbackMember(token, readParameter);
+				feedbackMemberString = mapper.writeValueAsString(feedbackmember);
+			} catch (Exception e) {
+			}
+			out.print(feedbackMemberString);
+			out.close();
 		}
-		try {
-			feedbackList = fbService.getFeedbacks(pagenum, numOfRec, token);
-			feedbackString = mapper.writeValueAsString(feedbackList);
-		} catch (Exception e) {
-
-		}
-		out.print(feedbackString);
-
-		out.close();
 	}
 
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 		setAccessControlHeaders(response);
 		PrintWriter out = response.getWriter();
 		String token = "";
@@ -89,16 +98,37 @@ public class FeedbackController extends HttpServlet {
 		Feedback feedback = new Feedback();
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
-		
+
 		inputjson = request.getInputStream();
 		token = request.getHeader("token");
 		feedback = mapper.readValue(inputjson, Feedback.class);
-		
+
 		Feedback fb = new Feedback();
 		try {
 			fb = fbService.addFeedback(feedback, token);
 			String addedFeedbackDetails = mapper.writeValueAsString(fb);
 			out.println(addedFeedbackDetails);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	protected void doPut(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		setAccessControlHeaders(response);
+		PrintWriter out = response.getWriter();
+		String token = "";
+		String updateEmail = "";
+		FeedbackService fbService = new FeedbackService();
+		token = request.getHeader("token");
+		updateEmail = request.getParameter("updateEmail");
+		try {
+			if (fbService.updateFeedbackStatus(token, updateEmail)) {
+				out.println("{\"FeedbackStatusUpdate\":true}");
+			} else {
+				out.println("{\"FeedbackStatusUpdate\":false}");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
