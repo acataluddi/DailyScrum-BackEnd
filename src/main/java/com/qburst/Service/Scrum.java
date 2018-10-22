@@ -558,6 +558,12 @@ public class Scrum extends ScrumDao {
 							totalHour += tasks[j].getHourSpent();
 							totalMinute += tasks[j].getMinuteSpent();
 						}
+						double  extrahour = 0;
+					    if (totalMinute >= 60) {
+					      extrahour = Math.floor(totalMinute / 60);
+					      totalMinute = totalMinute % 60;
+					    }
+					    totalHour += extrahour;											
 						tmember.setHour(totalHour);
 						tmember.setMinute(totalMinute);
 						taskList.add(tmember);
