@@ -3,6 +3,7 @@ package com.qburst.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -202,6 +203,11 @@ public class GoalService {
 			
 		}else if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
 			goalMember = gdao.getIndividualMemberGoal(userEmail);
+			Goal[] oldGoalsArray = goalMember.getGoals();
+			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(oldGoalsArray));
+			Collections.sort(goalsList,Collections.reverseOrder());
+			oldGoalsArray = goalsList.toArray(oldGoalsArray);
+			goalMember.setGoals(oldGoalsArray);
 		}
 		return goalMember;		
 	}

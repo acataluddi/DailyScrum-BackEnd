@@ -2,7 +2,7 @@ package com.qburst.Model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Goal {
+public class Goal implements Comparable<Goal>{
 	
 	private String goalId;
 	
@@ -104,5 +104,10 @@ public class Goal {
 	public void setComments(Comment[] comments) {
 		this.comments = comments;
 	}
+	
+    @Override
+    public int compareTo(Goal goal) {
+         return this.getGoalId().compareTo(((Goal) goal).getGoalId());
+    }
 
 }
