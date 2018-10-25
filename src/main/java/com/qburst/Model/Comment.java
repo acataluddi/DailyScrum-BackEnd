@@ -1,5 +1,7 @@
 package com.qburst.Model;
 
+import java.util.Date;
+
 public class Comment {
 	
 	private String commentId;
@@ -8,7 +10,7 @@ public class Comment {
 	
 	private String commentDescription;
 	
-	private String commentTime;
+	private Date commentTime;
 	
 	private String memberName;
 	
@@ -42,11 +44,11 @@ public class Comment {
 		this.commentDescription = commentDescription;
 	}
 
-	public String getCommentTime() {
+	public Date getCommentTime() {
 		return commentTime;
 	}
 
-	public void setCommentTime(String commentTime) {
+	public void setCommentTime(Date commentTime) {
 		this.commentTime = commentTime;
 	}
 

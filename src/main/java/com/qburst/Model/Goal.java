@@ -1,12 +1,14 @@
 package com.qburst.Model;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Goal implements Comparable<Goal>{
 	
 	private String goalId;
 	
-	private String goalTime;
+	private Date goalTime;
 	
 	private String goalTitle;
 	
@@ -33,11 +35,11 @@ public class Goal implements Comparable<Goal>{
 		this.goalId = goalId;
 	}
 
-	public String getGoalTime() {
+	public Date getGoalTime() {
 		return goalTime;
 	}
 
-	public void setGoalTime(String goalTime) {
+	public void setGoalTime(Date goalTime) {
 		this.goalTime = goalTime;
 	}
 
@@ -107,7 +109,7 @@ public class Goal implements Comparable<Goal>{
 	
     @Override
     public int compareTo(Goal goal) {
-         return this.getGoalId().compareTo(((Goal) goal).getGoalId());
+         return this.getGoalTime().compareTo(((Goal) goal).getGoalTime());
     }
 
 }

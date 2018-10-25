@@ -1,6 +1,5 @@
 package com.qburst.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,8 +28,6 @@ public class GoalService {
 		GoalMember gMember = new GoalMember();
 		GoalDao gdao = new GoalDao();
 		Date date = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("E dd-MM-yyyy 'at' hh:mm a ");
-		String strDate = formatter.format(date);
 
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
@@ -44,7 +41,7 @@ public class GoalService {
 		if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
 			try {
 				goal.setGoalId(String.valueOf(date.getTime()));
-				goal.setGoalTime(strDate);
+				goal.setGoalTime(date);
 				goal.setManagerEmail(user.getEmail());
 				goal.setManagerName(user.getName());
 				goal.setManagerImage(user.getImageurl());
@@ -52,14 +49,14 @@ public class GoalService {
 				goal.setComments(null);
 				goal.setHasNewUpdates(true);
 				if (goalMember != null && goal.getUserEmail().equals(goalMember.getUserEmail())) {
-					//Goals already exist for the user so add the new one to array
+					// Goals already exist for the user so add the new one to array
 					Goal[] previousGoalsArray = goalMember.getGoals();
 					Goal[] newGoalArray = new Goal[previousGoalsArray.length + 1];
 					System.arraycopy(previousGoalsArray, 0, newGoalArray, 0, previousGoalsArray.length);
 					newGoalArray[previousGoalsArray.length] = goal;
 					goalMember.setGoals(newGoalArray);
 				} else {
-					//Goals do not exist for the user, so add the new one
+					// Goals do not exist for the user, so add the new one
 					GoalMember newMember = new GoalMember();
 					if (member.getEmployeeID() != null && !member.getUserType().equals("Manager")) {
 						newMember.setUserId(member.getEmployeeID());
@@ -74,11 +71,21 @@ public class GoalService {
 					}
 				}
 				goalMember.setHasNewUpdates(true);
-				goalMember.setLastUpdate(strDate);
+				goalMember.setLastUpdate(date);
+				Goal[] goalsArray = goalMember.getGoals();
+				ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
+				Collections.sort(goalsList, Collections.reverseOrder());
+				goalsArray = goalsList.toArray(goalsArray);
+				goalMember.setGoals(goalsArray);
 				gMember = gdao.insertGoal(goalMember);
 				Goal[] newGoalArray = gMember.getGoals();
-				//retrieving the last goal to check whether the insertion was successful
-				newGoal = newGoalArray[newGoalArray.length - 1];
+				// retrieving the last added goal to check whether the insertion was successful
+				for (Goal selectedGoal : newGoalArray) {
+					if (selectedGoal.getGoalId().equals(goal.getGoalId())) {
+						newGoal = selectedGoal;
+						break;
+					}
+				}
 			} catch (Exception e) {
 				System.out.println(e);
 			}
@@ -88,6 +95,7 @@ public class GoalService {
 
 	public Comment addComment(Comment comment, String token) throws Exception {
 		UsersData user = new UsersData();
+		UsersData member = new UsersData();
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		ScrumDao sdao = new ScrumDao();
 		GoalMember goalMember = new GoalMember();
@@ -95,40 +103,44 @@ public class GoalService {
 		GoalDao gdao = new GoalDao();
 		Comment addedComment = new Comment();
 		Date date = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("E dd-MM-yyyy 'at' hh:mm a ");
-		String strDate = formatter.format(date);
 
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
 				user = sdao.getIndividualUser(user.getEmail());
+				member = sdao.getIndividualUser(comment.getUserEmail());
 			} catch (Exception e) {
 				System.out.println(e);
 			}
 		}
-		if (user.getUserType().equals("Manager") || user.getUserType().equals("User")) {
+		if ((user.getUserType().equals("Manager") || user.getUserType().equals("User"))
+				&& (!member.getUserType().equals("Manager"))) {
 			try {
 				goalMember = gdao.getIndividualMemberGoal(comment.getUserEmail());
 				Goal[] oldGoalsArray = goalMember.getGoals();
 				comment.setCommentId(String.valueOf(date.getTime()));
-				comment.setCommentTime(strDate);
+				comment.setCommentTime(date);
 				comment.setMemberEmail(user.getEmail());
 				comment.setMemberImage(user.getImageurl());
 				comment.setMemberName(user.getName());
-				if(goalMember!= null && (goalMember.getUserEmail().equals(comment.getUserEmail()))) {
+				if (goalMember != null && (goalMember.getUserEmail().equals(comment.getUserEmail()))) {
 					ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(oldGoalsArray));
 					Iterator<Goal> itr = goalsList.iterator();
+					boolean isValidAuthor = false;
 					while (itr.hasNext()) {
 						Goal selectedGoal = (Goal) itr.next();
-						if (selectedGoal.getGoalId().equals(comment.getGoalId())) {
+						if (selectedGoal.getGoalId().equals(comment.getGoalId())
+								&& (selectedGoal.getManagerEmail().equals(user.getEmail())
+										|| selectedGoal.getUserEmail().equals(user.getEmail()))) {
+							isValidAuthor = true;
 							Comment[] oldCommentArray = selectedGoal.getComments();
-							if(oldCommentArray!=null) {
-								Comment[] newCommentArray = new Comment[oldCommentArray.length+1];
+							if (oldCommentArray != null) {
+								Comment[] newCommentArray = new Comment[oldCommentArray.length + 1];
 								System.arraycopy(oldCommentArray, 0, newCommentArray, 0, oldCommentArray.length);
-								newCommentArray[oldCommentArray.length]=comment;
+								newCommentArray[oldCommentArray.length] = comment;
 								selectedGoal.setComments(newCommentArray);
 								selectedGoal.setHasNewUpdates(true);
-							}else {
+							} else {
 								Comment[] newCommentArray = new Comment[] { comment };
 								selectedGoal.setComments(newCommentArray);
 								selectedGoal.setHasNewUpdates(true);
@@ -138,27 +150,30 @@ public class GoalService {
 							break;
 						}
 					}
-					oldGoalsArray = goalsList.toArray(oldGoalsArray);
-					goalMember.setGoals(oldGoalsArray);
-					goalMember.setHasNewUpdates(true);
-					goalMember.setLastUpdate(strDate);
-					updatedGoalMember = gdao.updateGoalMember(goalMember);
-					Goal[] newGoalArray = updatedGoalMember.getGoals();
-					for (Goal selectedGoal : newGoalArray) {
-						if(selectedGoal.getGoalId().equals(comment.getGoalId())) {
-							Comment[] newCommentsArray = selectedGoal.getComments();
-							addedComment = newCommentsArray[newCommentsArray.length-1];
-							break;
+					if(isValidAuthor) {
+						Collections.sort(goalsList, Collections.reverseOrder());
+						oldGoalsArray = goalsList.toArray(oldGoalsArray);
+						goalMember.setGoals(oldGoalsArray);
+						goalMember.setHasNewUpdates(true);
+						goalMember.setLastUpdate(date);
+						updatedGoalMember = gdao.updateGoalMember(goalMember);
+						Goal[] newGoalArray = updatedGoalMember.getGoals();
+						for (Goal selectedGoal : newGoalArray) {
+							if (selectedGoal.getGoalId().equals(comment.getGoalId())) {
+								Comment[] newCommentsArray = selectedGoal.getComments();
+								addedComment = newCommentsArray[newCommentsArray.length - 1];
+								break;
+							}
 						}
 					}
 				}
 			} catch (Exception e) {
 				System.out.println(e);
 			}
-		}		
+		}
 		return addedComment;
 	}
-	
+
 	public List<NavBarMember> readGoalStatus(String token) throws Exception {
 		UsersData user = new UsersData();
 		IdTokenVerification id_verifier = new IdTokenVerification();
@@ -174,14 +189,25 @@ public class GoalService {
 				System.out.println(e);
 			}
 		}
-		if (user.getUserType().equals("User")) {
-			membersStatusList = gdao.readGoalStatusForUser(user.getEmail());
-		}else if (user.getUserType().equals("Manager")) {
-			
+		try {
+			if (user.getUserType().equals("User")) {
+				membersStatusList = gdao.readGoalStatusForUser(user.getEmail());
+			} else if (user.getUserType().equals("Manager")) {
+				String[] members = gdao.getMembersUnderManager(user.getEmail());
+				System.out.println("the members are "+Arrays.toString(members));
+		        for (String memberEmail : members) {
+		        	UsersData currentMember =  sdao.getIndividualUser(memberEmail);
+		        	if(currentMember.getUserType().equals("User")) {
+		        		//here fetch the goal member then add the member to navmember list
+		        	}
+		        } 
+			}
+		} catch (Exception e) {
+			System.out.println(e);
 		}
-		return membersStatusList;		
+		return membersStatusList;
 	}
-	
+
 	public GoalMember getGoalMember(String token, String userEmail) throws Exception {
 		GoalMember goalMember = new GoalMember();
 		UsersData member = new UsersData();
@@ -189,7 +215,7 @@ public class GoalService {
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		ScrumDao sdao = new ScrumDao();
 		GoalDao gdao = new GoalDao();
-		
+
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
@@ -200,15 +226,10 @@ public class GoalService {
 			}
 		}
 		if (user.getUserType().equals("User")) {
-			
-		}else if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
+
+		} else if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
 			goalMember = gdao.getIndividualMemberGoal(userEmail);
-			Goal[] oldGoalsArray = goalMember.getGoals();
-			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(oldGoalsArray));
-			Collections.sort(goalsList,Collections.reverseOrder());
-			oldGoalsArray = goalsList.toArray(oldGoalsArray);
-			goalMember.setGoals(oldGoalsArray);
 		}
-		return goalMember;		
+		return goalMember;
 	}
 }

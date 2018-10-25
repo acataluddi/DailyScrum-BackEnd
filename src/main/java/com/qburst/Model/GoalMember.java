@@ -1,5 +1,7 @@
 package com.qburst.Model;
 
+import java.util.Date;
+
 import org.mongojack.ObjectId;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,7 +18,7 @@ public class GoalMember {
 	
 	private String userImage;
 	
-	private String lastUpdate;
+	private Date lastUpdate;
 	
 	private boolean hasNewUpdates;
 	
@@ -67,11 +69,11 @@ public class GoalMember {
 		this.userImage = userImage;
 	}
 
-	public String getLastUpdate() {
+	public Date getLastUpdate() {
 		return lastUpdate;
 	}
 
-	public void setLastUpdate(String lastUpdate) {
+	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
 
