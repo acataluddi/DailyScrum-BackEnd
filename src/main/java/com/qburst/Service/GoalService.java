@@ -150,7 +150,7 @@ public class GoalService {
 							break;
 						}
 					}
-					if(isValidAuthor) {
+					if (isValidAuthor) {
 						Collections.sort(goalsList, Collections.reverseOrder());
 						oldGoalsArray = goalsList.toArray(oldGoalsArray);
 						goalMember.setGoals(oldGoalsArray);
@@ -194,13 +194,34 @@ public class GoalService {
 				membersStatusList = gdao.readGoalStatusForUser(user.getEmail());
 			} else if (user.getUserType().equals("Manager")) {
 				String[] members = gdao.getMembersUnderManager(user.getEmail());
-				System.out.println("the members are "+Arrays.toString(members));
-		        for (String memberEmail : members) {
-		        	UsersData currentMember =  sdao.getIndividualUser(memberEmail);
-		        	if(currentMember.getUserType().equals("User")) {
-		        		//here fetch the goal member then add the member to navmember list
-		        	}
-		        } 
+				System.out.println("the members are " + Arrays.toString(members));
+				for (String memberEmail : members) {
+					UsersData currentMember = sdao.getIndividualUser(memberEmail);
+					if (currentMember.getUserType().equals("User")) {
+						GoalMember gMember = gdao.getIndividualMemberGoal(memberEmail);
+						if (gMember != null) {
+							NavBarMember navMember = new NavBarMember();
+							navMember.setMemberId(gMember.getUserId());
+							navMember.setMemberEmail(gMember.getUserEmail());
+							navMember.setMemberName(gMember.getUserName());
+							navMember.setMemberImage(gMember.getUserImage());
+							navMember.setLastUpdate(gMember.getLastUpdate());
+							navMember.setHasNewUpdates(gMember.getHasNewUpdates());
+							membersStatusList.add(navMember);
+						} else {
+							NavBarMember navMember = new NavBarMember();
+							navMember.setMemberId(currentMember.getEmployeeID());
+							navMember.setMemberEmail(currentMember.getEmail());
+							navMember.setMemberImage(currentMember.getImageurl());
+							navMember.setMemberName(currentMember.getName());
+							navMember.setHasNewUpdates(false);
+							Date d2 = new Date(0);
+							navMember.setLastUpdate(d2);
+							membersStatusList.add(navMember);
+						}
+					}
+				}
+				Collections.sort(membersStatusList, Collections.reverseOrder());
 			}
 		} catch (Exception e) {
 			System.out.println(e);
@@ -225,8 +246,20 @@ public class GoalService {
 				System.out.println(e);
 			}
 		}
-		if (user.getUserType().equals("User")) {
-
+		if (user.getUserType().equals("User") && member.getUserType().equals("Manager")) {
+			goalMember = gdao.getIndividualMemberGoal(user.getEmail());
+			Goal[] goalsArray = goalMember.getGoals();
+			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
+			Iterator<Goal> itr = goalsList.iterator();
+			while (itr.hasNext()) {
+				Goal selectedGoal = (Goal) itr.next();
+				if(!selectedGoal.getManagerEmail().equals(userEmail)) {
+					itr.remove();
+				}
+			}
+			Goal[] newGoalsArray = new Goal[goalsList.size()];
+			newGoalsArray = goalsList.toArray(newGoalsArray);
+			goalMember.setGoals(newGoalsArray);
 		} else if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
 			goalMember = gdao.getIndividualMemberGoal(userEmail);
 		}

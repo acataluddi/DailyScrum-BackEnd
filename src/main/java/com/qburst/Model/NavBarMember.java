@@ -1,6 +1,8 @@
 package com.qburst.Model;
 
-public class NavBarMember {
+import java.util.Date;
+
+public class NavBarMember implements Comparable<NavBarMember>{
 	
 	private String memberId;
 	
@@ -9,6 +11,8 @@ public class NavBarMember {
 	private String memberName;
 	
 	private String memberImage;
+	
+	private Date lastUpdate;
 	
 	private boolean hasNewUpdates;
 
@@ -44,6 +48,14 @@ public class NavBarMember {
 		this.memberImage = memberImage;
 	}
 
+	public Date getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(Date lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+
 	public boolean isHasNewUpdates() {
 		return hasNewUpdates;
 	}
@@ -51,5 +63,10 @@ public class NavBarMember {
 	public void setHasNewUpdates(boolean hasNewUpdates) {
 		this.hasNewUpdates = hasNewUpdates;
 	}
+	
+    @Override
+    public int compareTo(NavBarMember navMember) {
+         return this.getLastUpdate().compareTo(((NavBarMember) navMember).getLastUpdate());
+    }
 
 }
