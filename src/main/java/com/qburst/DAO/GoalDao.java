@@ -22,9 +22,9 @@ import com.qburst.Model.ProjectData;
 import com.qburst.Model.ProjectMember;
 
 public class GoalDao extends connection {
-	
+
 	@SuppressWarnings({ "resource", "deprecation" })
-	public GoalMember insertGoal(GoalMember goalMember) throws Exception{
+	public GoalMember insertGoal(GoalMember goalMember) throws Exception {
 		DB db;
 		GoalMember gMember = new GoalMember();
 		DBCursor<GoalMember> result = null;
@@ -56,10 +56,10 @@ public class GoalDao extends connection {
 			if (mongo != null) {
 				mongo.close();
 			}
-		}		
+		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public GoalMember getIndividualMemberGoal(String userEmail) throws Exception {
 		DB db;
@@ -78,7 +78,7 @@ public class GoalDao extends connection {
 				goalMember = result.next();
 				result.close();
 				return goalMember;
-			}			
+			}
 		} catch (Exception e) {
 		} finally {
 			if (result != null) {
@@ -88,9 +88,9 @@ public class GoalDao extends connection {
 				mongo.close();
 			}
 		}
-		return null;		
+		return null;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public GoalMember updateGoalMember(GoalMember goalMember) {
 		DB db;
@@ -121,7 +121,7 @@ public class GoalDao extends connection {
 		}
 		return gMember;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public List<NavBarMember> readGoalStatusForUser(String userEmail) throws Exception {
 		DB db;
@@ -149,10 +149,10 @@ public class GoalDao extends connection {
 				while (itr.hasNext()) {
 					NavBarMember navMember = (NavBarMember) itr.next();
 					if (navMember.getMemberEmail().equals(managerEmail)) {
-						if(!navMember.getHasNewUpdates()) {
+						if (!navMember.getHasNewUpdates()) {
 							navMember.setHasNewUpdates(hasUpdatesForUser);
 							itr.remove();
-							membersStatusList.add(navMember);							
+							membersStatusList.add(navMember);
 						}
 						memberPresent = true;
 						break;
@@ -166,7 +166,7 @@ public class GoalDao extends connection {
 					newNavBarMember.setMemberName(selectedGoal.getManagerName());
 					membersStatusList.add(newNavBarMember);
 				}
-			}			
+			}
 		} catch (Exception e) {
 		} finally {
 			if (result != null) {
@@ -178,22 +178,21 @@ public class GoalDao extends connection {
 		}
 		return membersStatusList;
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public String[] getMembersUnderManager(String userEmail) throws Exception {
-
 		DB db;
 		ProjectData pdata = new ProjectData();
 		DBCursor<ProjectData> projectResult = null;
 		MongoClient mongo = null;
 		String membersArray[] = null;
-		Set<String> projectMembers = new HashSet<String>(); 
+		Set<String> projectMembers = new HashSet<String>();
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
-			JacksonDBCollection<ProjectData, Object> projectCollection = JacksonDBCollection.wrap(table, ProjectData.class,
-					Object.class);
+			JacksonDBCollection<ProjectData, Object> projectCollection = JacksonDBCollection.wrap(table,
+					ProjectData.class, Object.class);
 			DBObject query = new BasicDBObject("members.email", userEmail);
 			userEmail = userEmail.trim();
 			projectResult = projectCollection.find(query);
@@ -204,20 +203,18 @@ public class GoalDao extends connection {
 					projectMembers.add(selectedMember.getemail());
 				}
 			}
-	        int n = projectMembers.size(); 
-	        membersArray = new String[n]; 
-	        membersArray = projectMembers.toArray(membersArray);
-	        return membersArray;
+			int n = projectMembers.size();
+			membersArray = new String[n];
+			membersArray = projectMembers.toArray(membersArray);
+			return membersArray;
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		finally{
-			if(projectResult!=null && mongo!=null) {
+		} finally {
+			if (projectResult != null && mongo != null) {
 				projectResult.close();
-			mongo.close();
+				mongo.close();
 			}
 		}
-		return null;		
+		return null;
 	}
-
 }
