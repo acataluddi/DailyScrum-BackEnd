@@ -164,6 +164,7 @@ public class GoalDao extends connection {
 					newNavBarMember.setMemberEmail(selectedGoal.getManagerEmail());
 					newNavBarMember.setMemberImage(selectedGoal.getManagerImage());
 					newNavBarMember.setMemberName(selectedGoal.getManagerName());
+					newNavBarMember.setLastUpdate(selectedGoal.getGoalTime());
 					membersStatusList.add(newNavBarMember);
 				}
 			}

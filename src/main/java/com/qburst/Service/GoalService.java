@@ -205,6 +205,7 @@ public class GoalService {
 		try {
 			if (user.getUserType().equals("User")) {
 				membersStatusList = gdao.readGoalStatusForUser(user.getEmail());
+				Collections.sort(membersStatusList, Collections.reverseOrder());
 			} else if (user.getUserType().equals("Manager")) {
 				String[] members = gdao.getMembersUnderManager(user.getEmail());
 				System.out.println("the members are " + Arrays.toString(members));
