@@ -143,18 +143,24 @@ public class GoalDao extends connection {
 			Goal[] goalsArray = goalMember.getGoals();
 			for (Goal selectedGoal : goalsArray) {
 				boolean memberPresent = false;
+				boolean hasUpdatesForUser = selectedGoal.gethasNewUpdatesForUser();
 				Iterator<NavBarMember> itr = membersStatusList.iterator();
 				String managerEmail = selectedGoal.getManagerEmail();
 				while (itr.hasNext()) {
 					NavBarMember navMember = (NavBarMember) itr.next();
 					if (navMember.getMemberEmail().equals(managerEmail)) {
+						if(!navMember.getHasNewUpdates()) {
+							navMember.setHasNewUpdates(hasUpdatesForUser);
+							itr.remove();
+							membersStatusList.add(navMember);							
+						}
 						memberPresent = true;
 						break;
 					}
 				}
 				if (!memberPresent) {
 					NavBarMember newNavBarMember = new NavBarMember();
-					newNavBarMember.setHasNewUpdates(selectedGoal.getHasNewUpdates());
+					newNavBarMember.setHasNewUpdates(hasUpdatesForUser);
 					newNavBarMember.setMemberEmail(selectedGoal.getManagerEmail());
 					newNavBarMember.setMemberImage(selectedGoal.getManagerImage());
 					newNavBarMember.setMemberName(selectedGoal.getManagerName());

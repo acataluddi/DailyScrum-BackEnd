@@ -56,7 +56,7 @@ public class NavBarMember implements Comparable<NavBarMember>{
 		this.lastUpdate = lastUpdate;
 	}
 
-	public boolean isHasNewUpdates() {
+	public boolean getHasNewUpdates() {
 		return hasNewUpdates;
 	}
 

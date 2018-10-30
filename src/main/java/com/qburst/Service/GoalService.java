@@ -47,7 +47,8 @@ public class GoalService {
 				goal.setManagerImage(user.getImageurl());
 				goalMember = gdao.getIndividualMemberGoal(goal.getUserEmail());
 				goal.setComments(null);
-				goal.setHasNewUpdates(true);
+				goal.sethasNewUpdatesForManager(true);
+				goal.sethasNewUpdatesForUser(true);
 				if (goalMember != null && goal.getUserEmail().equals(goalMember.getUserEmail())) {
 					// Goals already exist for the user so add the new one to array
 					Goal[] previousGoalsArray = goalMember.getGoals();
@@ -139,11 +140,13 @@ public class GoalService {
 								System.arraycopy(oldCommentArray, 0, newCommentArray, 0, oldCommentArray.length);
 								newCommentArray[oldCommentArray.length] = comment;
 								selectedGoal.setComments(newCommentArray);
-								selectedGoal.setHasNewUpdates(true);
+								selectedGoal.sethasNewUpdatesForManager(true);
+								selectedGoal.sethasNewUpdatesForUser(true);
 							} else {
 								Comment[] newCommentArray = new Comment[] { comment };
 								selectedGoal.setComments(newCommentArray);
-								selectedGoal.setHasNewUpdates(true);
+								selectedGoal.sethasNewUpdatesForManager(true);
+								selectedGoal.sethasNewUpdatesForUser(true);
 							}
 							itr.remove();
 							goalsList.add(selectedGoal);
@@ -197,16 +200,28 @@ public class GoalService {
 				System.out.println("the members are " + Arrays.toString(members));
 				for (String memberEmail : members) {
 					UsersData currentMember = sdao.getIndividualUser(memberEmail);
-					if (currentMember.getUserType().equals("User")) {
+					if (currentMember.getEmployeeID()!=null && currentMember.getUserType().equals("User")) {
 						GoalMember gMember = gdao.getIndividualMemberGoal(memberEmail);
 						if (gMember != null) {
+							boolean hasUpdatesForManager = false;
+							Goal[] goalsArray = gMember.getGoals();
+							String managerEmail = user.getEmail();
+							for (Goal g : goalsArray) {
+//								Updating the 'hasNewUpdates' indicator by iterating through
+//								the goals created by the manager
+								if (g.getManagerEmail().equals(managerEmail)) {
+									if(g.gethasNewUpdatesForUser()) {
+										hasUpdatesForManager = true;										
+									}
+								}
+							}
 							NavBarMember navMember = new NavBarMember();
 							navMember.setMemberId(gMember.getUserId());
 							navMember.setMemberEmail(gMember.getUserEmail());
 							navMember.setMemberName(gMember.getUserName());
 							navMember.setMemberImage(gMember.getUserImage());
 							navMember.setLastUpdate(gMember.getLastUpdate());
-							navMember.setHasNewUpdates(gMember.getHasNewUpdates());
+							navMember.setHasNewUpdates(hasUpdatesForManager);
 							membersStatusList.add(navMember);
 						} else {
 							NavBarMember navMember = new NavBarMember();
@@ -253,7 +268,7 @@ public class GoalService {
 			Iterator<Goal> itr = goalsList.iterator();
 			while (itr.hasNext()) {
 				Goal selectedGoal = (Goal) itr.next();
-				if(!selectedGoal.getManagerEmail().equals(userEmail)) {
+				if (!selectedGoal.getManagerEmail().equals(userEmail)) {
 					itr.remove();
 				}
 			}

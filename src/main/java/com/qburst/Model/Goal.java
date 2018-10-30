@@ -22,7 +22,9 @@ public class Goal implements Comparable<Goal>{
 	
 	private String userEmail;
 	
-	private boolean hasNewUpdates;
+	private boolean hasNewUpdatesForUser;
+	
+	private boolean hasNewUpdatesForManager;
 	
 	@JsonProperty("comments")
 	private Comment[] comments;
@@ -91,12 +93,20 @@ public class Goal implements Comparable<Goal>{
 		this.userEmail = userEmail;
 	}
 
-	public boolean getHasNewUpdates() {
-		return hasNewUpdates;
+	public boolean gethasNewUpdatesForUser() {
+		return hasNewUpdatesForUser;
 	}
 
-	public void setHasNewUpdates(boolean hasNewUpdates) {
-		this.hasNewUpdates = hasNewUpdates;
+	public void sethasNewUpdatesForUser(boolean hasNewUpdatesForUser) {
+		this.hasNewUpdatesForUser = hasNewUpdatesForUser;
+	}
+
+	public boolean gethasNewUpdatesForManager() {
+		return hasNewUpdatesForManager;
+	}
+
+	public void sethasNewUpdatesForManager(boolean hasNewUpdatesForManager) {
+		this.hasNewUpdatesForManager = hasNewUpdatesForManager;
 	}
 
 	public Comment[] getComments() {
