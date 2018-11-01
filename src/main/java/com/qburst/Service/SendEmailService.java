@@ -74,7 +74,7 @@ public class SendEmailService {
 		}
 	}
 
-	public void sendFeedbackNotificationEmail(Feedback feedback, UsersData user) {
+	public void sendFeedbackNotificationEmail(Feedback feedback) {
 		InputStream input = null;
 		Properties property = new Properties();
 		try {
@@ -110,18 +110,18 @@ public class SendEmailService {
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 			message.setRecipients(Message.RecipientType.CC, InternetAddress.parse(CC));
 			message.setSubject("Daily Scrum Updates");
-			message.setText("Hi,\n\nNew feedback has been submitted by " + user.getName() + ".\n\n" + "Name:\n"
-					+ user.getName() + "\nEmail:\n" + user.getEmail() + "\nFeedback:\n\""
+			message.setText("Hi,\n\nNew feedback has been submitted by " + feedback.getUserName() + ".\n\n" + "Name:\n"
+					+ feedback.getUserName() + "\nEmail:\n" + feedback.getUserEmail() + "\nFeedback:\n\""
 					+ feedback.getFeedbackDescription() + "\"\n\nThanks,\nDaily Scrum");
 			Transport.send(message);
 
 			// Sending acknowledgement to user
-			to = user.getEmail();
+			to = feedback.getUserEmail();
 			message = new MimeMessage(session);
 			message.setFrom(new InternetAddress(fromID));
 			message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 			message.setSubject("Daily Scrum Updates");
-			message.setText("Hi " + user.getName() + ",\n\nYour feedback has been successfully submitted."
+			message.setText("Hi " + feedback.getUserName() + ",\n\nYour feedback has been successfully submitted."
 					+ "\n\nPlease feel free to reach out if you have any more questions, comments, or concerns."
 					+ "\n\nThanks,\nDaily Scrum");
 			Transport.send(message);
