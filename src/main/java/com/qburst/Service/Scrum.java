@@ -508,6 +508,8 @@ public class Scrum extends ScrumDao {
 		ProjectData pdata = new ProjectData();
 		IdTokenVerification id_verifier = new IdTokenVerification();
 		List<TaskMember> taskList = new ArrayList<TaskMember>();
+		List<TaskMember> taskListNonEmpty = new ArrayList<TaskMember>();
+		List<TaskMember> taskListEmpty = new ArrayList<TaskMember>();
 		user = id_verifier.processToken(token);
 		if (user.getEmployeeID() != null) {
 			try {
@@ -558,18 +560,28 @@ public class Scrum extends ScrumDao {
 							totalHour += tasks[j].getHourSpent();
 							totalMinute += tasks[j].getMinuteSpent();
 						}
-						double  extrahour = 0;
-					    if (totalMinute >= 60) {
-					      extrahour = Math.floor(totalMinute / 60);
-					      totalMinute = totalMinute % 60;
-					    }
-					    totalHour += extrahour;											
+						double extrahour = 0;
+						if (totalMinute >= 60) {
+							extrahour = Math.floor(totalMinute / 60);
+							totalMinute = totalMinute % 60;
+						}
+						totalHour += extrahour;
 						tmember.setHour(totalHour);
 						tmember.setMinute(totalMinute);
 						taskList.add(tmember);
 					}
 				}
-				return taskList;
+				Iterator<TaskMember> taskIterator = taskList.iterator();
+				while (taskIterator.hasNext()) {
+					TaskMember tMember = (TaskMember) taskIterator.next();
+					if (tMember.getTasks().length > 0) {
+						taskListNonEmpty.add(tMember);
+					} else if (tMember.getTasks().length == 0) {
+						taskListEmpty.add(tMember);
+					}
+				}
+				taskListNonEmpty.addAll(taskListEmpty);
+				return taskListNonEmpty;
 			} catch (Exception e) {
 				System.out.println(e);
 			}
