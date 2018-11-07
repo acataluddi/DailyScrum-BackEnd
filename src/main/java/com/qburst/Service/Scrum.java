@@ -11,7 +11,7 @@ import com.qburst.Controller.IdTokenVerification;
 import com.qburst.DAO.ProjectDao;
 import com.qburst.DAO.ScrumDao;
 import com.qburst.Model.ProjectData;
-import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.ProjectMember;
 import com.qburst.Model.TaskData;
 import com.qburst.Model.TaskMember;
 import com.qburst.Model.UsersData;
@@ -31,7 +31,7 @@ public class Scrum extends ScrumDao {
 				user = insertIntoTable(incomingdata);
 				projectlist = this.pdao.getProjects(user.getEmail());
 				Iterator<ProjectData> itr = projectlist.iterator();
-				ProjectMemberModel[] current_members;
+				ProjectMember[] current_members;
 				while (itr.hasNext()) {
 					ProjectData project = (ProjectData) itr.next();
 					current_members = project.getMembers();
@@ -100,14 +100,14 @@ public class Scrum extends ScrumDao {
 		}
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
-				ProjectMemberModel[] membersWithoutManager = incomingdata.getMembers();
-				ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(
+				ProjectMember[] membersWithoutManager = incomingdata.getMembers();
+				ArrayList<ProjectMember> membersList = new ArrayList<ProjectMember>(
 						Arrays.asList(membersWithoutManager));
-				ProjectMemberModel manager = new ProjectMemberModel();
+				ProjectMember manager = new ProjectMember();
 				manager.setemail(user.getEmail());
 				manager.setrole("Project Manager");
 				membersList.add(manager);
-				ProjectMemberModel[] members = new ProjectMemberModel[membersWithoutManager.length + 1];
+				ProjectMember[] members = new ProjectMember[membersWithoutManager.length + 1];
 				members = membersList.toArray(members);
 				SendEmailService mailService = new SendEmailService();
 				for (int i = 0; i < members.length; i++) {
@@ -186,15 +186,15 @@ public class Scrum extends ScrumDao {
 		}
 		String pid = incomingdata.getProjectId();
 		ProjectData current_project = this.pdao.getIndividualProject(pid);
-		ProjectMemberModel[] current_members = current_project.getMembers();
-		ProjectMemberModel[] members = incomingdata.getMembers();
-		ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(Arrays.asList(members));
+		ProjectMember[] current_members = current_project.getMembers();
+		ProjectMember[] members = incomingdata.getMembers();
+		ArrayList<ProjectMember> membersList = new ArrayList<ProjectMember>(Arrays.asList(members));
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
-				for (ProjectMemberModel oldMember : current_members) {
+				for (ProjectMember oldMember : current_members) {
 					boolean memberPresent = false;
 					boolean memberIsActive = false;
-					for (ProjectMemberModel newMember : members) {
+					for (ProjectMember newMember : members) {
 						if (oldMember.getemail().equals(newMember.getemail())) {
 							memberPresent = true;
 							break;
@@ -206,9 +206,9 @@ public class Scrum extends ScrumDao {
 						membersList.add(oldMember);
 					}
 				}
-				for (ProjectMemberModel newMember : members) {
+				for (ProjectMember newMember : members) {
 					boolean memberPresent = false;
-					for (ProjectMemberModel oldMember : current_members) {
+					for (ProjectMember oldMember : current_members) {
 						if (newMember.getemail().equals(oldMember.getemail())) {
 							if (oldMember.getIsActive() == true) {
 								newMember.setDeletedDate("");
@@ -216,9 +216,9 @@ public class Scrum extends ScrumDao {
 								newMember.setAddedDate(oldMember.getAddedDate());
 								newMember.setimage(oldMember.getimage());
 								newMember.setname(oldMember.getname());
-								Iterator<ProjectMemberModel> itr = membersList.iterator();
+								Iterator<ProjectMember> itr = membersList.iterator();
 								while (itr.hasNext()) {
-									ProjectMemberModel m = (ProjectMemberModel) itr.next();
+									ProjectMember m = (ProjectMember) itr.next();
 									if (m.getemail().equals(newMember.getemail())) {
 										itr.remove();
 									}
@@ -232,9 +232,9 @@ public class Scrum extends ScrumDao {
 								newMember.setAddedDate(oldMember.getAddedDate());
 								newMember.setimage(oldMember.getimage());
 								newMember.setname(oldMember.getname());
-								Iterator<ProjectMemberModel> itr = membersList.iterator();
+								Iterator<ProjectMember> itr = membersList.iterator();
 								while (itr.hasNext()) {
-									ProjectMemberModel m = (ProjectMemberModel) itr.next();
+									ProjectMember m = (ProjectMember) itr.next();
 									if (m.getemail().equals(newMember.getemail())) {
 										itr.remove();
 									}
@@ -249,9 +249,9 @@ public class Scrum extends ScrumDao {
 						newMember.setAddedDate(strDate);
 						newMember.setDeletedDate("");
 						newMember.setIsActive(true);
-						Iterator<ProjectMemberModel> itr = membersList.iterator();
+						Iterator<ProjectMember> itr = membersList.iterator();
 						while (itr.hasNext()) {
-							ProjectMemberModel m = (ProjectMemberModel) itr.next();
+							ProjectMember m = (ProjectMember) itr.next();
 							if (m.getemail().equals(newMember.getemail())) {
 								itr.remove();
 							}
@@ -272,7 +272,7 @@ public class Scrum extends ScrumDao {
 				}
 				members = membersList.toArray(members);
 				// To change the role of Users (who are Project Managers) to Manager
-				for (ProjectMemberModel memb : members) {
+				for (ProjectMember memb : members) {
 					if (memb.getrole().equals("Project Manager") && memb.getname() != "") {
 						UsersData current_user = new UsersData();
 						current_user = getIndividualUser(memb.getemail());
@@ -322,20 +322,20 @@ public class Scrum extends ScrumDao {
 			projectlist = this.pdao.getProjects(project_param);
 			if (user.getEmail() != "" && (user.getUserType().equals("Manager") || user.getUserType().equals("User"))) {
 				Iterator<ProjectData> itr = projectlist.iterator();
-				ProjectMemberModel[] current_members;
+				ProjectMember[] current_members;
 				while (itr.hasNext()) {
 					ProjectData project = (ProjectData) itr.next();
 					current_members = project.getMembers();
-					ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(
+					ArrayList<ProjectMember> membersList = new ArrayList<ProjectMember>(
 							Arrays.asList(current_members));
-					Iterator<ProjectMemberModel> itr1 = membersList.iterator();
+					Iterator<ProjectMember> itr1 = membersList.iterator();
 					while (itr1.hasNext()) {
-						ProjectMemberModel mem = (ProjectMemberModel) itr1.next();
+						ProjectMember mem = (ProjectMember) itr1.next();
 						if (mem.getIsActive() == false) {
 							itr1.remove();
 						}
 					}
-					ProjectMemberModel[] updated_members = new ProjectMemberModel[membersList.size()];
+					ProjectMember[] updated_members = new ProjectMember[membersList.size()];
 					updated_members = membersList.toArray(updated_members);
 					int index = projectlist.indexOf(project);
 					boolean isProjectDeleted = false;
@@ -355,20 +355,20 @@ public class Scrum extends ScrumDao {
 				}
 			} else if (user.getEmail() != "" && (user.getUserType().equals("Admin"))) {
 				Iterator<ProjectData> itr = projectlist.iterator();
-				ProjectMemberModel[] current_members;
+				ProjectMember[] current_members;
 				while (itr.hasNext()) {
 					ProjectData project = (ProjectData) itr.next();
 					current_members = project.getMembers();
-					ArrayList<ProjectMemberModel> membersList = new ArrayList<ProjectMemberModel>(
+					ArrayList<ProjectMember> membersList = new ArrayList<ProjectMember>(
 							Arrays.asList(current_members));
-					Iterator<ProjectMemberModel> itr1 = membersList.iterator();
+					Iterator<ProjectMember> itr1 = membersList.iterator();
 					while (itr1.hasNext()) {
-						ProjectMemberModel mem = (ProjectMemberModel) itr1.next();
+						ProjectMember mem = (ProjectMember) itr1.next();
 						if (mem.getIsActive() == false) {
 							itr1.remove();
 						}
 					}
-					ProjectMemberModel[] updated_members = new ProjectMemberModel[membersList.size()];
+					ProjectMember[] updated_members = new ProjectMember[membersList.size()];
 					updated_members = membersList.toArray(updated_members);
 					int index = projectlist.indexOf(project);
 					project.setMembers(updated_members);
@@ -521,7 +521,7 @@ public class Scrum extends ScrumDao {
 		if (user.getUserType().equals("Admin") || user.getUserType().equals("Manager")) {
 			try {
 				pdata = this.pdao.getIndividualProject(viewTaskProjectId);
-				ProjectMemberModel[] members;
+				ProjectMember[] members;
 				members = pdata.getMembers();
 				for (int i = 0; i < members.length; i++) {
 					TaskMember tmember = new TaskMember();

@@ -11,11 +11,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import com.qburst.Model.Feedback;
-import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.ProjectMember;
 import com.qburst.Model.UsersData;
 
 public class SendEmailService {
-	public void sendEmail(ProjectMemberModel member, String projectName, UsersData assignee) {
+	public void sendEmail(ProjectMember member, String projectName, UsersData assignee) {
 		InputStream input = null;
 		Properties property = new Properties();
 		try {

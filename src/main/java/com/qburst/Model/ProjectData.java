@@ -16,7 +16,7 @@ public class ProjectData {
 	private String endDate;
 
 	@JsonProperty("members")
-	private ProjectMemberModel[] members;
+	private ProjectMember[] members;
 
 	@ObjectId
 	@JsonProperty("_id")
@@ -54,12 +54,12 @@ public class ProjectData {
 		this.projectDesc = projectDesc;
 	}
 
-	public ProjectMemberModel[] getMembers() {
+	public ProjectMember[] getMembers() {
 		return members;
 	}
 
 	@JsonProperty("members")
-	public void setMembers(ProjectMemberModel[] members) {
+	public void setMembers(ProjectMember[] members) {
 		this.members = members;
 	}
 

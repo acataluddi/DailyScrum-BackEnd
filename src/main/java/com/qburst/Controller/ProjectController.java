@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.qburst.Model.ProjectData;
-import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.ProjectMember;
 import com.qburst.Model.TaskData;
 import com.qburst.Service.Scrum;
 
@@ -49,7 +49,7 @@ public class ProjectController extends HttpServlet {
 		String token = "";
 		Scrum scrum = new Scrum();
 		ProjectData incomingdata = new ProjectData();
-		ProjectMemberModel[] members = null;
+		ProjectMember[] members = null;
 		ObjectMapper mapper = new ObjectMapper();
 		ServletInputStream inputjson = null;
 
