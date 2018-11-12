@@ -1,17 +1,17 @@
 package com.qburst.Service;
 
-import com.qburst.Model.ProjectMemberModel;
+import com.qburst.Model.ProjectMember;
 import com.qburst.Model.UsersData;
 
 public class MailThread implements Runnable{
 	
-	ProjectMemberModel member;
+	ProjectMember member;
 	String projectname;
 	UsersData user;
 	
 	Thread mailthread;
 	 private String mailthreadname;
-	 MailThread(ProjectMemberModel member, String projectname, UsersData user) {
+	 MailThread(ProjectMember member, String projectname, UsersData user) {
 		 this.member = member;
 		 this.projectname = projectname;
 		 this.user = user;
