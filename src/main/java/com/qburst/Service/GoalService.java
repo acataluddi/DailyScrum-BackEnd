@@ -38,7 +38,7 @@ public class GoalService {
 				System.out.println(e);
 			}
 		}
-		if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
+		if (user.getUserType().equals("Manager") && member.getUserType().equals("User")) {
 			try {
 				goal.setGoalId(String.valueOf(date.getTime()));
 				goal.setGoalTime(date);
@@ -206,6 +206,11 @@ public class GoalService {
 			if (user.getUserType().equals("User")) {
 				membersStatusList = gdao.readGoalStatusForUser(user.getEmail());
 				Collections.sort(membersStatusList, Collections.reverseOrder());
+				for (NavBarMember navMember : membersStatusList) {
+					String currentManagerEmail = navMember.getMemberEmail();
+					UsersData currentMember = sdao.getIndividualUser(currentManagerEmail);
+					navMember.setMemberId(currentMember.getEmployeeID());
+				}
 			} else if (user.getUserType().equals("Manager")) {
 				String[] members = gdao.getMembersUnderManager(user.getEmail());
 				for (String memberEmail : members) {
@@ -283,9 +288,13 @@ public class GoalService {
 			}
 			Goal[] newGoalsArray = new Goal[goalsList.size()];
 			newGoalsArray = goalsList.toArray(newGoalsArray);
+			goalMember.setUserEmail(member.getEmail());
+			goalMember.setUserId(member.getEmployeeID());
+			goalMember.setUserName(member.getName());
+			goalMember.setUserImage(member.getImageurl());
 			goalMember.setGoals(newGoalsArray);
 			changeGoalReadStatus(user, member);
-		} else if (user.getUserType().equals("Manager") && !member.getUserType().equals("Manager")) {
+		} else if (user.getUserType().equals("Manager") && member.getUserType().equals("User")) {
 			goalMember = gdao.getIndividualMemberGoal(userEmail);
 			changeGoalReadStatus(user, member);
 		}
@@ -303,15 +312,15 @@ public class GoalService {
 				Goal[] newGoalsArray = new Goal[goalsArray.length];
 				int newGoalsArrayIndex = 0;
 				for (Goal goal : goalsArray) {
-					if(goal.getManagerEmail().equals(managerEmail)) {
+					if (goal.getManagerEmail().equals(managerEmail)) {
 						goal.sethasNewUpdatesForManager(false);
 					}
-					newGoalsArray[newGoalsArrayIndex]=goal;
+					newGoalsArray[newGoalsArrayIndex] = goal;
 					newGoalsArrayIndex++;
 				}
 				goalMember.setGoals(newGoalsArray);
 				GoalMember gMember = gdao.updateGoalMember(goalMember);
-				if(gMember.getId()!=null) {
+				if (gMember.getId() != null) {
 					return true;
 				}
 			} else if (user.getUserType().equals("User") && member.getUserType().equals("Manager")) {
@@ -321,15 +330,15 @@ public class GoalService {
 				Goal[] newGoalsArray = new Goal[goalsArray.length];
 				int newGoalsArrayIndex = 0;
 				for (Goal goal : goalsArray) {
-					if(goal.getManagerEmail().equals(managerEmail)) {
+					if (goal.getManagerEmail().equals(managerEmail)) {
 						goal.sethasNewUpdatesForUser(false);
 					}
-					newGoalsArray[newGoalsArrayIndex]=goal;
+					newGoalsArray[newGoalsArrayIndex] = goal;
 					newGoalsArrayIndex++;
 				}
 				goalMember.setGoals(newGoalsArray);
 				GoalMember gMember = gdao.updateGoalMember(goalMember);
-				if(gMember.getId()!=null) {
+				if (gMember.getId() != null) {
 					return true;
 				}
 			}
