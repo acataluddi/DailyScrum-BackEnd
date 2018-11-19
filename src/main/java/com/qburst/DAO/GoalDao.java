@@ -200,9 +200,18 @@ public class GoalDao extends connection {
 			while (projectResult.hasNext()) {
 				pdata = projectResult.next();
 				ProjectMember[] members = pdata.getMembers();
+				boolean isMemberActive = false;
 				for (ProjectMember selectedMember : members) {
-					if(selectedMember.getIsActive()) {
-						projectMembers.add(selectedMember.getemail());
+					if(selectedMember.getemail().equals(userEmail) && selectedMember.getIsActive() == true) {
+						isMemberActive = true;
+						break;
+					}
+				}
+				if(isMemberActive) {
+					for (ProjectMember selectedMember : members) {
+						if(selectedMember.getIsActive()) {
+							projectMembers.add(selectedMember.getemail());
+						}
 					}
 				}
 			}
