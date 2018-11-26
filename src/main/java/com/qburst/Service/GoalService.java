@@ -296,6 +296,18 @@ public class GoalService {
 			changeGoalReadStatus(user, member);
 		} else if (user.getUserType().equals("Manager") && member.getUserType().equals("User")) {
 			goalMember = gdao.getIndividualMemberGoal(userEmail);
+			Goal[] goalsArray = goalMember.getGoals();
+			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
+			Iterator<Goal> itr = goalsList.iterator();
+			while (itr.hasNext()) {
+				Goal selectedGoal = (Goal) itr.next();
+				if (!selectedGoal.getManagerEmail().equals(user.getEmail())) {
+					itr.remove();
+				}
+			}
+			Goal[] newGoalsArray = new Goal[goalsList.size()];
+			newGoalsArray = goalsList.toArray(newGoalsArray);
+			goalMember.setGoals(newGoalsArray);
 			changeGoalReadStatus(user, member);
 		}
 		return goalMember;
