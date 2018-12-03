@@ -38,7 +38,7 @@ public class GoalService {
 				System.out.println(e);
 			}
 		}
-		if (user.getUserType().equals("Manager") && member.getUserType().equals("User")) {
+		if (user.getUserType().equals("Manager")) {
 			try {
 				goal.setGoalId(String.valueOf(date.getTime()));
 				goal.setGoalTime(date);
@@ -59,7 +59,7 @@ public class GoalService {
 				} else {
 					// Goals do not exist for the user, so add the new one
 					GoalMember newMember = new GoalMember();
-					if (member.getEmployeeID() != null && !member.getUserType().equals("Manager")) {
+					if (member.getEmployeeID() != null) {
 						newMember.setUserId(member.getEmployeeID());
 						newMember.setUserEmail(member.getEmail());
 						newMember.setUserName(member.getName());
@@ -115,7 +115,7 @@ public class GoalService {
 			}
 		}
 		if ((user.getUserType().equals("Manager") || user.getUserType().equals("User"))
-				&& (!member.getUserType().equals("Manager"))) {
+				&& (member.getUserType().equals("Manager") || member.getUserType().equals("User"))) {
 			try {
 				goalMember = gdao.getIndividualMemberGoal(comment.getUserEmail());
 				Goal[] oldGoalsArray = goalMember.getGoals();
@@ -215,7 +215,7 @@ public class GoalService {
 				String[] members = gdao.getMembersUnderManager(user.getEmail());
 				for (String memberEmail : members) {
 					UsersData currentMember = sdao.getIndividualUser(memberEmail);
-					if (currentMember.getEmployeeID() != null && currentMember.getUserType().equals("User")) {
+					if (currentMember.getEmployeeID() != null) {
 						GoalMember gMember = gdao.getIndividualMemberGoal(memberEmail);
 						if (gMember != null) {
 							boolean hasUpdatesForManager = false;
@@ -294,7 +294,7 @@ public class GoalService {
 			goalMember.setUserImage(member.getImageurl());
 			goalMember.setGoals(newGoalsArray);
 			changeGoalReadStatus(user, member);
-		} else if (user.getUserType().equals("Manager") && member.getUserType().equals("User")) {
+		} else if (user.getUserType().equals("Manager")) {
 			goalMember = gdao.getIndividualMemberGoal(userEmail);
 			Goal[] goalsArray = goalMember.getGoals();
 			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
@@ -305,6 +305,17 @@ public class GoalService {
 					itr.remove();
 				}
 			}
+			GoalMember goalMember1 = gdao.getIndividualMemberGoal(user.getEmail());
+			Goal[] goalsArray1 = goalMember1.getGoals();
+			ArrayList<Goal> goalsList1 = new ArrayList<Goal>(Arrays.asList(goalsArray1));
+			Iterator<Goal> itr1 = goalsList1.iterator();
+			while (itr1.hasNext()) {
+				Goal selectedGoal = (Goal) itr1.next();
+				if (selectedGoal.getManagerEmail().equals(userEmail)) {
+					goalsList.add(selectedGoal);
+				}
+			}
+			Collections.sort(goalsList, Collections.reverseOrder());
 			Goal[] newGoalsArray = new Goal[goalsList.size()];
 			newGoalsArray = goalsList.toArray(newGoalsArray);
 			goalMember.setGoals(newGoalsArray);
