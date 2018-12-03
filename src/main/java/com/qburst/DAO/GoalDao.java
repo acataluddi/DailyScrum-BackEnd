@@ -209,7 +209,7 @@ public class GoalDao extends connection {
 				}
 				if(isMemberActive) {
 					for (ProjectMember selectedMember : members) {
-						if(selectedMember.getIsActive()) {
+						if(selectedMember.getIsActive() && !selectedMember.getemail().equals(userEmail)) {
 							projectMembers.add(selectedMember.getemail());
 						}
 					}
