@@ -1,6 +1,7 @@
 package com.qburst.DAO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,7 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.qburst.Model.Comment;
 import com.qburst.Model.Goal;
 import com.qburst.Model.GoalMember;
 import com.qburst.Model.NavBarMember;
@@ -140,32 +142,49 @@ public class GoalDao extends connection {
 				goalMember = result.next();
 				result.close();
 			}
-			Goal[] goalsArray = goalMember.getGoals();
-			for (Goal selectedGoal : goalsArray) {
-				boolean memberPresent = false;
-				boolean hasUpdatesForUser = selectedGoal.gethasNewUpdatesForUser();
-				Iterator<NavBarMember> itr = membersStatusList.iterator();
-				String managerEmail = selectedGoal.getManagerEmail();
-				while (itr.hasNext()) {
-					NavBarMember navMember = (NavBarMember) itr.next();
-					if (navMember.getMemberEmail().equals(managerEmail)) {
-						if (!navMember.getHasNewUpdates()) {
-							navMember.setHasNewUpdates(hasUpdatesForUser);
-							itr.remove();
-							membersStatusList.add(navMember);
+			if(goalMember != null) {
+				Goal[] goalsArray = goalMember.getGoals();
+				for (Goal selectedGoal : goalsArray) {
+					boolean memberPresent = false;
+					boolean hasUpdatesForUser = selectedGoal.gethasNewUpdatesForUser();
+					Iterator<NavBarMember> itr = membersStatusList.iterator();
+					String managerEmail = selectedGoal.getManagerEmail();
+					while (itr.hasNext()) {
+						NavBarMember navMember = (NavBarMember) itr.next();
+						if (navMember.getMemberEmail().equals(managerEmail)) {
+							Date lastUpdatedDate = navMember.getLastUpdate();
+							Comment[] goalComments = selectedGoal.getComments();
+							if(goalComments != null) {
+								Date commentTime = goalComments[goalComments.length-1].getCommentTime();
+								if(lastUpdatedDate.before(commentTime)) {
+									lastUpdatedDate = commentTime;
+								}
+							}
+							navMember.setLastUpdate(lastUpdatedDate);
+							if (!navMember.getHasNewUpdates()) {
+								navMember.setHasNewUpdates(hasUpdatesForUser);
+							}
+							memberPresent = true;
+							break;
 						}
-						memberPresent = true;
-						break;
 					}
-				}
-				if (!memberPresent) {
-					NavBarMember newNavBarMember = new NavBarMember();
-					newNavBarMember.setHasNewUpdates(hasUpdatesForUser);
-					newNavBarMember.setMemberEmail(selectedGoal.getManagerEmail());
-					newNavBarMember.setMemberImage(selectedGoal.getManagerImage());
-					newNavBarMember.setMemberName(selectedGoal.getManagerName());
-					newNavBarMember.setLastUpdate(selectedGoal.getGoalTime());
-					membersStatusList.add(newNavBarMember);
+					if (!memberPresent) {
+						NavBarMember newNavBarMember = new NavBarMember();
+						newNavBarMember.setHasNewUpdates(hasUpdatesForUser);
+						newNavBarMember.setMemberEmail(selectedGoal.getManagerEmail());
+						newNavBarMember.setMemberImage(selectedGoal.getManagerImage());
+						newNavBarMember.setMemberName(selectedGoal.getManagerName());
+						Date lastUpdatedDate = selectedGoal.getGoalTime();
+						Comment[] goalComments = selectedGoal.getComments();
+						if(goalComments != null) {
+							Date commentTime = goalComments[goalComments.length-1].getCommentTime();
+							if(lastUpdatedDate.before(commentTime)) {
+								lastUpdatedDate = commentTime;
+							}
+						}
+						newNavBarMember.setLastUpdate(lastUpdatedDate);
+						membersStatusList.add(newNavBarMember);
+					}
 				}
 			}
 		} catch (Exception e) {
