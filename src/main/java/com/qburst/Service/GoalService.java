@@ -211,46 +211,72 @@ public class GoalService {
 					UsersData currentMember = sdao.getIndividualUser(currentManagerEmail);
 					navMember.setMemberId(currentMember.getEmployeeID());
 				}
-			} else if (user.getUserType().equals("Manager")) {
+			} else if (user.getUserType().equals("Manager")) {				
 				String[] members = gdao.getMembersUnderManager(user.getEmail());
+				GoalMember managerMember = gdao.getIndividualMemberGoal(user.getEmail());
+				Goal[] managerGoals = null;
+				if(managerMember != null) {
+					managerGoals = managerMember.getGoals();
+				}
 				for (String memberEmail : members) {
 					UsersData currentMember = sdao.getIndividualUser(memberEmail);
 					if (currentMember.getEmployeeID() != null) {
-						GoalMember gMember = gdao.getIndividualMemberGoal(memberEmail);
-						if (gMember != null) {
-							boolean hasUpdatesForManager = false;
-							Goal[] goalsArray = gMember.getGoals();
-							String managerEmail = user.getEmail();
-							for (Goal g : goalsArray) {
-//								Updating the 'hasNewUpdates' indicator by iterating through the goals created by the manager
-								if (g.getManagerEmail().equals(managerEmail)) {
-									if (g.gethasNewUpdatesForManager()) {
-										hasUpdatesForManager = true;
+						NavBarMember navMember = new NavBarMember();
+						navMember.setMemberId(currentMember.getEmployeeID());
+						navMember.setMemberEmail(currentMember.getEmail());
+						navMember.setMemberImage(currentMember.getImageurl());
+						navMember.setMemberName(currentMember.getName());
+						boolean isThereAnythingNew = false;
+						Date userGoalDate = new Date(0);
+						if(managerGoals != null) {
+							for (Goal selectedGoal : managerGoals) {
+								if(selectedGoal.getManagerEmail().equals(memberEmail)) {
+									if(selectedGoal.gethasNewUpdatesForUser()) {
+										isThereAnythingNew = true;
+									}
+									if(userGoalDate.before(selectedGoal.getGoalTime())) {
+										userGoalDate = selectedGoal.getGoalTime();
+									}
+									Comment[] goalComments = selectedGoal.getComments();
+									if(goalComments != null) {
+										Date commentTime = goalComments[goalComments.length-1].getCommentTime();
+										if(userGoalDate.before(commentTime)) {
+											userGoalDate = commentTime;
+										}
 									}
 								}
 							}
-							NavBarMember navMember = new NavBarMember();
-							navMember.setMemberId(gMember.getUserId());
-							navMember.setMemberEmail(gMember.getUserEmail());
-							navMember.setMemberName(gMember.getUserName());
-							navMember.setMemberImage(gMember.getUserImage());
-							navMember.setLastUpdate(gMember.getLastUpdate());
-							navMember.setHasNewUpdates(hasUpdatesForManager);
-							membersStatusList.add(navMember);
-						} else {
-							NavBarMember navMember = new NavBarMember();
-							navMember.setMemberId(currentMember.getEmployeeID());
-							navMember.setMemberEmail(currentMember.getEmail());
-							navMember.setMemberImage(currentMember.getImageurl());
-							navMember.setMemberName(currentMember.getName());
-							navMember.setHasNewUpdates(false);
-							Date d2 = new Date(0);
-							navMember.setLastUpdate(d2);
-							membersStatusList.add(navMember);
+						}				
+						GoalMember gMember = gdao.getIndividualMemberGoal(memberEmail);
+						Goal[] userGoals;
+						if (gMember != null) {
+							userGoals = gMember.getGoals();
+							if(userGoals != null) {
+								for (Goal selectedGoal : userGoals) {
+									if(selectedGoal.getManagerEmail().equals(user.getEmail())) {
+										if(selectedGoal.gethasNewUpdatesForManager()) {
+											isThereAnythingNew = true;
+										}
+										if(userGoalDate.before(selectedGoal.getGoalTime())) {
+											userGoalDate = selectedGoal.getGoalTime();
+										}
+										Comment[] goalComments = selectedGoal.getComments();
+										if(goalComments != null) {
+											Date commentTime = goalComments[goalComments.length-1].getCommentTime();
+											if(userGoalDate.before(commentTime)) {
+												userGoalDate = commentTime;
+											}
+										}
+									}
+								}
+							}
 						}
+						navMember.setLastUpdate(userGoalDate);
+						navMember.setHasNewUpdates(isThereAnythingNew);
+						membersStatusList.add(navMember);
+						Collections.sort(membersStatusList, Collections.reverseOrder());
 					}
 				}
-				Collections.sort(membersStatusList, Collections.reverseOrder());
 			}
 		} catch (Exception e) {
 			System.out.println(e);
@@ -277,55 +303,77 @@ public class GoalService {
 		}
 		if (user.getUserType().equals("User") && member.getUserType().equals("Manager")) {
 			goalMember = gdao.getIndividualMemberGoal(user.getEmail());
-			Goal[] goalsArray = goalMember.getGoals();
-			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
-			Iterator<Goal> itr = goalsList.iterator();
-			while (itr.hasNext()) {
-				Goal selectedGoal = (Goal) itr.next();
-				if (!selectedGoal.getManagerEmail().equals(userEmail)) {
-					itr.remove();
+			if(goalMember != null) {
+				Goal[] goalsArray = goalMember.getGoals();
+				ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
+				Iterator<Goal> itr = goalsList.iterator();
+				while (itr.hasNext()) {
+					Goal selectedGoal = (Goal) itr.next();
+					if (!selectedGoal.getManagerEmail().equals(userEmail)) {
+						itr.remove();
+					}
 				}
+				Goal[] newGoalsArray = new Goal[goalsList.size()];
+				newGoalsArray = goalsList.toArray(newGoalsArray);
+				goalMember.setUserEmail(member.getEmail());
+				goalMember.setUserId(member.getEmployeeID());
+				goalMember.setUserName(member.getName());
+				goalMember.setUserImage(member.getImageurl());
+				goalMember.setGoals(newGoalsArray);
+				changeGoalReadStatus(user, member);
 			}
-			Goal[] newGoalsArray = new Goal[goalsList.size()];
-			newGoalsArray = goalsList.toArray(newGoalsArray);
-			goalMember.setUserEmail(member.getEmail());
-			goalMember.setUserId(member.getEmployeeID());
-			goalMember.setUserName(member.getName());
-			goalMember.setUserImage(member.getImageurl());
-			goalMember.setGoals(newGoalsArray);
-			changeGoalReadStatus(user, member);
 		} else if (user.getUserType().equals("Manager")) {
-			goalMember = gdao.getIndividualMemberGoal(userEmail);
-			Goal[] goalsArray = goalMember.getGoals();
-			ArrayList<Goal> goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
-			Iterator<Goal> itr = goalsList.iterator();
-			while (itr.hasNext()) {
-				Goal selectedGoal = (Goal) itr.next();
-				if (!selectedGoal.getManagerEmail().equals(user.getEmail())) {
-					itr.remove();
+			try {
+				List<Goal> goalsList = new ArrayList<Goal>();
+				List<Goal> goalsList1 = new ArrayList<Goal>();
+				goalMember = gdao.getIndividualMemberGoal(userEmail);
+				if (goalMember != null && goalMember.getUserId() != null && goalMember.getGoals() != null) {
+					Goal[] goalsArray = goalMember.getGoals();
+					if(goalsArray.length>0) {
+						goalsList = new ArrayList<Goal>(Arrays.asList(goalsArray));
+						Iterator<Goal> itr = goalsList.iterator();
+						while (itr.hasNext()) {
+							Goal selectedGoal = (Goal) itr.next();
+							if (!selectedGoal.getManagerEmail().equals(user.getEmail())) {
+								itr.remove();
+							}
+						}
+					}
 				}
-			}
-			GoalMember goalMember1 = gdao.getIndividualMemberGoal(user.getEmail());
-			Goal[] goalsArray1 = goalMember1.getGoals();
-			ArrayList<Goal> goalsList1 = new ArrayList<Goal>(Arrays.asList(goalsArray1));
-			Iterator<Goal> itr1 = goalsList1.iterator();
-			while (itr1.hasNext()) {
-				Goal selectedGoal = (Goal) itr1.next();
-				if (selectedGoal.getManagerEmail().equals(userEmail)) {
-					goalsList.add(selectedGoal);
+				GoalMember goalMember1 = gdao.getIndividualMemberGoal(user.getEmail());
+				if (goalMember1 != null && goalMember1.getUserId() != null && goalMember1.getGoals() != null) {
+					if(goalMember == null) {
+						goalMember = new GoalMember();
+						goalMember.setUserEmail(member.getEmail());
+						goalMember.setUserId(member.getEmployeeID());
+						goalMember.setUserName(member.getName());
+						goalMember.setUserImage(member.getImageurl());
+					}
+					Goal[] goalsArray1 = goalMember1.getGoals();
+					goalsList1 =  new ArrayList<Goal>(Arrays.asList(goalsArray1));
+					Iterator<Goal> itr1 = goalsList1.iterator();
+					while (itr1.hasNext()) {
+						Goal selectedGoal = (Goal) itr1.next();
+						if (selectedGoal.getManagerEmail().equals(userEmail)) {
+							goalsList.add(selectedGoal);
+						}
+					}
 				}
+				Collections.sort(goalsList, Collections.reverseOrder());
+				Goal[] newGoalsArray = new Goal[goalsList.size()];
+				newGoalsArray = goalsList.toArray(newGoalsArray);
+				goalMember.setGoals(newGoalsArray);
+				changeGoalReadStatus(user, member);
+			} catch (Exception e) {
+				System.out.println(e);
 			}
-			Collections.sort(goalsList, Collections.reverseOrder());
-			Goal[] newGoalsArray = new Goal[goalsList.size()];
-			newGoalsArray = goalsList.toArray(newGoalsArray);
-			goalMember.setGoals(newGoalsArray);
-			changeGoalReadStatus(user, member);
 		}
 		return goalMember;
 	}
 
 	public boolean changeGoalReadStatus(UsersData user, UsersData member) throws Exception {
 		GoalMember goalMember = new GoalMember();
+		GoalMember goalMember1 = new GoalMember();
 		GoalDao gdao = new GoalDao();
 		try {
 			if (user.getUserType().equals("Manager") && member.getUserType().equals("User")) {
@@ -362,6 +410,54 @@ public class GoalService {
 				goalMember.setGoals(newGoalsArray);
 				GoalMember gMember = gdao.updateGoalMember(goalMember);
 				if (gMember.getId() != null) {
+					return true;
+				}
+			} else if (user.getUserType().equals("Manager") && member.getUserType().equals("Manager")) {
+				goalMember = gdao.getIndividualMemberGoal(user.getEmail());
+				goalMember1 = gdao.getIndividualMemberGoal(member.getEmail());
+				boolean isUpdated = false;
+				boolean isUpdated1 = false;
+				if(goalMember != null) {
+					String managerEmail = member.getEmail();
+					Goal[] goalsArray = goalMember.getGoals();
+					Goal[] newGoalsArray = new Goal[goalsArray.length];
+					int newGoalsArrayIndex = 0;
+					for (Goal goal : goalsArray) {
+						if (goal.getManagerEmail().equals(managerEmail)) {
+							goal.sethasNewUpdatesForUser(false);
+						}
+						newGoalsArray[newGoalsArrayIndex] = goal;
+						newGoalsArrayIndex++;
+					}
+					goalMember.setGoals(newGoalsArray);
+					GoalMember gMember = gdao.updateGoalMember(goalMember);
+					if (gMember.getId() != null) {
+						isUpdated = true;
+					}
+				} else {
+					isUpdated = true;
+				}
+				if(goalMember1 != null) {
+					String managerEmail = user.getEmail();
+					Goal[] goalsArray = goalMember.getGoals();
+					Goal[] newGoalsArray = new Goal[goalsArray.length];
+					int newGoalsArrayIndex = 0;
+					for (Goal goal : goalsArray) {
+						if (goal.getManagerEmail().equals(managerEmail)) {
+							goal.sethasNewUpdatesForManager(false);
+						}
+						newGoalsArray[newGoalsArrayIndex] = goal;
+						newGoalsArrayIndex++;
+					}
+					goalMember.setGoals(newGoalsArray);
+					GoalMember gMember1 = gdao.updateGoalMember(goalMember);
+					if (gMember1.getId() != null) {
+						isUpdated1 = true;
+					}
+				} else {
+					isUpdated1 = true;
+				}
+				if(isUpdated && isUpdated1) {
 					return true;
 				}
 			}
