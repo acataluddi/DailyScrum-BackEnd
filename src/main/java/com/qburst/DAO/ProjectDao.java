@@ -25,7 +25,7 @@ public class ProjectDao extends connection {
 
 		ProjectData pdata = new ProjectData();
 		DBCursor<ProjectData> result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -48,9 +48,11 @@ public class ProjectDao extends connection {
 		} catch (Exception e) {
 		}
 		finally{
-			if(result!=null && mongo!=null) {
+			if(result!=null
+//					&& mongo!=null
+			) {
 			result.close();
-			mongo.close();
+//			mongo.close();
 			}
 		}
 		return null;
@@ -63,7 +65,7 @@ public class ProjectDao extends connection {
 		List<ProjectData> projectlist = new ArrayList<ProjectData>();
 		ProjectData pdata = new ProjectData();
 		DBCursor<ProjectData> result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -88,9 +90,11 @@ public class ProjectDao extends connection {
 			e.printStackTrace();
 		}
 		finally{
-			if(result!=null && mongo!=null) {
+			if(result!=null
+//					&& mongo!=null
+			) {
 			result.close();
-			mongo.close();
+//			mongo.close();
 			}
 		}
 		return projectlist;
@@ -100,7 +104,7 @@ public class ProjectDao extends connection {
 	public boolean deleteProject(String incomingdata) throws Exception {
 		DB db;
 		com.mongodb.DBCursor result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 
 			mongo = databaseConnection();
@@ -121,9 +125,11 @@ public class ProjectDao extends connection {
 		} catch (Exception e) {
 		}
 		finally{
-			if(result!=null && mongo!=null) {
+			if(result!=null
+//					&& mongo!=null
+			) {
 			result.close();
-			mongo.close();
+//			mongo.close();
 			}
 		}
 		return true;
@@ -132,7 +138,7 @@ public class ProjectDao extends connection {
 	@SuppressWarnings("deprecation")
 	public boolean updateProject(ProjectData projectData) throws Exception {
 		DB db;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -143,11 +149,11 @@ public class ProjectDao extends connection {
 		} catch (Exception e) {
 			return false;
 		}
-		finally{
-			if(mongo!=null) {
-			mongo.close();
-			}
-		}
+//		finally{
+//			if(mongo!=null) {
+//			mongo.close();
+//			}
+//		}
 		return true;
 	}
 
@@ -157,7 +163,7 @@ public class ProjectDao extends connection {
 		DB db;
 		ProjectData pdata = new ProjectData();
 		DBCursor<ProjectData> result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -174,9 +180,11 @@ public class ProjectDao extends connection {
 			e.printStackTrace();
 		}
 		finally{
-			if(result!=null && mongo!=null) {
+			if(result!=null
+//					&& mongo!=null
+			) {
 			result.close();
-			mongo.close();
+//			mongo.close();
 			}
 		}
 		return pdata;

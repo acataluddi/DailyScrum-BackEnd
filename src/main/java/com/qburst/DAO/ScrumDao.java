@@ -30,7 +30,7 @@ public class ScrumDao extends connection {
 		DBCursor results = null;
 		String UserType;
 		UsersData user = new UsersData();
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 
 			mongo = databaseConnection();
@@ -84,10 +84,12 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 		} finally {
-			if (result != null && mongo != null) {
+			if (result != null
+//					&& mongo != null
+			) {
 				result.close();
 				results.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 
@@ -99,7 +101,7 @@ public class ScrumDao extends connection {
 		DB db;
 		UsersData user = new UsersData();
 		DBCursor result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -123,9 +125,11 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 		} finally {
-			if (result != null && mongo != null) {
+			if (result != null
+//					&& mongo != null
+			) {
 				result.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 		return user;
@@ -135,7 +139,7 @@ public class ScrumDao extends connection {
 	public List<UsersData> readUserList(int pagenum, int num_of_rec) throws Exception {
 		DB db;
 		List<UsersData> userlist = new ArrayList<UsersData>();
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 
 			mongo = databaseConnection();
@@ -163,11 +167,12 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (mongo != null) {
-				mongo.close();
-			}
 		}
+//		finally {
+//			if (mongo != null) {
+//				mongo.close();
+//			}
+//		}
 		return userlist;
 	}
 
@@ -176,7 +181,7 @@ public class ScrumDao extends connection {
 			throws Exception {
 
 		DB db;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		List<TaskData> tasklist = new ArrayList<TaskData>();
 		try {
 
@@ -218,11 +223,12 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (mongo != null) {
-				mongo.close();
-			}
 		}
+//		finally {
+//			if (mongo != null) {
+//				mongo.close();
+//			}
+//		}
 		return tasklist;
 	}
 
@@ -230,7 +236,7 @@ public class ScrumDao extends connection {
 
 		DB db;
 		DBCursor cursor = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -246,10 +252,13 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			if (cursor != null && mongo != null) {
+		}
+		finally {
+			if (cursor != null
+//					&& mongo != null
+			) {
 				cursor.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 		return null;
@@ -260,7 +269,7 @@ public class ScrumDao extends connection {
 
 		DB db;
 		DBCursor result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -285,9 +294,11 @@ public class ScrumDao extends connection {
 		} catch (Exception e) {
 			System.out.println(e);
 		} finally {
-			if (result != null && mongo != null) {
+			if (result != null
+//					&& mongo != null
+			) {
 				result.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 		return false;
@@ -299,7 +310,7 @@ public class ScrumDao extends connection {
 	public boolean updateTask(TaskData taskData) throws Exception {
 		DB db;
 		DBCursor result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 			mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
@@ -328,9 +339,11 @@ public class ScrumDao extends connection {
 		} catch (Exception e) {
 			return false;
 		} finally {
-			if (result != null && mongo != null) {
+			if (result != null
+//					&& mongo != null
+			) {
 				result.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 		return true;
@@ -340,7 +353,7 @@ public class ScrumDao extends connection {
 	public boolean subtractTask(TaskData taskData) throws Exception {
 		DB db;
 		DBCursor result = null;
-		MongoClient mongo = null;
+		MongoClient mongo;
 		try {
 
 			mongo = databaseConnection();
@@ -360,11 +373,14 @@ public class ScrumDao extends connection {
 			}
 		} catch (Exception e) {
 		} finally {
-			if (result != null && mongo != null) {
+			if (result != null
+//					&& mongo != null
+			) {
 				result.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 		return true;
 	}
+
 }

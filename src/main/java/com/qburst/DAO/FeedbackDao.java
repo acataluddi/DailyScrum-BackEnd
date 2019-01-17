@@ -21,9 +21,9 @@ public class FeedbackDao extends connection {
 		DB db;
 		Feedback fback = new Feedback();
 		DBCursor<Feedback> result = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Feedback");
 			JacksonDBCollection<Feedback, Object> coll = JacksonDBCollection.wrap(table, Feedback.class, Object.class);
@@ -39,9 +39,9 @@ public class FeedbackDao extends connection {
 			if (result != null) {
 				result.close();
 			}
-			if (mongo != null) {
-				mongo.close();
-			}
+//			if (mongo != null) {
+//				mongo.close();
+//			}
 		}
 		return null;
 	}
@@ -51,10 +51,10 @@ public class FeedbackDao extends connection {
 		DB db;
 		Feedback feedback = new Feedback();
 		DBCursor<Feedback> result = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		List<Feedback> feedbackList = new ArrayList<Feedback>();
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Feedback");
 			JacksonDBCollection<Feedback, Object> coll = JacksonDBCollection.wrap(table, Feedback.class, Object.class);
@@ -70,9 +70,9 @@ public class FeedbackDao extends connection {
 			if (result != null) {
 				result.close();
 			}
-			if (mongo != null) {
-				mongo.close();
-			}
+//			if (mongo != null) {
+//				mongo.close();
+//			}
 		}
 		return null;
 	}

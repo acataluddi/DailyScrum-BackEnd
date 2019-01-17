@@ -30,9 +30,9 @@ public class GoalDao extends connection {
 		DB db;
 		GoalMember gMember = new GoalMember();
 		DBCursor<GoalMember> result = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Goal");
 			JacksonDBCollection<GoalMember, Object> coll = JacksonDBCollection.wrap(table, GoalMember.class,
@@ -55,9 +55,9 @@ public class GoalDao extends connection {
 			if (result != null) {
 				result.close();
 			}
-			if (mongo != null) {
-				mongo.close();
-			}
+//			if (mongo != null) {
+//				mongo.close();
+//			}
 		}
 		return null;
 	}
@@ -67,9 +67,9 @@ public class GoalDao extends connection {
 		DB db;
 		GoalMember goalMember = new GoalMember();
 		DBCursor<GoalMember> result = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Goal");
 			JacksonDBCollection<GoalMember, Object> coll = JacksonDBCollection.wrap(table, GoalMember.class,
@@ -86,9 +86,9 @@ public class GoalDao extends connection {
 			if (result != null) {
 				result.close();
 			}
-			if (mongo != null) {
-				mongo.close();
-			}
+//			if (mongo != null) {
+//				mongo.close();
+//			}
 		}
 		return null;
 	}
@@ -98,9 +98,9 @@ public class GoalDao extends connection {
 		DB db;
 		GoalMember gMember = new GoalMember();
 		DBCursor<GoalMember> result = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Goal");
 			JacksonDBCollection<GoalMember, Object> coll = JacksonDBCollection.wrap(table, GoalMember.class,
@@ -117,9 +117,9 @@ public class GoalDao extends connection {
 			if (result != null) {
 				result.close();
 			}
-			if (mongo != null) {
-				mongo.close();
-			}
+//			if (mongo != null) {
+//				mongo.close();
+//			}
 		}
 		return gMember;
 	}
@@ -129,10 +129,10 @@ public class GoalDao extends connection {
 		DB db;
 		GoalMember goalMember = new GoalMember();
 		DBCursor<GoalMember> result = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		List<NavBarMember> membersStatusList = new ArrayList<NavBarMember>();
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Goal");
 			JacksonDBCollection<GoalMember, Object> coll = JacksonDBCollection.wrap(table, GoalMember.class,
@@ -192,9 +192,9 @@ public class GoalDao extends connection {
 			if (result != null) {
 				result.close();
 			}
-			if (mongo != null) {
-				mongo.close();
-			}
+//			if (mongo != null) {
+//				mongo.close();
+//			}
 		}
 		return membersStatusList;
 	}
@@ -204,11 +204,11 @@ public class GoalDao extends connection {
 		DB db;
 		ProjectData pdata = new ProjectData();
 		DBCursor<ProjectData> projectResult = null;
-		MongoClient mongo = null;
+//		MongoClient mongo = null;
 		String membersArray[] = null;
 		Set<String> projectMembers = new HashSet<String>();
 		try {
-			mongo = databaseConnection();
+			MongoClient mongo = databaseConnection();
 			db = mongo.getDB("Scrum");
 			DBCollection table = db.getCollection("Project");
 			JacksonDBCollection<ProjectData, Object> projectCollection = JacksonDBCollection.wrap(table,
@@ -241,9 +241,11 @@ public class GoalDao extends connection {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (projectResult != null && mongo != null) {
+			if (projectResult != null
+//					&& mongo != null
+			 ) {
 				projectResult.close();
-				mongo.close();
+//				mongo.close();
 			}
 		}
 		return null;
